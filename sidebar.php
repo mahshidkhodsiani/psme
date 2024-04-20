@@ -7,7 +7,7 @@
     .sidebar {
         margin: 0;
         padding: 0;
-        width: 200px;
+        /* width: 200px; */
         background-color: #f1f1f1;
         position: fixed;
         height: 100%;
@@ -64,8 +64,12 @@
 
 
 <div class="sidebar">
-        <a href="products" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'products') echo 'active'; ?>">
-            <!-- <img src="img/users.png" height="20px" width="20px"> -->
+        <a href="personnels_review" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'personnels_review') echo 'active'; ?>">
+            <img src="img/review.png" height="20px" width="20px">
             بررسی سوابق کارکرد پرسنل
+        </a>
+        <a href="new_piece" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'new_piece') echo 'active'; ?>">
+            <img src="img/add_pro.png" height="20px" width="20px">
+            ثبت قطعه جدید
         </a>
 </div>

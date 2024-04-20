@@ -26,9 +26,7 @@ if (!isset($_SESSION["all_data"])) {
                 <?php
                 include 'sidebar.php';
                 ?>
-                <button class="btn btn-primary bg-primary" onclick="showSidebar()" style="height: 50px;">
-                ||| 
-                </button>
+           
             </div>
 
             <div class="col-md-8 col-sm-12">
@@ -76,16 +74,7 @@ if (!isset($_SESSION["all_data"])) {
             });
         });
 
-        function showSidebar() {
-            var sidebar = document.getElementById('sidebarMenu');
-            if (sidebar.style.display === 'none' || sidebar.style.display === '') {
-                sidebar.style.display = 'block'; // Show the sidebar
-            } else {
-                console.log('close') ;
-                // sidebar.style.display = 'none'; // Hide the sidebar
-                sidebar.setAttribute('style', 'display: none !important;')
-            }
-        }
+  
 
     </script>
 </body>

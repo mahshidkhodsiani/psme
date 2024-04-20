@@ -1,173 +1,71 @@
-<?php
-if ($_SESSION["all_data"]['admin'] == 1) {
-?>
-    <div id="sidebarMenu" style="display : none !important; width: 300px !important" 
-        class="d-flex flex-column flex-shrink-0 p-3 text-white border collapse">
+<style>
+    body {
+        margin: 0;
+        font-family: "Lato", sans-serif;
+    }
 
-        <h5 style="color: black;"><?= $_SESSION["all_data"]['name'] . " " . $_SESSION["all_data"]['family'] ?></h5>
-        <hr>
+    .sidebar {
+        margin: 0;
+        padding: 0;
+        width: 200px;
+        background-color: #f1f1f1;
+        position: fixed;
+        height: 100%;
+        overflow: auto;
+        right: 0;
+    }
 
-        <ul class="nav nav-pills flex-column mb-auto" style="padding-right: 10px;">
+    .sidebar a {
+        display: block;
+        color: black;
+        padding: 16px;
+        text-decoration: none;
+    }
 
-            <!-- <li>
-                <a href="submit_pro" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'submit_pro') echo 'active'; ?>">
-                    <img src="img/products.png" height="20px" width="20px">
-                    ثبت محصول
-                </a>
-            </li> -->
+    .sidebar a.active {
+        background-color: #1681f7;
+        color: white;
+    }
 
-            <li>
-                <a class="nav-link  <?php if (basename($_SERVER['REQUEST_URI']) === 'submit_pro' || basename($_SERVER['REQUEST_URI']) === 'products') echo 'active'; ?>" href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#newProduct" aria-expanded="false">
+    .sidebar a:hover:not(.active) {
+        background-color: #555;
+        color: white;
+    }
 
-                    <img src="img/point.png" height="20px" width="20px">
-                    محصولات
-                </a>
-                <ul id="newProduct" class="collapse first-level" aria-expanded="false">
-                    <li>
-                        <a href="submit_pro" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'submit_pro') echo 'active'; ?>">
-                            <!-- <img src="img/add-user.png" height="20px" width="20px"> -->
+    div.content {
+        margin-left: 200px;
+        padding: 1px 16px;
+        height: 1000px;
+    }
 
-                            ثبت محصول
-                        </a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a href="products" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'products') echo 'active'; ?>">
-                            <!-- <img src="img/users.png" height="20px" width="20px"> -->
-                            مدیریت محصولات
-                        </a>
-                    </li>
-                </ul>
-            </li>
+    @media screen and (max-width: 700px) {
+        .sidebar {
+            width: 100%;
+            height: auto;
+            position: relative;
+        }
 
+        .sidebar a {
+            float: left;
+        }
 
+        div.content {
+            margin-left: 0;
+        }
+    }
 
-            <li>
-                <a class="nav-link  <?php if (basename($_SERVER['REQUEST_URI']) === 'new_user' || basename($_SERVER['REQUEST_URI']) === 'users') echo 'active'; ?>" href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#newUser" aria-expanded="false">
-
-                    <img src="img/point.png" height="20px" width="20px">
-                    کاربران سیستم
-                </a>
-                <ul id="newUser" class="collapse first-level" aria-expanded="false">
-                    <li>
-                        <a href="new_user" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'new_user') echo 'active'; ?>">
-                            <!-- <img src="img/add-user.png" height="20px" width="20px"> -->
-
-                            افزودن کاربر
-                        </a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a href="users" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'users') echo 'active'; ?>">
-                            <!-- <img src="img/users.png" height="20px" width="20px"> -->
-                            مدیریت کاربران
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-            <li>
-                <a class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'new_device' || basename($_SERVER['REQUEST_URI']) === 'devices') echo 'active'; ?>" href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#newDevice" aria-expanded="false">
-
-                    <img src="img/point.png" height="20px" width="20px">
-                    دستگاه ها
-                </a>
-                <ul id="newDevice" class="collapse first-level" aria-expanded="false">
-                    <li>
-                        <a href="new_device" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'new_device') echo 'active'; ?>">
+    @media screen and (max-width: 400px) {
+        .sidebar a {
+            text-align: center;
+            float: none;
+        }
+    }
+</style>
 
 
-                            افزودن دستگاه جدید
-                        </a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a href="devices" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'devices') echo 'active'; ?>">
-
-                            مدیریت دستگاه ها
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-
-            <li>
-                <a class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'new_piece' || basename($_SERVER['REQUEST_URI']) === 'pieces') echo 'active'; ?>" href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#newPiece" aria-expanded="false">
-
-                    <img src="img/point.png" height="20px" width="20px">
-                    قطعات
-                </a>
-                <ul id="newPiece" class="collapse first-level" aria-expanded="false">
-                    <li>
-                        <a href="new_piece" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'new_piece') echo 'active'; ?>">
-
-
-                            افزودن قطعه جدید
-                        </a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a href="pieces" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'pieces') echo 'active'; ?>">
-
-                            مدیریت قطعات
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-            <li>
-                <a href="new_message" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'new_message') echo 'active'; ?>">
-                    <img src="img/message.png" height="20px" width="20px">
-                    ارسال پیام
-                </a>
-            </li>
-
-            <li>
-                <a href="sum" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'sum') echo 'active'; ?>">
-                    <img src="img/plus.png" height="20px" width="20px">
-                    جمع مبالغ هر ماه
-                </a>
-            </li>
-
-
-
-
-
-           
-
-
-        </ul>
-    </div>
-
-<?php
-
-
-} else {
-
-?>
-
-    <div id="sidebarMenu" style="display : none !important; width: 300px !important" 
-        class="d-flex flex-column flex-shrink-0 p-3 text-white border collapse">
-
-        <h5 style="color: black;"><?= $_SESSION["all_data"]['name'] . " " . $_SESSION["all_data"]['family'] ?></h5>
-        <hr>
-
-        <ul class="nav nav-pills flex-column mb-auto" style="padding-right: 10px;">
-            <li>
-                <a href="submit_pro" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'submit_pro') echo 'active'; ?>">
-                    <img src="img/products.png" height="20px" width="20px">
-                    ثبت محصول
-                </a>
-            </li>
-
-            <li>
-                <a href="sum" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'sum') echo 'active'; ?>">
-                    <img src="img/plus.png" height="20px" width="20px">
-                    جمع مبالغ هر ماه
-                </a>
-            </li>
-        </ul>
-    </div>
-
-
-<?php
-
-}
-
-?>
+<div class="sidebar">
+        <a href="products" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'products') echo 'active'; ?>">
+            <!-- <img src="img/users.png" height="20px" width="20px"> -->
+            بررسی سوابق کارکرد پرسنل
+        </a>
+</div>

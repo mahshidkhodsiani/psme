@@ -32,12 +32,14 @@ $id = $_SESSION["all_data"]['id'];
                 <?php
                 include 'sidebar.php';
                 ?>
-                <button class="btn btn-primary bg-primary" onclick="showSidebar()" style="height: 50px;">
+                <!-- <button class="btn btn-primary bg-primary" onclick="showSidebar()" style="height: 50px;">
                     |||
-                </button>
+                </button> -->
             </div>
 
             <div class="col-md-8">
+                <h3 style="background-color: #dbd50c;" class="d-flex justify-content-center mt-2 p-3">صفحه اول : </h3>
+
                 <div class="row">
                     <div class="col-md-6">
                         <div class="card">
@@ -135,16 +137,16 @@ $id = $_SESSION["all_data"]['id'];
             });
         });
 
-        function showSidebar() {
-            var sidebar = document.getElementById('sidebarMenu');
-            if (sidebar.style.display === 'none' || sidebar.style.display === '') {
-                sidebar.style.display = 'block'; // Show the sidebar
-            } else {
-                console.log('close');
-                // sidebar.style.display = 'none'; // Hide the sidebar
-                sidebar.setAttribute('style', 'display: none !important;')
-            }
-        }
+        // function showSidebar() {
+        //     var sidebar = document.getElementById('sidebarMenu');
+        //     if (sidebar.style.display === 'none' || sidebar.style.display === '') {
+        //         sidebar.style.display = 'block'; // Show the sidebar
+        //     } else {
+        //         console.log('close');
+        //         // sidebar.style.display = 'none'; // Hide the sidebar
+        //         sidebar.setAttribute('style', 'display: none !important;')
+        //     }
+        // }
     </script>
 </body>
 

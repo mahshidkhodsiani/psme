@@ -92,7 +92,7 @@ if (!isset($_SESSION["all_data"])) {
                                 // Remove any existing custom validity message
                                 $(this)[0].setCustomValidity('');
                                 $.ajax({
-                                    url: 'search_similar.php',
+                                    url: 'search_similar_piece.php',
                                     method: 'POST',
                                     data: {
                                         name: name
@@ -136,7 +136,7 @@ if (!isset($_SESSION["all_data"])) {
                             var size = $(this).val();
                             if ($('#name').val() !== '' && size !== '') { // Check if name is filled before fetching sizes
                                 $.ajax({
-                                    url: 'search_similar.php',
+                                    url: 'search_similar_piece.php',
                                     method: 'POST',
                                     data: {
                                         size: size

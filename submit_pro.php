@@ -30,6 +30,26 @@ if (!isset($_SESSION["all_data"])) {
     <script src="persianDate/js/vertical-responsive-menu.min.js"></script>
 
 
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script> -->
+
+
+
+
+    <style>
+        /* Hide the up and down arrows */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
+
+
 </head>
 
 <body>
@@ -59,13 +79,21 @@ if (!isset($_SESSION["all_data"])) {
                                 <option value="3">شب</option>
                             </select>
                         </div>
+                      
+                    </div>
+
+
+
+                    <div class="row">
                         <div class="col-md-6">
                             <label for="device_name" class="form-label fw-semibold">
                                 نام دستگاه</label>
-                            <select name="device_name" class="form-select" aria-label="Default select example">
+                            <select name="device_name" id="device_name" class="form-select" aria-label="Default select example">
                                 <option selected>یکی از دستگاه های زیر را انتخاب کنید</option>
                                 <?php
-                                $sql = "SELECT * FROM devices";
+                               $sql = "SELECT name, MIN(id) AS id FROM devices GROUP BY name";
+
+
                                 $result = $conn->query($sql);
                                 if ($result->num_rows > 0) {
                                     while ($row = $result->fetch_assoc()) { ?>
@@ -77,16 +105,13 @@ if (!isset($_SESSION["all_data"])) {
                                 ?>
                             </select>
                         </div>
-                    </div>
 
 
-
-                    <div class="row mt-1">
                         <div class="col-md-6">
                             <label for="device_number" class="form-label fw-semibold">
                                 شماره دستگاه</label>
-                            <select name="device_number" class="form-select" aria-label="Default select example">
-                                <option selected>یکی از شماره های زیر را انتخاب کنید</option>
+                            <select name="device_number" id="device_number" class="form-select" aria-label="Default select example">
+                                <option selected disabled>ابتدا اسم دستگاه را وارد کنید</option>
                                 <?php
                                 $sql = "SELECT * FROM devices";
                                 $result = $conn->query($sql);
@@ -100,12 +125,66 @@ if (!isset($_SESSION["all_data"])) {
                                 ?>
                             </select>
                         </div>
+                    </div>
+
+                    
+           
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            var deviceNameSelect = document.getElementById('device_name');
+                            var deviceNumberSelect = document.getElementById('device_number');
+
+                            // Disable device number select initially
+                            deviceNumberSelect.disabled = true;
+
+                            deviceNameSelect.addEventListener('change', function() {
+                                var selectedDeviceName = this.value;
+
+                                // Clear previous options
+                                deviceNumberSelect.innerHTML = '<option value="" selected>در حال بارگذاری...</option>';
+
+                                // Make AJAX request
+                                var xhr = new XMLHttpRequest();
+                                xhr.onreadystatechange = function() {
+                                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                                        if (xhr.status === 200) {
+                                            var deviceNumbers = JSON.parse(xhr.responseText);
+                                            // Update device number select options
+                                            deviceNumberSelect.innerHTML = '<option value="" selected>یکی از شماره های زیر را انتخاب کنید</option>';
+                                            deviceNumbers.forEach(function(device) {
+                                                var option = document.createElement('option');
+                                                option.value = device.id; // Assuming 'id' is the device id
+                                                option.textContent = device.numbers; // Assuming 'numbers' is the device number
+                                                deviceNumberSelect.appendChild(option);
+                                            });
+                                            // Enable device number select
+                                            deviceNumberSelect.disabled = false;
+                                        } else {
+                                            console.error('Request failed: ' + xhr.status);
+                                        }
+                                    }
+                                };
+                                xhr.open('GET', 'search_smilar_device.php?name=' + encodeURIComponent(selectedDeviceName), true);
+                                xhr.send();
+                            });
+                        });
+                    </script>
+
+
+
+
+
+                    <div class="row mt-3">
+                        
                         <div class="col-md-6">
                             <label for="piece_name" class="form-label fw-semibold">نام قطعه</label>
                             <select name="piece_name" id="piece_name" class="form-select" aria-label="Default select example">
                                 <option value="" selected>یکی از قطعه های زیر را انتخاب کنید</option>
                                 <?php
-                                $sql = "SELECT * FROM pieces";
+
+                                $sql = "SELECT name, MIN(id) AS id FROM pieces GROUP BY name";
+
                                 $result = $conn->query($sql);
                                 if ($result->num_rows > 0) {
                                     while ($row = $result->fetch_assoc()) { ?>
@@ -130,66 +209,69 @@ if (!isset($_SESSION["all_data"])) {
 
                         </div>
 
-
-
-
-                    </div>
-                    <div class="row mt-1">
-
-
                         <div class="col-md-6">
-                            <label for="size" class="form-label fw-semibold">سایز محصول</label>
+                            <label for="size" class="form-label fw-semibold">سایز قطعه</label>
                             <select name="size" id="size_piece" class="form-select" aria-label="Default select example">
                                 <option value="" selected>یکی از سایزهای زیر را انتخاب کنید</option>
                                 <!-- Other options here -->
                             </select>
                         </div>
 
-                        
 
 
 
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                                var pieceNameSelect = document.getElementById('piece_name');
-                                var sizeSelect = document.getElementById('size_piece');
-                                var hiddenPieceIdInput = document.querySelector('input[name="piece_id"]');
+                    </div>
 
-                                pieceNameSelect.addEventListener('change', function() {
-                                    var pieceName = this.value;
 
-                                    // Clear previous options
-                                    sizeSelect.innerHTML = '<option value="" selected>در حال بارگذاری...</option>';
 
-                                    // Make AJAX request
-                                    var xhr = new XMLHttpRequest();
-                                    xhr.onreadystatechange = function() {
-                                        if (xhr.readyState === XMLHttpRequest.DONE) {
-                                            if (xhr.status === 200) {
-                                                var sizes = JSON.parse(xhr.responseText);
-                                                // Update size select options
-                                                sizeSelect.innerHTML = '<option value="" selected>یکی از سایزهای زیر را انتخاب کنید</option>';
-                                                sizes.forEach(function(size) {
-                                                    var option = document.createElement('option');
-                                                    option.value = size;
-                                                    option.textContent = size;
-                                                    sizeSelect.appendChild(option);
-                                                });
-                                            } else {
-                                                console.error('Request failed: ' + xhr.status);
-                                            }
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            var pieceNameSelect = document.getElementById('piece_name');
+                            var sizeSelect = document.getElementById('size_piece');
+
+                            // Add initial option and disable size select
+                            sizeSelect.innerHTML = '<option value="" selected>ابتدا اسم قطعه را وارد کنید</option>';
+                            sizeSelect.disabled = true;
+
+                            pieceNameSelect.addEventListener('change', function() {
+                                var pieceName = this.value;
+
+                                // Clear previous options
+                                sizeSelect.innerHTML = '<option value="" selected>در حال بارگذاری...</option>';
+
+                                // Make AJAX request
+                                var xhr = new XMLHttpRequest();
+                                xhr.onreadystatechange = function() {
+                                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                                        if (xhr.status === 200) {
+                                            var sizes = JSON.parse(xhr.responseText);
+                                            // Update size select options
+                                            sizeSelect.innerHTML = '<option value="" selected>یکی از سایزهای زیر را انتخاب کنید</option>';
+                                            sizes.forEach(function(size) {
+                                                var option = document.createElement('option');
+                                                option.value = size;
+                                                option.textContent = size;
+                                                sizeSelect.appendChild(option);
+                                            });
+                                            // Enable size select
+                                            sizeSelect.disabled = false;
+                                        } else {
+                                            console.error('Request failed: ' + xhr.status);
                                         }
-                                    };
-                                    xhr.open('GET', 'get_sizes.php?piece_name=' + encodeURIComponent(pieceName), true);
-                                    xhr.send();
-                                });
+                                    }
+                                };
+                                xhr.open('GET', 'get_sizes.php?piece_name=' + encodeURIComponent(pieceName), true);
+                                xhr.send();
                             });
-
-                         
-                        </script>
-
+                        });
+                    </script>
 
 
+
+
+
+                    <div class="row mt-3">
 
                         <div class="col-md-6">
                             <label for="level" class="form-label fw-semibold">
@@ -201,61 +283,111 @@ if (!isset($_SESSION["all_data"])) {
                                 <option value="3">سه</option>
                             </select>
                         </div>
-                    </div>
 
-
-
-                    <div class="row mt-1">
                         <div class="col-md-6">
                             <label for="numbers" class="form-label fw-semibold">
                                 تعداد</label>
-                            <input type="text" name="numbers" class="form-control">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="time_one" class="form-label fw-semibold">
-                                زمان تولید یک قطعه</label>
-                            <input type="text" name="time_one" class="form-control">
+                            <input type="number" name="numbers" class="form-control">
                         </div>
                     </div>
-                    <div class="row mt-1">
+
+
+
+                
+                    <div class="row mt-3">
+                      
                         <div class="col-md-6">
-                            <label for="price" class="form-label fw-semibold">
-                                قیمت</label>
-                            <input type="text" name="price" class="form-control" placeholder="تومان">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="time_stop" class="form-label fw-semibold">
+                            <label for="had_stop" class="form-label fw-semibold">
                                 توقف (دقیقه)</label>
-                            <input type="text" name="time_stop" class="form-control">
+                            <!-- <input type="text" name="had_stop" class="form-control"> -->
+                            <select name="had_stop" id="had_stop" class="form-select" aria-label="Default select example">
+                                
+                                <option value="0">نداشتم</option>
+                                <option value="1">داشتم</option>
+                            
+                            </select>
                         </div>
                     </div>
-                    <div class="row mt-1">
+
+
+
+                    <div class="row mt-3" id="times_stop" style="display: none;">
+                        <div class="col-md-6">
+                            <label for="start_stop" class="form-label fw-semibold">
+                                از ساعت</label>
+                            <input type="time" class="form-control input-md" name="start_stop" id="start_stop">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="finish_stop" class="form-label fw-semibold">
+                                تا ساعت</label>
+                            <input type="time" class="form-control input-md" name="finish_stop" id="finish_stop">
+
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="couse_stop" class="form-label fw-semibold">
+                                علت توقف</label>
+                            <textarea type="text" name="couse_stop" class="form-control"></textarea>
+                        </div>
+                    </div>
+
+
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            var timeStopSelect = document.getElementById("had_stop");
+                            var nextDiv = document.getElementById('times_stop');
+
+                            timeStopSelect.addEventListener('change', function() {
+                                var selectedValue = this.value;
+                                if (selectedValue === '1') {
+                                    nextDiv.style.display = '';
+                                } else {
+                                    nextDiv.style.display = 'none';
+                                }
+                            });
+                        });
+                    </script>
+
+
+
+                    <!-- <div class="row mt-3">
                         <div class="col-md-6">
                             <label for="sub_date" class="form-label fw-semibold">
                                 تاریخ</label>
                             <input id="pdpDefault" type="text" name="sub_date" class="form-control">
                         </div>
 
-                    </div>
+                    </div> -->
                     <br>
-                    <div style="margin-top: 150px !important;" class="row mt-1">
+                    <div class="row mt-3">
                         <div class="col-md-6">
                             <label for="hour" class="form-label fw-semibold">
-                                ساعت</label>
+                                ساعت شروع تولید قطعه</label>
+                            <input type="text" name="hour" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="hour" class="form-label fw-semibold">
+                                ساعت پایان تولید قطعه</label>
                             <input type="text" name="hour" class="form-control">
                         </div>
                     </div>
-                    <div class="row mt-1">
+                    <div class="row mt-3" style="margin-bottom: 200px;">
+                       
+
                         <div class="col-md-6">
-                            <label for="couse_stop" class="form-label fw-semibold">
-                                علت توقف</label>
-                            <textarea type="text" name="couse_stop" class="form-control"></textarea>
+                            <label for="sub_date" class="form-label fw-semibold">
+                                تاریخ</label>
+                            <input id="pdpDark" type="text" name="sub_date" class="form-control">
                         </div>
+
                         <div class="col-md-6">
-                            <label for="explanation" class="form-label fw-semibold">
-                                توضیحات</label>
-                            <textarea type="text" name="explanation" class="form-control"></textarea>
+                            <label for="sub_date" class="form-label fw-semibold">
+                                توضیحات اضافی</label>
+                            <textarea class="form-control" ></textarea>
                         </div>
+
+                     
                     </div>
 
 

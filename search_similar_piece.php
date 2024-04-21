@@ -5,7 +5,7 @@ if (isset($_POST['name'])) {
     $name = $_POST['name'];
 
     // Perform a database query to find similar entries based on the entered name
-    $sql = "SELECT DISTINCT name FROM pieces WHERE name LIKE '%$name%'";
+    $sql = "SELECT DISTINCT name FROM devices WHERE name LIKE '%$name%'";
     $result = $conn->query($sql);
 
     // Output the results
@@ -21,7 +21,7 @@ if (isset($_POST['name'])) {
     $size = $_POST['size'];
 
     // Perform a database query to find similar entries based on the entered size
-    $sql = "SELECT DISTINCT size FROM pieces WHERE size LIKE '%$size%'";
+    $sql = "SELECT DISTINCT numbers FROM devices WHERE size LIKE '%$size%'";
     $result = $conn->query($sql);
 
     // Output the results

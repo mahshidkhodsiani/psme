@@ -1,18 +1,24 @@
 <?php
-
 include 'config.php';
-// Assuming $conn is your database connection
+
+// Check if the piece name is provided
 if (isset($_GET['piece_name'])) {
+    // Retrieve the piece name from the GET parameters
     $pieceName = $_GET['piece_name'];
-    // Fetch sizes from the database based on the selected piece name
-    $sql = "SELECT size FROM pieces WHERE name = '$pieceName'";
-    $result = $conn->query($sql);
+    
+    // Prepare and execute SQL query to fetch sizes related to the selected piece name
+    $sql = "SELECT id, size FROM pieces WHERE name = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $pieceName);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    // Store the sizes in an array
     $sizes = array();
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            $sizes[] = $row['size'];
-        }
+    while ($row = $result->fetch_assoc()) {
+        $sizes[] = $row;
     }
+    
     // Return sizes as JSON
     echo json_encode($sizes);
 } else {

@@ -68,19 +68,19 @@ if (!isset($_SESSION["all_data"])) {
             <div class="col-md-8">
                 <h3 style="background-color: #dbd50c;" class="d-flex justify-content-center mt-2 p-3">فرم ثبت روزانه محصولات : </h3>
                 <form action="submit_pro.php" method="POST" enctype="multipart/form-data" class="p-3 border mt-4">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label for="shift" class="form-label fw-semibold">
-                                شیفت</label>
-                            <select name="shift" class="form-select" aria-label="Default select example">
-                                <option selected>یکی از شیفت های زیر را انتخاب کنید</option>
-                                <option value="1">روز</option>
-                                <option value="2">عصر</option>
-                                <option value="3">شب</option>
-                            </select>
-                        </div>
-                      
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="shift" class="form-label fw-semibold">
+                            شیفت</label>
+                        <select name="shift" class="form-select" aria-label="Default select example" required>
+                            <option value="" selected>یکی از شیفت های زیر را انتخاب کنید</option>
+                            <option value="1">روز</option>
+                            <option value="2">عصر</option>
+                            <option value="3">شب</option>
+                        </select>
                     </div>
+                </div>
+
 
 
 
@@ -88,10 +88,10 @@ if (!isset($_SESSION["all_data"])) {
                         <div class="col-md-6">
                             <label for="device_name" class="form-label fw-semibold">
                                 نام دستگاه</label>
-                            <select name="device_name" id="device_name" class="form-select" aria-label="Default select example">
-                                <option selected>یکی از دستگاه های زیر را انتخاب کنید</option>
+                            <select name="device_name" id="device_name" class="form-select" aria-label="Default select example" required>
+                                <option value="" selected>یکی از دستگاه های زیر را انتخاب کنید</option>
                                 <?php
-                               $sql = "SELECT name, MIN(id) AS id FROM devices GROUP BY name";
+                               $sql = "SELECT name, MIN(id) AS id FROM devices GROUP BY name ORDER BY name";
 
 
                                 $result = $conn->query($sql);
@@ -110,8 +110,8 @@ if (!isset($_SESSION["all_data"])) {
                         <div class="col-md-6">
                             <label for="device_number" class="form-label fw-semibold">
                                 شماره دستگاه</label>
-                            <select name="device_number" id="device_number" class="form-select" aria-label="Default select example">
-                                <option selected disabled>ابتدا اسم دستگاه را وارد کنید</option>
+                            <select name="device_number" id="device_number" class="form-select" aria-label="Default select example" required>
+                                <option value="" selected disabled>ابتدا اسم دستگاه را وارد کنید</option>
                                 <?php
                                 $sql = "SELECT * FROM devices";
                                 $result = $conn->query($sql);
@@ -179,7 +179,7 @@ if (!isset($_SESSION["all_data"])) {
                         
                         <div class="col-md-6">
                             <label for="piece_name" class="form-label fw-semibold">نام قطعه</label>
-                            <select name="piece_name" id="piece_name" class="form-select" aria-label="Default select example">
+                            <select name="piece_name" id="piece_name" class="form-select" aria-label="Default select example" required>
                                 <option value="" selected>یکی از قطعه های زیر را انتخاب کنید</option>
                                 <?php
 
@@ -211,9 +211,23 @@ if (!isset($_SESSION["all_data"])) {
 
                         <div class="col-md-6">
                             <label for="size" class="form-label fw-semibold">سایز قطعه</label>
-                            <select name="size" id="size_piece" class="form-select" aria-label="Default select example">
+                            <!-- <select name="size" id="size_piece" class="form-select" aria-label="Default select example">
                                 <option value="" selected>یکی از سایزهای زیر را انتخاب کنید</option>
-                                <!-- Other options here -->
+                           
+                            </select> -->
+                            <select name="size" id="size" class="form-select" aria-label="Default select example" required>
+                                <option value="" selected disabled>ابتدا اسم قطعه را وارد کنید</option>
+                                <?php
+                                $sql = "SELECT * FROM pieces";
+                                $result = $conn->query($sql);
+                                if ($result->num_rows > 0) {
+                                    while ($row = $result->fetch_assoc()) { ?>
+                                        <option id="<?= $row['id'] ?>" value="<?= $row['size'] ?>"><?= $row['size'] ?></option>
+                                <?php
+                                    }
+                                }
+
+                                ?>
                             </select>
                         </div>
 
@@ -225,7 +239,7 @@ if (!isset($_SESSION["all_data"])) {
 
 
 
-                    <script>
+                    <!-- <script>
                         document.addEventListener('DOMContentLoaded', function() {
                             var pieceNameSelect = document.getElementById('piece_name');
                             var sizeSelect = document.getElementById('size_piece');
@@ -265,7 +279,70 @@ if (!isset($_SESSION["all_data"])) {
                                 xhr.send();
                             });
                         });
+                    </script> -->
+
+
+
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            var pieceNameSelect = document.getElementById('piece_name');
+                            var sizeSelect = document.getElementById('size');
+
+                            // Disable size select initially
+                            sizeSelect.disabled = true;
+
+                            pieceNameSelect.addEventListener('change', function() {
+                                var selectedPieceName = this.value;
+
+                                // Clear previous options
+                                sizeSelect.innerHTML = '<option value="" selected>در حال بارگذاری...</option>';
+
+                                // Make AJAX request
+                                var xhr = new XMLHttpRequest();
+                                xhr.onreadystatechange = function() {
+                                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                                        if (xhr.status === 200) {
+                                            var sizes = JSON.parse(xhr.responseText);
+
+                                            // Ensure sizes is not empty
+                                            if (sizes.length > 0) {
+                                                // Update size select options
+                                                sizeSelect.innerHTML = '<option value="" selected>یکی از سایزهای زیر را انتخاب کنید</option>';
+                                                sizes.forEach(function(size) {
+                                                    var option = document.createElement('option');
+                                                    option.value = size.id; // Assuming 'id' is the ID from the database
+                                                    option.textContent = size.size; // Assuming 'size' is the size name from the database
+                                                    sizeSelect.appendChild(option);
+                                                });
+
+                                                // Enable size select
+                                                sizeSelect.disabled = false;
+                                            } else {
+                                                // If sizes array is empty, display a message
+                                                sizeSelect.innerHTML = '<option value="" selected>هیچ سایزی یافت نشد</option>';
+                                                sizeSelect.disabled = true;
+                                            }
+                                        } else {
+                                            console.error('Request failed: ' + xhr.status);
+                                        }
+                                    }
+                                };
+
+                                // Adjust the URL according to your server endpoint
+                                xhr.open('GET', 'get_sizes.php?piece_name=' + encodeURIComponent(selectedPieceName), true);
+                                xhr.send();
+                            });
+                        });
                     </script>
+
+
+
+
+
+
+          
+
 
 
 
@@ -276,8 +353,8 @@ if (!isset($_SESSION["all_data"])) {
                         <div class="col-md-6">
                             <label for="level" class="form-label fw-semibold">
                                 مرحله</label>
-                            <select name="level" class="form-select" aria-label="Default select example">
-                                <option selected>یکی از مراحل زیر را انتخاب کنید</option>
+                            <select name="level" class="form-select" aria-label="Default select example" required>
+                                <option value="" selected>یکی از مراحل زیر را انتخاب کنید</option>
                                 <option value="1">یک</option>
                                 <option value="2">دو</option>
                                 <option value="3">سه</option>
@@ -287,7 +364,7 @@ if (!isset($_SESSION["all_data"])) {
                         <div class="col-md-6">
                             <label for="numbers" class="form-label fw-semibold">
                                 تعداد</label>
-                            <input type="number" name="numbers" class="form-control">
+                            <input type="number" name="numbers" class="form-control" required>
                         </div>
                     </div>
 
@@ -300,7 +377,7 @@ if (!isset($_SESSION["all_data"])) {
                             <label for="had_stop" class="form-label fw-semibold">
                                 توقف (دقیقه)</label>
                             <!-- <input type="text" name="had_stop" class="form-control"> -->
-                            <select name="had_stop" id="had_stop" class="form-select" aria-label="Default select example">
+                            <select name="had_stop" id="had_stop" class="form-select" aria-label="Default select example" >
                                 
                                 <option value="0">نداشتم</option>
                                 <option value="1">داشتم</option>
@@ -351,25 +428,18 @@ if (!isset($_SESSION["all_data"])) {
 
 
 
-                    <!-- <div class="row mt-3">
-                        <div class="col-md-6">
-                            <label for="sub_date" class="form-label fw-semibold">
-                                تاریخ</label>
-                            <input id="pdpDefault" type="text" name="sub_date" class="form-control">
-                        </div>
-
-                    </div> -->
+    
                     <br>
                     <div class="row mt-3">
                         <div class="col-md-6">
-                            <label for="hour" class="form-label fw-semibold">
+                            <label for="start" class="form-label fw-semibold">
                                 ساعت شروع تولید قطعه</label>
-                            <input type="text" name="hour" class="form-control">
+                            <input name="start" type="time" class="form-control input-md" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="hour" class="form-label fw-semibold">
+                            <label for="stop" class="form-label fw-semibold">
                                 ساعت پایان تولید قطعه</label>
-                            <input type="text" name="hour" class="form-control">
+                            <input name="stop" type="time" class="form-control input-md" required>
                         </div>
                     </div>
                     <div class="row mt-3" style="margin-bottom: 200px;">
@@ -378,13 +448,13 @@ if (!isset($_SESSION["all_data"])) {
                         <div class="col-md-6">
                             <label for="sub_date" class="form-label fw-semibold">
                                 تاریخ</label>
-                            <input id="pdpDark" type="text" name="sub_date" class="form-control">
+                            <input id="pdpDark" type="text" name="sub_date" class="form-control" autocomplete="off">
                         </div>
 
                         <div class="col-md-6">
-                            <label for="sub_date" class="form-label fw-semibold">
+                            <label for="extra_explanation" class="form-label fw-semibold">
                                 توضیحات اضافی</label>
-                            <textarea class="form-control" ></textarea>
+                            <textarea name="extra_explanation" class="form-control" ></textarea>
                         </div>
 
                      
@@ -445,10 +515,35 @@ if (!isset($_SESSION["all_data"])) {
                 theme: "melon",
                 alwaysShow: true,
             });
+
+
+
+            // $("#pdpDark").persianDatepicker({
+            //     theme: "dark",
+            //     alwaysShow: true,
+            // });
+
+
+
+             // Initialize PersianDatepicker with desired options
             $("#pdpDark").persianDatepicker({
                 theme: "dark",
-                alwaysShow: true,
+                alwaysShow: false, // Datepicker will appear only when the input field is clicked
+                onSelect: function(selectedDate) {
+                    this.destroy(); // Close the datepicker after a date is selected
+                }
             });
+
+            // Add event listener to the input field to reinitialize PersianDatepicker when clicked
+            $("#pdpDark").on('click', function() {
+                $(this).persianDatepicker('show');
+            });
+
+
+
+
+
+            
 
             //size
             $("#pdpSmall").persianDatepicker({
@@ -591,30 +686,88 @@ if (isset($_POST['enter'])) {
     $size = $conn->real_escape_string($_POST['size']);
     $level = $conn->real_escape_string($_POST['level']);
     $numbers = $conn->real_escape_string($_POST['numbers']);
-    $time_one = $conn->real_escape_string($_POST['time_one']);
-    $price = $conn->real_escape_string($_POST['price']);
-    $time_stop = $conn->real_escape_string($_POST['time_stop']);
+    $had_stop = $conn->real_escape_string($_POST['had_stop']);
+    if($had_stop == 1){
+        $start_stop = $conn->real_escape_string($_POST['start_stop']);
+        $finish_stop = $conn->real_escape_string($_POST['finish_stop']);
+        $couse_stop = $conn->real_escape_string($_POST['couse_stop']);
+    }else{
+        $start_stop = NULL;
+        $finish_stop = NULL;
+        $couse_stop = NULL;
+    }
+    
+   
+
     $sub_date = $conn->real_escape_string($_POST['sub_date']);
-    $hour = $conn->real_escape_string($_POST['hour']);
-    $couse_stop = $conn->real_escape_string($_POST['couse_stop']);
-    $explanation = $conn->real_escape_string($_POST['explanation']);
+ 
+    $start = $conn->real_escape_string($_POST['start']);
+    $stop = $conn->real_escape_string($_POST['stop']);
+   
+   
+   
+    $explanation = $conn->real_escape_string($_POST['extra_explanation']);
 
 
 
     $sql = "INSERT INTO products (device_name, device_number, piece_name, shift, 
-                    size, level, numbers, time_one, price, time_stop, date, 
-                    hour, couse_stop, explanation, user)
+                    size, level, numbers, had_stop, start_stop, finish_stop,
+                    date,start,stop,
+                    couse_stop, explanation, user)
             VALUES ('$device_name', '$device_number', '$piece_name', '$shift', 
-                    '$size', '$level', '$numbers', '$time_one', '$price', '$time_stop', '$sub_date', 
-                    '$hour', '$couse_stop', '$explanation', '$user')";
+                    '$size', '$level', '$numbers', '$had_stop', '$start_stop', '$finish_stop', 
+                     '$sub_date', '$start', '$stop',
+                    '$couse_stop', '$explanation', '$user')";
 
     // Execute the query
     $result = $conn->query($sql);
 
     if ($result) {
-        echo '<h3>محصول به درستی اضافه شد</h3>';
-    } else { ?>
-        <h3>خطایی در افزودن محصول پیش آمده!</h3>
-<?php echo "Error: " . $sql . "<br>" . $conn->error;
+        // Use Bootstrap's toast component to show a success toast message
+        echo "<div id='successToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+                <div class='toast-header bg-success text-white'>
+                    <strong class='mr-auto'>Success</strong>
+                    <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                        <span aria-hidden='true'>&times;</span>
+                    </button>
+                </div>
+                <div class='toast-body'>
+                    قطعه به درستی اضافه شد!
+                </div>
+              </div>
+              <script>
+                $(document).ready(function(){
+                    $('#successToast').toast('show');
+                    setTimeout(function(){
+                        $('#successToast').toast('hide');
+                    }, 3000);
+                });
+              </script>";
+    } else {
+        // Use Bootstrap's toast component to show an error toast message
+        echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+                <div class='toast-header bg-danger text-white'>
+                    <strong class='mr-auto'>Error</strong>
+                    <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                        <span aria-hidden='true'>&times;</span>
+                    </button>
+                </div>
+                <div class='toast-body'>
+                    خطایی در افزودن قطعه پیش آمده!
+                </div>
+              </div>
+              <script>
+                $(document).ready(function(){
+                    $('#errorToast').toast('show');
+                    setTimeout(function(){
+                        $('#errorToast').toast('hide');
+                    }, 3000);
+                });
+              </script>";
+
+              echo "Error: " . $sql . "<br>" . $conn->error;
     }
 }
+
+
+

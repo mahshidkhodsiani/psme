@@ -5,7 +5,8 @@ if (isset($_GET['name'])) {
     $selectedDeviceName = $_GET['name'];
 
     // Perform a database query to fetch device numbers associated with the selected device name
-    $sql = "SELECT id, numbers FROM devices WHERE name = '$selectedDeviceName'";
+    $sql = "SELECT id, numbers FROM devices WHERE name = '$selectedDeviceName' ORDER BY numbers";
+
     $result = $conn->query($sql);
 
     // Output the results as JSON

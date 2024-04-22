@@ -465,7 +465,13 @@ if (!isset($_SESSION["all_data"])) {
 
                     <div class="row mt-4">
                         <div class="col-md-6">
-                            <button name="enter" class="btn btn-primary">ثبت</button>
+                            <button name="submit_go" class="btn btn-primary">ثبت و ادامه</button>
+                        </div>
+
+                        <div class="col-md-4"></div>
+
+                        <div class="col-md-2 mt-3">
+                            <button name="final_submit" class="btn btn-primary ">ثبت نهایی</button>
                         </div>
 
                     </div>
@@ -667,6 +673,28 @@ if (!isset($_SESSION["all_data"])) {
         });
     </script> -->
 
+
+
+
+
+    <!-- To avoid entering Persian letters  -->
+    <script>
+        // Function to alert when Persian numbers are entered in input fields
+        document.addEventListener('DOMContentLoaded', function() {
+            var textInputs = document.querySelectorAll('input[type="text"]');
+            textInputs.forEach(function(input) {
+                input.addEventListener('input', function(event) {
+                    var persianNumbers = /[۰-۹]/g;
+                    if (persianNumbers.test(this.value)) {
+                        alert('Please enter only English numbers.');
+                        // Clear the input value
+                        this.value = '';
+                    }
+                });
+            });
+        });
+    </script>
+
 </body>
 
 </html>
@@ -674,7 +702,7 @@ if (!isset($_SESSION["all_data"])) {
 
 <?php
 
-if (isset($_POST['enter'])) {
+if (isset($_POST['final_submit']) || isset($_POST['submit_go'])) {
 
     $user = $_SESSION['all_data']['id'];
 
@@ -732,7 +760,7 @@ if (isset($_POST['enter'])) {
                     </button>
                 </div>
                 <div class='toast-body'>
-                    قطعه به درستی اضافه شد!
+                    محصول به درستی اضافه شد!
                 </div>
               </div>
               <script>
@@ -743,6 +771,9 @@ if (isset($_POST['enter'])) {
                     }, 3000);
                 });
               </script>";
+
+            
+
     } else {
         // Use Bootstrap's toast component to show an error toast message
         echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
@@ -753,7 +784,7 @@ if (isset($_POST['enter'])) {
                     </button>
                 </div>
                 <div class='toast-body'>
-                    خطایی در افزودن قطعه پیش آمده!
+                    خطایی در افزودن محصول پیش آمده!
                 </div>
               </div>
               <script>

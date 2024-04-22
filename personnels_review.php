@@ -4,6 +4,8 @@ if (!isset($_SESSION["all_data"])) {
     header("Location: login.php");
     exit();
 }
+
+
 ?>
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
@@ -41,23 +43,80 @@ if (!isset($_SESSION["all_data"])) {
                     
 
 
-                <div class="card" style="width: 18rem;">
+                <div class="card m-2" >
                     <div class="card-body">
                         <h5 class="card-title">اعمال فیلتر</h5>
+                        
                         <form method="GET" action="">
-                            <div class="mb-3">
-                                <label for="status" class="form-label">وضعیت:</label>
-                                <select class="form-select" name="status">
-                                    <option value="">همه</option>
-                                    <option value="0" <?php if(isset($_GET['status']) && $_GET['status'] === '0') echo 'selected'; ?>>تایید نشده</option>
-                                    <option value="1" <?php if(isset($_GET['status']) && $_GET['status'] === '1') echo 'selected'; ?>>تایید شده</option>
-                                    <option value="2" <?php if(isset($_GET['status']) && $_GET['status'] === '2') echo 'selected'; ?>>رد شده</option>
-                                </select>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="status" class="form-label">وضعیت:</label>
+                                    <select class="form-select" name="status">
+                                        <option value="">همه</option>
+                                        <option value="0" <?php if(isset($_GET['status']) && $_GET['status'] === '0') echo 'selected'; ?>>تایید نشده</option>
+                                        <option value="1" <?php if(isset($_GET['status']) && $_GET['status'] === '1') echo 'selected'; ?>>تایید شده</option>
+                                        <option value="2" <?php if(isset($_GET['status']) && $_GET['status'] === '2') echo 'selected'; ?>>رد شده</option>
+                                    </select>
+                                </div>
+                                
                             </div>
                             <button type="submit" class="btn btn-primary">اعمال فیلترها</button>
                         </form>
                     </div>
                 </div>
+
+
+                <br>
+
+
+                <div class="card m-2"  id="reason_reject">
+                    <div class="card-body">
+                        
+
+                        <?php
+                        if(isset($_POST['reject_product'])) {
+                            $id = $_POST['id_pro']; 
+                            $to_user = $_POST['to_user']; 
+                            ?>
+
+                        
+
+                            <h5 class="card-title">علت عدم تایید محصول را بنویسید</h5>
+                            <form action="" method="POST">
+                                <div class="row">
+                                    <div class="col-md-2"></div>
+                                    <div class="col-md-6 p-2 ">
+                                
+                                    <input type="hidden" value="<?= $id ?>" name="id_pro2">
+                                    <input type="hidden" value="<?= $to_user ?>" name="to_user2">
+
+
+
+                                    <textarea name="text_reason" class="form-control"></textarea>
+                                        
+                                        
+                                    </div>
+                                    <div class="col-md-4 d-flex">
+                                        <button name="send_message" class="btn btn-outline-warning">ارسال برای پرسنل</button>
+                                        <br>
+                                        <button name="inform_message" class="btn btn-outline-info">به پرسنل اطلاع می دهم</button>
+                                    </div>
+
+                                </div>
+                            </form>
+
+
+                        <?php
+                        }
+                        ?>
+                        
+                        
+
+                    </div>
+                </div>
+
+
+ 
 
               
              
@@ -112,16 +171,21 @@ if (!isset($_SESSION["all_data"])) {
                                         <?php if($row['status'] == 0) { ?>
                                             <form action="" method="POST">
                                                 <input type="hidden" value="<?=$row['id'] ?>" name="id_pro">
-                                                <button  name="accept_product" class="btn btn-outline-success btn-sm">تایید</button>
-                                                <button name="reject_product" class="btn btn-outline-danger btn-sm">رد</button>
+                                                <input type="hidden" value="<?=$row['user'] ?>" name="to_user">
+                                                <button name="accept_product" class="btn btn-outline-success btn-sm">تایید</button>
+                                                <!-- Change the type of the button to "button" -->
+                                                <button name="reject_product"  id="reject_button"
+                                                     class="btn btn-outline-danger btn-sm">رد</button>
                                             </form>
-                                           
                                         <?php } elseif($row['status'] == 1) {
                                             echo "تایید شده";
                                         } elseif($row['status'] == 2) {
                                             echo "رد شده";
                                         } ?>
                                     </td>
+
+
+
 
                                 </tr>
                                 <?php
@@ -201,8 +265,27 @@ if (!isset($_SESSION["all_data"])) {
                 $('.nav-link').removeClass('active');
                 $(this).addClass('active');
             });
+
+
+
         });
     </script>
+
+
+    <!-- <script>
+        // Function to show the "reason_reject" div
+        function showReasonReject() {
+            document.getElementById("reason_reject").style.display = "block";
+        }
+        
+        // Event listener for the "رد" button
+        document.getElementById("reject_button").addEventListener("click", function(event) {
+            event.preventDefault(); // Prevent default form submission behavior
+            showReasonReject(); // Call the function to show the "reason_reject" div
+        });
+    </script> -->
+
+   
 </body>
 
 </html>
@@ -223,16 +306,56 @@ if(isset($_POST['accept_product'])){
     }
 }
 
-if(isset($_POST['reject_product'])){
 
-    $id = $_POST['id_pro']; 
-    $sql = "UPDATE products SET status = 1 WHERE id = $id";
+
+if(isset($_POST['text_reason'], $_POST['send_message'])){
+
+    $id = $_POST['id_pro2']; 
+    $person = $_POST['to_user2'];
+    $message =  $_POST['text_reason'];
+
+    $sql = "UPDATE products SET status = 2 WHERE id = $id";
     $result = $conn->query($sql);
 
     if($result){
 
-      echo "<meta http-equiv='refresh' content='0'>";
+        $sql2 = "INSERT INTO messages (text, to_user)
+                VALUES ('$message', '$person')" ;
+                 $result2 = $conn->query($sql2);
+                 if($result2){
+
+                    echo "<div id='successToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+                        <div class='toast-header bg-success text-white'>
+                            <strong class='mr-auto'>Success</strong>
+                            <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                                <span aria-hidden='true'>&times;</span>
+                            </button>
+                            </div>
+                            <div class='toast-body'>
+                                پیام به درستی ارسال شد!
+                            </div>
+                        </div>
+                        <script>
+                            $(document).ready(function(){
+                                $('#successToast').toast('show');
+                                setTimeout(function(){
+                                    $('#successToast').toast('hide');
+                                }, 3000);
+                            });
+                        </script>";
+
+                        $a = 1 ;
+                    
+
+                    
+                 }
+
+                 if($a == 1){
+                    echo "<meta http-equiv='refresh' content='0'>";
+                 }
+                 
+
+      
           
     }
 }
-?>

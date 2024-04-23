@@ -10,16 +10,36 @@
     </div> -->
 
 
-    <button class="navbar-toggler position-absolute d-md-none " 
+    <!-- <button class="navbar-toggler position-absolute d-md-none " 
             type="button" data-bs-toggle="collapse"
             data-bs-target="#sidebarMenu" 
             aria-controls="sidebarMenu" 
             aria-expanded="false" >
         <span class="navbar-toggler-icon"></span>
-    </button>
+    </button> -->
+        <?php
+          // require_once 'path/to/source/jdatetime.class.php';
+          require_once 'jDateTime-master/jdatetime.class.php';
+          // D:\project\xamp\htdocs\project2\jDateTime-master\jdatetime.class.php
+          // Make sure the jDateTime extension is loaded
+          // Use the following line to load the extension if it's not autoloaded:
+          // include 'jdatetime.class.php';
+
+          $currentDate = date("Y-m-d"); // Get current Gregorian date
+          list($year, $month, $day) = explode('-', $currentDate);
+          $jdate = new jDateTime(); // Create an instance of jDateTime
+          $currentPersianDate = $jdate->date("d-m-y l", mktime(0, 0, 0, $month, $day, $year)); // Get Persian date and the name of the day
+
+          echo  "<h4>امروز: " . $currentPersianDate . " است </h4>"  ;
+
+
+          ?>
+
     
   
           <a href="logout.php" class="m-2" >خروج</a>
+       
+
  
     
 </header>

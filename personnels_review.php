@@ -17,6 +17,7 @@ if (!isset($_SESSION["all_data"])) {
     <?php
     include 'includes.php';
     include 'config.php';
+    include 'functions.php';
     ?>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -58,7 +59,27 @@ if (!isset($_SESSION["all_data"])) {
                                         <option value="2" <?php if(isset($_GET['status']) && $_GET['status'] === '2') echo 'selected'; ?>>رد شده</option>
                                     </select>
                                 </div>
-                                
+
+                                <div class="col-md-6">
+                                    <label for="status" class="form-label">پرسنل:</label>
+                                    <select class="form-select" name="personel">
+                                    <option value="">همه</option>
+                                    <?php
+                                        $sql = "SELECT * FROM users";
+                                        $result = $conn ->query($sql);
+                                        if($result->num_rows >0){
+                                            while($row = $result-> fetch_assoc()){?>
+
+                                                <option value="<?=$row['id']?>" <?php if(isset($_GET['personel']) && $_GET['personel'] === $row['id']) echo 'selected'; ?>>
+                                                    <?=$row['name']. " " .$row['family']?>
+                                                </option>
+                                        <?php
+                                            }
+                                        }
+                                    ?>
+
+                                    </select>
+                                </div>
                             </div>
                             <button type="submit" class="btn btn-primary">اعمال فیلترها</button>
                         </form>
@@ -69,6 +90,8 @@ if (!isset($_SESSION["all_data"])) {
                 <br>
 
 
+
+                <!-- when admin reject a personel -->
                 <div class="card m-2"  id="reason_reject">
                     <div class="card-body">
                         
@@ -114,6 +137,8 @@ if (!isset($_SESSION["all_data"])) {
 
                     </div>
                 </div>
+                <!-- when admin reject a personel -->
+
 
 
  
@@ -126,6 +151,8 @@ if (!isset($_SESSION["all_data"])) {
                     <thead>
                         <tr>
                             <th scope="col">ردیف</th>
+                            <th scope="col">نام شخص</th>
+                            <th scope="col">شیفت</th>
                             <th scope="col">نام دستگاه</th>
                             <th scope="col">کد دستگاه</th>
                             <th scope="col">اسم محصول</th>
@@ -147,13 +174,26 @@ if (!isset($_SESSION["all_data"])) {
                         $sql = "SELECT * FROM products";
 
                         // Add WHERE clause based on filter values
-                        if(isset($_GET['status']) && $_GET['status'] !== '') {
+                        if(isset($_GET['status']) && $_GET['status'] !== '' && $_GET['personel'] === '') {
                             $status = $_GET['status'];
                             $sql .= " WHERE status = $status";
                         }
 
+                        if(isset($_GET['personel']) && $_GET['personel'] !== '' && $_GET['status'] === '') {
+                            $personel = $_GET['personel'];
+                            $sql .= " WHERE `user` = $personel ";
+                        }
+
+                        if(isset($_GET['personel'], $_GET['status']) && $_GET['personel'] !== '' && $_GET['status'] !== ''){
+                            $personel = $_GET['personel'];
+                            $status = $_GET['status'];
+                            $sql .= " WHERE status = $status AND user= $personel";
+                        }
+
                         // Add LIMIT clause for pagination
                         $sql .= " LIMIT $start_from, $results_per_page";
+
+                        echo $sql;
                         
                         $result = $conn->query($sql);
 
@@ -164,6 +204,12 @@ if (!isset($_SESSION["all_data"])) {
                                 <!-- Table rows -->
                                 <tr>
                                     <th scope="row"><?= $a ?></th>
+                                    <td><?= givePerson($row['user']) ?></td>
+                                    <td>
+                                        <?php
+
+                                        ?>
+                                    </td>
                                     <td><?= $row['device_name'] ?></td>
                                     <td><?= $row['device_number'] ?></td>
                                     <td><?= $row['piece_name'] ?></td>
@@ -229,6 +275,7 @@ if (!isset($_SESSION["all_data"])) {
                                 if(isset($_GET['status']) && $_GET['status'] !== '') {
                                     echo '&status=' . $_GET['status'];
                                 }
+                                
                                 echo '">' . $i . '</a></li>';
                             } else {
                                 echo '<li class="page-item"><a class="page-link" href="?page=' . $i;

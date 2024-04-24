@@ -4,12 +4,136 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b4e812e4ca6df44a7b389da5dc8ed430",
-    "packages": [],
+    "content-hash": "573361e71492e679a7b5eaa2f2a7c46c",
+    "packages": [
+        {
+            "name": "phpoffice/phpexcel",
+            "version": "1.8.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PHPOffice/PHPExcel.git",
+                "reference": "372c7cbb695a6f6f1e62649381aeaa37e7e70b32"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PHPOffice/PHPExcel/zipball/372c7cbb695a6f6f1e62649381aeaa37e7e70b32",
+                "reference": "372c7cbb695a6f6f1e62649381aeaa37e7e70b32",
+                "shasum": ""
+            },
+            "require": {
+                "ext-xml": "*",
+                "ext-xmlwriter": "*",
+                "php": ">=5.2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "PHPExcel": "Classes/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL"
+            ],
+            "authors": [
+                {
+                    "name": "Maarten Balliauw",
+                    "homepage": "http://blog.maartenballiauw.be"
+                },
+                {
+                    "name": "Mark Baker"
+                },
+                {
+                    "name": "Franck Lefevre",
+                    "homepage": "http://blog.rootslabs.net"
+                },
+                {
+                    "name": "Erik Tilt"
+                }
+            ],
+            "description": "PHPExcel - OpenXML - Read, Create and Write Spreadsheet documents in PHP - Spreadsheet engine",
+            "homepage": "http://phpexcel.codeplex.com",
+            "keywords": [
+                "OpenXML",
+                "excel",
+                "php",
+                "spreadsheet",
+                "xls",
+                "xlsx"
+            ],
+            "support": {
+                "issues": "https://github.com/PHPOffice/PHPExcel/issues",
+                "source": "https://github.com/PHPOffice/PHPExcel/tree/master"
+            },
+            "abandoned": "phpoffice/phpspreadsheet",
+            "time": "2015-05-01T07:00:55+00:00"
+        },
+        {
+            "name": "sallar/jdatetime",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sallar/jDateTime.git",
+                "reference": "74fa0b2c3cfddbc819eea5134fa4588aa1c1adba"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sallar/jDateTime/zipball/74fa0b2c3cfddbc819eea5134fa4588aa1c1adba",
+                "reference": "74fa0b2c3cfddbc819eea5134fa4588aa1c1adba",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^5.2"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "jdatetime.class.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sallar Kaboli",
+                    "email": "sallar.kaboli@gmail.com",
+                    "homepage": "http://sallar.me",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Jalali (Shamsi) DateTime class written in PHP, Supports year higher than 2038",
+            "homepage": "http://sallar.me/projects/jdatetime/",
+            "keywords": [
+                "Jalali",
+                "date",
+                "datetime",
+                "farsi",
+                "iran",
+                "jalalidate",
+                "jdatetime",
+                "persian",
+                "shamsi",
+                "time"
+            ],
+            "support": {
+                "issues": "https://github.com/sallar/jDateTime/issues",
+                "source": "https://github.com/sallar/jDateTime/tree/master"
+            },
+            "time": "2023-06-12T12:13:50+00:00"
+        }
+    ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "sallar/jdatetime": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

@@ -4,8 +4,7 @@
     "type": "project",
 
     "require": {
-        "sallar/jdatetime": "dev-master"
+        "sallar/jdatetime": "dev-master",
+        "phpoffice/phpexcel": "^1.8"
     }
 }
-
-

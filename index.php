@@ -61,7 +61,7 @@ $id = $_SESSION["all_data"]['id'];
 
                                         // Fetch records
                                         $sql = "SELECT * FROM products WHERE user = '$id'
-                                                ORDER BY id DESC LIMIT 4";
+                                                ORDER BY id DESC LIMIT 10";
                                         $result = $conn->query($sql);
 
                                         if ($result->num_rows > 0) {
@@ -105,7 +105,7 @@ $id = $_SESSION["all_data"]['id'];
                                         $a = 1;
 
                                         // Fetch records
-                                        $sql = "SELECT * FROM messages ";
+                                        $sql = "SELECT * FROM messages LIMIT 10";
                                         $result = $conn->query($sql);
 
                                         if ($result->num_rows > 0) {

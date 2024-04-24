@@ -6,13 +6,25 @@ namespace Composer\Autoload;
 
 class ComposerStaticInitb4e812e4ca6df44a7b389da5dc8ed430
 {
+    public static $prefixesPsr0 = array (
+        'P' => 
+        array (
+            'PHPExcel' => 
+            array (
+                0 => __DIR__ . '/..' . '/phpoffice/phpexcel/Classes',
+            ),
+        ),
+    );
+
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'jDateTime' => __DIR__ . '/..' . '/sallar/jdatetime/jdatetime.class.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
+            $loader->prefixesPsr0 = ComposerStaticInitb4e812e4ca6df44a7b389da5dc8ed430::$prefixesPsr0;
             $loader->classMap = ComposerStaticInitb4e812e4ca6df44a7b389da5dc8ed430::$classMap;
 
         }, null, ClassLoader::class);

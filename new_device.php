@@ -12,10 +12,20 @@ if (!isset($_SESSION["all_data"])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>افزودن دستگاه جدید</title>
-    <title>افزودن دستگاه جدید</title>
     <?php include 'includes.php'; ?>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+    <style>
+        /* Hide the up and down arrows */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
     </style>
 </head>
 
@@ -29,36 +39,141 @@ if (!isset($_SESSION["all_data"])) {
                 <?php
                 include 'sidebar.php';
                 ?>
-               
+
             </div>
 
             <div class="col-md-8 col-sm-12">
                 <h3 style="background-color: #dbd50c;" class="d-flex justify-content-center mt-2 p-3">فرم ثبت دستگاه جدید : </h3>
-                <form action="new_device.php" method="POST" enctype="multipart/form-data" class="p-3 border mt-4">
+
+
+
+                <!-- Include jQuery library -->
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+                <!-- Your HTML form -->
+                <form id="newPieceForm" action="new_device.php" method="POST" enctype="multipart/form-data" class="p-3 border mt-4">
                     <div class="row">
                         <div class="col-md-6">
-                            <label for="name" class="form-label fw-semibold">
-                                نام دستگاه </label>
-                            <input type="text" name="name" class="form-control">
+                            <label for="name" class="form-label fw-semibold">نام دستگاه</label>
+                            <input type="text" name="name" id="name" class="form-control" required>
+                            <div id="similarPiecesName"></div> <!-- Placeholder for similar pieces by name -->
                         </div>
                         <div class="col-md-6">
-                            <label for="code" class="form-label fw-semibold">
-                                کد دستگاه</label>
-                            <input type="text" name="code" class="form-control">
+                            <label for="size" class="form-label fw-semibold">کد دستگاه</label>
+                            <input type="text" name="size" id="size" class="form-control" required>
+                            <div id="similarPiecesSize"></div> <!-- Placeholder for similar pieces by size -->
                         </div>
-
-                        
                     </div>
-                   
-                
+                 
                     <div class="row mt-4">
                         <div class="col-md-6">
                             <button name="enter" class="btn btn-primary">ثبت</button>
                         </div>
-
                     </div>
-
                 </form>
+
+
+
+
+                <script>
+                    $(document).ready(function() {
+                        $('#name').keyup(function() {
+                            var name = $(this).val();
+                            if (name !== '') {
+                                // Remove any existing custom validity message
+                                $(this)[0].setCustomValidity('');
+                                $.ajax({
+                                    url: 'similar_piece.php',
+                                    method: 'POST',
+                                    data: {
+                                        name: name
+                                    },
+                                    success: function(data) {
+                                        $('#similarPiecesName').html(data);
+                                        // Add click event handler for each similar piece by name
+                                        $('#similarPiecesName div').click(function() {
+                                            var selectedPiece = $(this).text();
+                                            $('#name').val(selectedPiece);
+                                            $('#similarPiecesName').html('');
+                                        });
+                                    },
+                                    error: function(xhr, status, error) {
+                                        console.error(xhr.responseText);
+                                    }
+                                });
+                            } else {
+                                // Set a custom validity message when the field is empty
+                                $(this)[0].setCustomValidity('Please provide a name.');
+                                $('#similarPiecesName').html('');
+                                $('#similarPiecesSize').html(''); // Clear the sizes when name is empty
+                            }
+                        });
+
+                        // Add event listener to remove the custom validity message when the field is not empty
+                        $('#name').on('input', function() {
+                            if ($(this).val() !== '') {
+                                $(this)[0].setCustomValidity('');
+                            }
+                        });
+
+                        // Click event handler for selecting a similar piece by size
+                        $('#similarPiecesSize').on('click', 'div', function() {
+                            var selectedPiece = $(this).text();
+                            $('#size').val(selectedPiece);
+                            $('#similarPiecesSize').html('');
+                        });
+
+                        $('#size').keyup(function() {
+                            var size = $(this).val();
+                            if ($('#name').val() !== '' && size !== '') { // Check if name is filled before fetching sizes
+                                $.ajax({
+                                    url: 'similar_piece.php',
+                                    method: 'POST',
+                                    data: {
+                                        size: size
+                                    },
+                                    success: function(data) {
+                                        $('#similarPiecesSize').html(data);
+                                    },
+                                    error: function(xhr, status, error) {
+                                        console.error(xhr.responseText);
+                                    }
+                                });
+                            } else {
+                                $('#similarPiecesSize').html('');
+                            }
+                        });
+                    });
+
+
+
+
+
+
+                    //   for entering name first:
+
+                    function toggleSizeInput() {
+                        var nameValue = $('#name').val().trim(); // Get value of name input
+                        if (nameValue !== '') {
+                            $('#size').prop('disabled', false); // Enable size input if name is not empty
+                            $('#size').attr('placeholder', ''); // Remove placeholder text if name is not empty
+                        } else {
+                            $('#size').prop('disabled', true); // Disable size input if name is empty
+                            $('#size').attr('placeholder', 'اول نام دستگاه را وارد کنید'); // Set placeholder text if name is empty
+                        }
+                    }
+
+                    // Call toggleSizeInput on keyup event for name input
+                    $('#name').keyup(function() {
+                        toggleSizeInput(); // Call the function to toggle size input
+                    });
+
+                    // Call toggleSizeInput on page load
+                    toggleSizeInput(); // Call the function to toggle size input initially
+                </script>
+
+
+
             </div>
         </div>
     </div>
@@ -71,9 +186,11 @@ if (!isset($_SESSION["all_data"])) {
                 $(this).addClass('active');
             });
         });
-
-     
     </script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
 </body>
 
 </html>
@@ -81,25 +198,61 @@ if (!isset($_SESSION["all_data"])) {
 
 <?php
 
-if (isset($_POST['enter'])) {
 
+if (isset($_POST['enter'])) {
     include 'config.php';
 
-    // Sanitize user inputs to prevent SQL injection
     $name = $conn->real_escape_string($_POST['name']);
-    $code = $conn->real_escape_string($_POST['code']);
-
+    $size = $conn->real_escape_string($_POST['size']);;
     // Construct the SQL query using placeholders
     $sql = "INSERT INTO devices (name, numbers)
-            VALUES ('$name', '$code')";
+            VALUES ('$name', '$size')";
 
     // Execute the query
     $result = $conn->query($sql);
 
-    if($result){
-        echo "<h3>دستگاه به درستی اضافه شد !</h3>" ;
+    if ($result) {
+        // Use Bootstrap's toast component to show a success toast message
+        echo "<div id='successToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+                <div class='toast-header bg-success text-white'>
+                    <strong class='mr-auto'>Success</strong>
+                    <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                        <span aria-hidden='true'>&times;</span>
+                    </button>
+                </div>
+                <div class='toast-body'>
+                    دستگاه به درستی اضافه شد!
+                </div>
+              </div>
+              <script>
+                $(document).ready(function(){
+                    $('#successToast').toast('show');
+                    setTimeout(function(){
+                        $('#successToast').toast('hide');
+                    }, 3000);
+                });
+              </script>";
     } else {
-        echo "<h3>خطایی در افزودن دستگاه پیش آمده!</h3>" ;
-        echo "Error: " . $sql . "<br>" . $conn->error; 
+        // Use Bootstrap's toast component to show an error toast message
+        echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+                <div class='toast-header bg-danger text-white'>
+                    <strong class='mr-auto'>Error</strong>
+                    <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                        <span aria-hidden='true'>&times;</span>
+                    </button>
+                </div>
+                <div class='toast-body'>
+                    خطایی در افزودن دستگاه پیش آمده!
+                </div>
+              </div>
+              <script>
+                $(document).ready(function(){
+                    $('#errorToast').toast('show');
+                    setTimeout(function(){
+                        $('#errorToast').toast('hide');
+                    }, 3000);
+                });
+              </script>";
     }
 }
+?>

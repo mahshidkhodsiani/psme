@@ -73,6 +73,10 @@ if ($_SESSION["all_data"]['admin'] == 1) {
         <img src="img/review.png" height="20px" width="20px">
         بررسی سوابق کارکرد پرسنل
     </a>
+    <a href="confirmations" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'confirmations') echo 'active'; ?>">
+        <img src="img/review.png" height="20px" width="20px">
+        تایید محصولات
+    </a>
     <a href="new_device" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'new_device') echo 'active'; ?>">
         <img src="img/add_pro.png" height="20px" width="20px">
         ثبت دستگاه جدید

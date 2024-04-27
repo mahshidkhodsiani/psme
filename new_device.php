@@ -56,12 +56,10 @@ if (!isset($_SESSION["all_data"])) {
                         <div class="col-md-6">
                             <label for="name" class="form-label fw-semibold">نام دستگاه</label>
                             <input type="text" name="name" id="name" class="form-control" required>
-                            <div id="similarPiecesName"></div> <!-- Placeholder for similar pieces by name -->
                         </div>
                         <div class="col-md-6">
                             <label for="size" class="form-label fw-semibold">کد دستگاه</label>
                             <input type="text" name="size" id="size" class="form-control" required>
-                            <div id="similarPiecesSize"></div> <!-- Placeholder for similar pieces by size -->
                         </div>
                     </div>
                  
@@ -75,102 +73,6 @@ if (!isset($_SESSION["all_data"])) {
 
 
 
-                <script>
-                    $(document).ready(function() {
-                        $('#name').keyup(function() {
-                            var name = $(this).val();
-                            if (name !== '') {
-                                // Remove any existing custom validity message
-                                $(this)[0].setCustomValidity('');
-                                $.ajax({
-                                    url: 'similar_piece.php',
-                                    method: 'POST',
-                                    data: {
-                                        name: name
-                                    },
-                                    success: function(data) {
-                                        $('#similarPiecesName').html(data);
-                                        // Add click event handler for each similar piece by name
-                                        $('#similarPiecesName div').click(function() {
-                                            var selectedPiece = $(this).text();
-                                            $('#name').val(selectedPiece);
-                                            $('#similarPiecesName').html('');
-                                        });
-                                    },
-                                    error: function(xhr, status, error) {
-                                        console.error(xhr.responseText);
-                                    }
-                                });
-                            } else {
-                                // Set a custom validity message when the field is empty
-                                $(this)[0].setCustomValidity('Please provide a name.');
-                                $('#similarPiecesName').html('');
-                                $('#similarPiecesSize').html(''); // Clear the sizes when name is empty
-                            }
-                        });
-
-                        // Add event listener to remove the custom validity message when the field is not empty
-                        $('#name').on('input', function() {
-                            if ($(this).val() !== '') {
-                                $(this)[0].setCustomValidity('');
-                            }
-                        });
-
-                        // Click event handler for selecting a similar piece by size
-                        $('#similarPiecesSize').on('click', 'div', function() {
-                            var selectedPiece = $(this).text();
-                            $('#size').val(selectedPiece);
-                            $('#similarPiecesSize').html('');
-                        });
-
-                        $('#size').keyup(function() {
-                            var size = $(this).val();
-                            if ($('#name').val() !== '' && size !== '') { // Check if name is filled before fetching sizes
-                                $.ajax({
-                                    url: 'similar_piece.php',
-                                    method: 'POST',
-                                    data: {
-                                        size: size
-                                    },
-                                    success: function(data) {
-                                        $('#similarPiecesSize').html(data);
-                                    },
-                                    error: function(xhr, status, error) {
-                                        console.error(xhr.responseText);
-                                    }
-                                });
-                            } else {
-                                $('#similarPiecesSize').html('');
-                            }
-                        });
-                    });
-
-
-
-
-
-
-                    //   for entering name first:
-
-                    function toggleSizeInput() {
-                        var nameValue = $('#name').val().trim(); // Get value of name input
-                        if (nameValue !== '') {
-                            $('#size').prop('disabled', false); // Enable size input if name is not empty
-                            $('#size').attr('placeholder', ''); // Remove placeholder text if name is not empty
-                        } else {
-                            $('#size').prop('disabled', true); // Disable size input if name is empty
-                            $('#size').attr('placeholder', 'اول نام دستگاه را وارد کنید'); // Set placeholder text if name is empty
-                        }
-                    }
-
-                    // Call toggleSizeInput on keyup event for name input
-                    $('#name').keyup(function() {
-                        toggleSizeInput(); // Call the function to toggle size input
-                    });
-
-                    // Call toggleSizeInput on page load
-                    toggleSizeInput(); // Call the function to toggle size input initially
-                </script>
 
 
 
@@ -203,7 +105,11 @@ if (isset($_POST['enter'])) {
     include 'config.php';
 
     $name = $conn->real_escape_string($_POST['name']);
-    $size = $conn->real_escape_string($_POST['size']);;
+    $size = $conn->real_escape_string($_POST['size']);
+
+
+  
+
     // Construct the SQL query using placeholders
     $sql = "INSERT INTO devices (name, numbers)
             VALUES ('$name', '$size')";

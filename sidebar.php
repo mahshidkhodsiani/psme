@@ -81,6 +81,10 @@ if ($_SESSION["all_data"]['admin'] == 1) {
         <img src="img/add_pro.png" height="20px" width="20px">
         ثبت دستگاه جدید
     </a>
+    <a href="new_piece" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'new_piece') echo 'active'; ?>">
+        <img src="img/add_pro.png" height="20px" width="20px">
+        ثبت قطعه جدید
+    </a>
   
 </div>
 

@@ -1,186 +1,262 @@
 <?php
-if ($_SESSION["all_data"]['admin'] == 1) {
-?>
-    <div id="sidebarMenu" style=" width: 300px !important" 
-        class="d-flex flex-column flex-shrink-0 p-3 text-white border collapse">
-
-        <h5 style="color: black;"><?= $_SESSION["all_data"]['name'] . " " . $_SESSION["all_data"]['family'] ?></h5>
-        <hr>
-
-        <ul class="nav nav-pills flex-column mb-auto" style="padding-right: 10px;">
-
-            <!-- <li>
-                <a href="submit_pro" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'submit_pro') echo 'active'; ?>">
-                    <img src="img/products.png" height="20px" width="20px">
-                    ثبت محصول
-                </a>
-            </li> -->
-
-            <li>
-                <a class="nav-link  <?php if (basename($_SERVER['REQUEST_URI']) === 'submit_pro' || basename($_SERVER['REQUEST_URI']) === 'products') echo 'active'; ?>" href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#newProduct" aria-expanded="false">
-
-                    <img src="img/point.png" height="20px" width="20px">
-                    محصولات
-                </a>
-                <ul id="newProduct" class="collapse first-level" aria-expanded="false">
-                    <li>
-                        <a href="submit_pro" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'submit_pro') echo 'active'; ?>">
-                            <!-- <img src="img/add-user.png" height="20px" width="20px"> -->
-
-                            ثبت محصول
-                        </a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a href="products" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'products') echo 'active'; ?>">
-                            <!-- <img src="img/users.png" height="20px" width="20px"> -->
-                            مدیریت محصولات
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-
-
-            <li>
-                <a class="nav-link  <?php if (basename($_SERVER['REQUEST_URI']) === 'new_user' || basename($_SERVER['REQUEST_URI']) === 'users') echo 'active'; ?>" href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#newUser" aria-expanded="false">
-
-                    <img src="img/point.png" height="20px" width="20px">
-                    کاربران سیستم
-                </a>
-                <ul id="newUser" class="collapse first-level" aria-expanded="false">
-                    <li>
-                        <a href="new_user" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'new_user') echo 'active'; ?>">
-                            <!-- <img src="img/add-user.png" height="20px" width="20px"> -->
-
-                            افزودن کاربر
-                        </a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a href="users" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'users') echo 'active'; ?>">
-                            <!-- <img src="img/users.png" height="20px" width="20px"> -->
-                            مدیریت کاربران
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-            <li>
-                <a class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'new_device' || basename($_SERVER['REQUEST_URI']) === 'devices') echo 'active'; ?>" href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#newDevice" aria-expanded="false">
-
-                    <img src="img/point.png" height="20px" width="20px">
-                    دستگاه ها
-                </a>
-                <ul id="newDevice" class="collapse first-level" aria-expanded="false">
-                    <li>
-                        <a href="new_device" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'new_device') echo 'active'; ?>">
-
-
-                            افزودن دستگاه جدید
-                        </a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a href="devices" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'devices') echo 'active'; ?>">
-
-                            مدیریت دستگاه ها
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-
-            <li>
-                <a class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'new_piece' || basename($_SERVER['REQUEST_URI']) === 'pieces') echo 'active'; ?>" href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#newPiece" aria-expanded="false">
-
-                    <img src="img/point.png" height="20px" width="20px">
-                    قطعات
-                </a>
-                <ul id="newPiece" class="collapse first-level" aria-expanded="false">
-                    <li>
-                        <a href="new_piece" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'new_piece') echo 'active'; ?>">
-
-
-                            افزودن قطعه جدید
-                        </a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a href="pieces" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'pieces') echo 'active'; ?>">
-
-                            مدیریت قطعات
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-            <li>
-                <a href="new_message" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'new_message') echo 'active'; ?>">
-                    <img src="img/message.png" height="20px" width="20px">
-                    ارسال پیام
-                </a>
-            </li>
-
-            <li>
-                <a href="sum" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'sum') echo 'active'; ?>">
-                    <img src="img/plus.png" height="20px" width="20px">
-                    جمع مبالغ هر ماه
-                </a>
-            </li>
-
-
-
-
-
-           
-
-
-        </ul>
-    </div>
-
-<?php
-
-
-} else {
-
-?>
-
-    <div id="sidebarMenu" style=" width: 300px !important" 
-        class="d-flex flex-column flex-shrink-0 p-3 text-white border collapse">
-
-        <h5 style="color: black;"><?= $_SESSION["all_data"]['name'] . " " . $_SESSION["all_data"]['family'] ?></h5>
-        <hr>
-
-        <ul class="nav nav-pills flex-column mb-auto" style="padding-right: 10px;">
-            <li>
-                <a href="submit_pro" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'submit_pro') echo 'active'; ?>">
-                    <img src="img/products.png" height="20px" width="20px">
-                    ثبت محصول
-                </a>
-            </li>
-
-            <li>
-                <a href="sum" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'sum') echo 'active'; ?>">
-                    <img src="img/plus.png" height="20px" width="20px">
-                    جمع مبالغ هر ماه
-                </a>
-            </li>
-        </ul>
-    </div>
-
-
-<?php
-
+session_start();
+if (!isset($_SESSION["all_data"])) {
+    header("Location: login.php");
+    exit();
 }
-
 ?>
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>افزودن دستگاه جدید</title>
+    <?php include 'includes.php'; ?>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        /* Hide the up and down arrows */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+
+<body>
+
+    <?php include 'header.php'; ?>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3 col-sm-12 d-flex">
+                <?php
+                include 'sidebar.php';
+                ?>
+
+            </div>
+
+            <div class="col-md-8 col-sm-12">
+                <h3 style="background-color: #dbd50c;" class="d-flex justify-content-center mt-2 p-3">فرم ثبت دستگاه جدید : </h3>
+
+
+
+                <!-- Include jQuery library -->
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+                <!-- Your HTML form -->
+                <form id="newPieceForm" action="new_device.php" method="POST" enctype="multipart/form-data" class="p-3 border mt-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="name" class="form-label fw-semibold">نام دستگاه</label>
+                            <input type="text" name="name" id="name" class="form-control" required>
+                            <div id="similarPiecesName"></div> <!-- Placeholder for similar pieces by name -->
+                        </div>
+                        <div class="col-md-6">
+                            <label for="size" class="form-label fw-semibold">کد دستگاه</label>
+                            <input type="text" name="size" id="size" class="form-control" required>
+                            <div id="similarPiecesSize"></div> <!-- Placeholder for similar pieces by size -->
+                        </div>
+                    </div>
+                 
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <button name="enter" class="btn btn-primary">ثبت</button>
+                        </div>
+                    </div>
+                </form>
+
+
+
+
+                <script>
+                    $(document).ready(function() {
+                        $('#name').keyup(function() {
+                            var name = $(this).val();
+                            if (name !== '') {
+                                // Remove any existing custom validity message
+                                $(this)[0].setCustomValidity('');
+                                $.ajax({
+                                    url: 'similar_piece.php',
+                                    method: 'POST',
+                                    data: {
+                                        name: name
+                                    },
+                                    success: function(data) {
+                                        $('#similarPiecesName').html(data);
+                                        // Add click event handler for each similar piece by name
+                                        $('#similarPiecesName div').click(function() {
+                                            var selectedPiece = $(this).text();
+                                            $('#name').val(selectedPiece);
+                                            $('#similarPiecesName').html('');
+                                        });
+                                    },
+                                    error: function(xhr, status, error) {
+                                        console.error(xhr.responseText);
+                                    }
+                                });
+                            } else {
+                                // Set a custom validity message when the field is empty
+                                $(this)[0].setCustomValidity('Please provide a name.');
+                                $('#similarPiecesName').html('');
+                                $('#similarPiecesSize').html(''); // Clear the sizes when name is empty
+                            }
+                        });
+
+                        // Add event listener to remove the custom validity message when the field is not empty
+                        $('#name').on('input', function() {
+                            if ($(this).val() !== '') {
+                                $(this)[0].setCustomValidity('');
+                            }
+                        });
+
+                        // Click event handler for selecting a similar piece by size
+                        $('#similarPiecesSize').on('click', 'div', function() {
+                            var selectedPiece = $(this).text();
+                            $('#size').val(selectedPiece);
+                            $('#similarPiecesSize').html('');
+                        });
+
+                        $('#size').keyup(function() {
+                            var size = $(this).val();
+                            if ($('#name').val() !== '' && size !== '') { // Check if name is filled before fetching sizes
+                                $.ajax({
+                                    url: 'similar_piece.php',
+                                    method: 'POST',
+                                    data: {
+                                        size: size
+                                    },
+                                    success: function(data) {
+                                        $('#similarPiecesSize').html(data);
+                                    },
+                                    error: function(xhr, status, error) {
+                                        console.error(xhr.responseText);
+                                    }
+                                });
+                            } else {
+                                $('#similarPiecesSize').html('');
+                            }
+                        });
+                    });
 
 
 
 
 
 
+                    //   for entering name first:
+
+                    function toggleSizeInput() {
+                        var nameValue = $('#name').val().trim(); // Get value of name input
+                        if (nameValue !== '') {
+                            $('#size').prop('disabled', false); // Enable size input if name is not empty
+                            $('#size').attr('placeholder', ''); // Remove placeholder text if name is not empty
+                        } else {
+                            $('#size').prop('disabled', true); // Disable size input if name is empty
+                            $('#size').attr('placeholder', 'اول نام دستگاه را وارد کنید'); // Set placeholder text if name is empty
+                        }
+                    }
+
+                    // Call toggleSizeInput on keyup event for name input
+                    $('#name').keyup(function() {
+                        toggleSizeInput(); // Call the function to toggle size input
+                    });
+
+                    // Call toggleSizeInput on page load
+                    toggleSizeInput(); // Call the function to toggle size input initially
+                </script>
 
 
 
+            </div>
+        </div>
+    </div>
 
 
+    <script>
+        $(document).ready(function() {
+            $('.nav-link').click(function() {
+                $('.nav-link').removeClass('active');
+                $(this).addClass('active');
+            });
+        });
+    </script>
 
 
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+</body>
+
+</html>
+
+
+<?php
+
+
+if (isset($_POST['enter'])) {
+    include 'config.php';
+
+    $name = $conn->real_escape_string($_POST['name']);
+    $size = $conn->real_escape_string($_POST['size']);
+
+
+  
+
+    // Construct the SQL query using placeholders
+    $sql = "INSERT INTO devices (name, numbers)
+            VALUES ('$name', '$size')";
+
+    // Execute the query
+    $result = $conn->query($sql);
+
+    if ($result) {
+        // Use Bootstrap's toast component to show a success toast message
+        echo "<div id='successToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+                <div class='toast-header bg-success text-white'>
+                    <strong class='mr-auto'>Success</strong>
+                    <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                        <span aria-hidden='true'>&times;</span>
+                    </button>
+                </div>
+                <div class='toast-body'>
+                    دستگاه به درستی اضافه شد!
+                </div>
+              </div>
+              <script>
+                $(document).ready(function(){
+                    $('#successToast').toast('show');
+                    setTimeout(function(){
+                        $('#successToast').toast('hide');
+                    }, 3000);
+                });
+              </script>";
+    } else {
+        // Use Bootstrap's toast component to show an error toast message
+        echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+                <div class='toast-header bg-danger text-white'>
+                    <strong class='mr-auto'>Error</strong>
+                    <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                        <span aria-hidden='true'>&times;</span>
+                    </button>
+                </div>
+                <div class='toast-body'>
+                    خطایی در افزودن دستگاه پیش آمده!
+                </div>
+              </div>
+              <script>
+                $(document).ready(function(){
+                    $('#errorToast').toast('show');
+                    setTimeout(function(){
+                        $('#errorToast').toast('hide');
+                    }, 3000);
+                });
+              </script>";
+    }
+}
+?>

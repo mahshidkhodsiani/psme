@@ -111,7 +111,7 @@ if (!isset($_SESSION["all_data"])) {
                             </div>
 
 
-                            <div class="row">
+                            <div class="row mt-2">
 
                                 <div class="col-md-6">
                                     <label for="piece_name" class="form-label">نام قطعه:</label>
@@ -135,13 +135,30 @@ if (!isset($_SESSION["all_data"])) {
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label for="device_code" class="form-label">کد دستگاه:</label>
-                                  
+                                    <label for="piece_size" class="form-label">سایز قطعه:</label>
+                                    <select class="form-select" name="piece_size">
+                                    <option value="">ابتدا نام قطعه را وارد کنید</option>
+                                    <?php
+                                        $sql = "SELECT * FROM pieces";
+                                        $result = $conn ->query($sql);
+                                        if($result->num_rows >0){
+                                            while($row = $result-> fetch_assoc()){?>
+
+                                                <option value="<?=$row['id']?>" <?php if(isset($_GET['piece_size']) && $_GET['piece_size'] === $row['id']) echo 'selected'; ?>>
+                                                    <?=$row['size']?>
+                                                </option>
+                                        <?php
+                                            }
+                                        }
+                                    ?>
+
+                                    </select>
                                 </div>
+
                             </div>
 
 
-                            <div class="row" style="margin-bottom: 250px;">
+                            <div class="row mt-2" style="margin-bottom: 180px;">
 
 
                                 <div class="col-md-6">
@@ -185,9 +202,10 @@ if (!isset($_SESSION["all_data"])) {
                             <tr>
                                 <th scope="col">ردیف</th>
                                 <th scope="col">نام شخص</th>
-                                <th scope="col">نام قطعه</th>
-                                <th scope="col">شیفت</th>
                                 <th scope="col">کد دستگاه</th>
+                                <th scope="col">نام قطعه</th>
+                                <th scope="col">سایز قطعه</th>
+                                <th scope="col">شیفت</th>
                                 <th scope="col">تاریخ</th>
                                 
                             </tr>
@@ -255,12 +273,12 @@ if (!isset($_SESSION["all_data"])) {
                                 $personel = $_GET['personel'];
                                 $sql .= " WHERE user = $personel AND piece_name = '$piece_name'";
                             }
-                            if(isset($_GET['device_number'], $_GET['piece_name']) 
-                                    && $_GET['device_number'] !== '' && $_GET['piece_name'] !== '' 
+                            if(isset($_GET['device_code'], $_GET['piece_name']) 
+                                    && $_GET['device_code'] !== '' && $_GET['piece_name'] !== '' 
                                     && $_GET['dates'] === '' &&  $_GET['personel']=== ''){
                                 $piece_name = $_GET['piece_name'];
-                                $device_number = $_GET['device_number'];
-                                $sql .= " WHERE device_number = '$device_number' AND piece_name = '$piece_name'";
+                                $device_code = $_GET['device_code'];
+                                $sql .= " WHERE device_number = '$device_code' AND piece_name = '$piece_name'";
                             }
                             if(isset($_GET['dates'], $_GET['device_code']) 
                                     && $_GET['device_code'] !== '' && $_GET['dates'] !== '' 
@@ -271,7 +289,7 @@ if (!isset($_SESSION["all_data"])) {
                             }
                             if(isset($_GET['dates'], $_GET['piece_name']) 
                                     && $_GET['piece_name'] !== '' && $_GET['dates'] !== '' 
-                                && $_GET['personel'] === '' && $_GET['device_number'] === ''){
+                                && $_GET['personel'] === '' && $_GET['device_code'] === ''){
                                 $piece_name = $_GET['piece_name'];
                                 $dates = $_GET['dates'];
                                 $sql .= " WHERE date = '$dates' AND piece_name = '$piece_name'";
@@ -303,14 +321,7 @@ if (!isset($_SESSION["all_data"])) {
                                 $personel = $_GET['personel'];
                                 $sql .= " WHERE date = '$dates' AND piece_name = '$piece_name' AND user = $personel ";
                             }
-                            if(isset($_GET['piece_name'], $_GET['device_code'], $_GET['personel']) 
-                                    && $_GET['device_code'] !== '' && $_GET['piece_name'] !== '' 
-                                    && $_GET['personel'] !== '' && $_GET['dates'] !== ''){
-                                $device_code = $_GET['device_code'];
-                                $piece_name = $_GET['piece_name'];
-                                $personel = $_GET['personel'];
-                                $sql .= " WHERE piece_name = '$piece_name' AND device_number = '$device_code' AND user = $personel ";
-                            }
+                           
                             if(isset($_GET['dates'], $_GET['device_code'], $_GET['piece_name']) 
                                     && $_GET['device_code'] !== '' && $_GET['dates'] !== '' 
                                     && $_GET['piece_name'] !== '' && $_GET['personel'] === ''){
@@ -351,7 +362,10 @@ if (!isset($_SESSION["all_data"])) {
                                     <tr>
                                         <th scope="row"><?= $a ?></th>
                                         <td><?= givePerson($row['user']) ?></td>
+                                        <td><?= giveDeviceCode($row['device_number']) ?></td>
+
                                         <td><?= $row['piece_name'] ?></td>
+                                        <td><?= giveName($row['size']) ?></td>
                                         <td>
                                             <?php
                                             if($row['shift']==1){
@@ -366,7 +380,6 @@ if (!isset($_SESSION["all_data"])) {
                                             ?>
                                         </td>
                                    
-                                        <td><?= giveDeviceCode($row['device_number']) ?></td>
                                         <td><?= $row['date'] ?></td>
                           
 

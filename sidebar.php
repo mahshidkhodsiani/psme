@@ -69,6 +69,10 @@ if ($_SESSION["all_data"]['admin'] == 1) {
 
 <div class="sidebar">
 <h4><?= $_SESSION['all_data']['name']. " ".$_SESSION['all_data']['family']?></h4>
+    <a href="index" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'index') echo 'active'; ?>">
+        <img src="img/review.png" height="20px" width="20px">
+        صفحه اول
+    </a>
     <a href="personnels_review" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'personnels_review') echo 'active'; ?>">
         <img src="img/review.png" height="20px" width="20px">
         بررسی سوابق کارکرد پرسنل

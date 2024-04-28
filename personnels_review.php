@@ -115,10 +115,10 @@ if (!isset($_SESSION["all_data"])) {
 
                                 <div class="col-md-6">
                                     <label for="piece_name" class="form-label">نام قطعه:</label>
-                                    <select class="form-select" name="piece_name">
+                                    <select class="form-select" id="piece_name" name="piece_name" onchange="getSizes()">
                                     <option value="">همه</option>
                                     <?php
-                                        $sql = "SELECT * FROM pieces";
+                                        $sql = "SELECT DISTINCT name FROM pieces";
                                         $result = $conn ->query($sql);
                                         if($result->num_rows >0){
                                             while($row = $result-> fetch_assoc()){?>
@@ -136,26 +136,16 @@ if (!isset($_SESSION["all_data"])) {
 
                                 <div class="col-md-6">
                                     <label for="piece_size" class="form-label">سایز قطعه:</label>
-                                    <select class="form-select" name="piece_size">
-                                    <option value="">ابتدا نام قطعه را وارد کنید</option>
-                                    <?php
-                                        $sql = "SELECT * FROM pieces";
-                                        $result = $conn ->query($sql);
-                                        if($result->num_rows >0){
-                                            while($row = $result-> fetch_assoc()){?>
-
-                                                <option value="<?=$row['id']?>" <?php if(isset($_GET['piece_size']) && $_GET['piece_size'] === $row['id']) echo 'selected'; ?>>
-                                                    <?=$row['size']?>
-                                                </option>
-                                        <?php
-                                            }
-                                        }
-                                    ?>
-
+                                    <select class="form-select" name="piece_size" id="piece_size">
+                                        <option value="" selected>ابتدا نام قطعه را وارد کنید</option>
                                     </select>
                                 </div>
 
+
                             </div>
+
+
+
 
 
                             <div class="row mt-2" style="margin-bottom: 180px;">
@@ -229,24 +219,34 @@ if (!isset($_SESSION["all_data"])) {
 
 
                             if(isset($_GET['personel']) && $_GET['personel'] !== '' 
-                                    && $_GET['dates'] === '' && $_GET['device_code'] === '' && $_GET['piece_name'] === '') {
+                                    && $_GET['dates'] === '' && $_GET['device_code'] === '' 
+                                    && $_GET['piece_name'] === '' && $_GET['piece_size'] === '') {
                                 $personel = $_GET['personel'];
                                 $sql .= " WHERE user = $personel";
                             }
                             if(isset($_GET['dates']) && $_GET['dates'] !== '' 
-                                    && $_GET['personel'] === '' && $_GET['device_code'] === '' && $_GET['piece_name'] === '') {
+                                    && $_GET['personel'] === '' && $_GET['device_code'] === '' 
+                                    && $_GET['piece_name'] === '' && $_GET['piece_size'] === '') {
                                 $dates = $_GET['dates'];
                                 $sql .= " WHERE date = '$dates'";
                             }
                             if(isset($_GET['device_code']) && $_GET['device_code'] !== '' 
-                                    && $_GET['personel'] === ''  && $_GET['dates'] === '' && $_GET['piece_name'] === '') {
+                                    && $_GET['personel'] === ''  && $_GET['dates'] === '' 
+                                    && $_GET['piece_name'] === '' && $_GET['piece_size'] === '') {
                                 $device_code = $_GET['device_code'];
                                 $sql .= " WHERE device_number = $device_code";
                             }
                             if(isset($_GET['piece_name']) && $_GET['piece_name'] !== '' 
-                                    && $_GET['personel'] === ''  && $_GET['dates'] === '' && $_GET['device_code'] === '') {
+                                    && $_GET['personel'] === ''  && $_GET['dates'] === '' 
+                                    && $_GET['device_code'] === '' && $_GET['piece_size'] === '' ) {
                                 $piece_name = $_GET['piece_name'];
                                 $sql .= " WHERE piece_name = '$piece_name'";
+                            }
+                            if(isset($_GET['piece_size']) && $_GET['piece_size'] !== '' 
+                                    && $_GET['personel'] === ''  && $_GET['dates'] === '' 
+                                    && $_GET['device_code'] === '' && $_GET['piece_name'] === '') {
+                                $piece_size = $_GET['piece_size'];
+                                $sql .= " WHERE size = '$piece_size'";
                             }
 
 
@@ -254,52 +254,63 @@ if (!isset($_SESSION["all_data"])) {
 
                             if(isset($_GET['personel'], $_GET['dates']) 
                                     && $_GET['personel'] !== '' && $_GET['dates'] !== '' 
-                                    && $_GET['device_code'] === '' && $_GET['piece_name'] === ''){
+                                    && $_GET['device_code'] === '' && $_GET['piece_name'] === '' && $_GET['piece_size'] === ''){
                                 $dates = $_GET['dates'];
                                 $personel = $_GET['personel'];
                                 $sql .= " WHERE user = $personel AND date = '$dates'";
                             }
                             if(isset($_GET['personel'], $_GET['device_code']) 
                                     && $_GET['personel'] !== '' && $_GET['device_code'] !== '' 
-                                    && $_GET['dates'] === '' && $_GET['piece_name'] === ''){
+                                    && $_GET['dates'] === '' && $_GET['piece_name'] === '' && $_GET['piece_size'] === ''){
                                 $device_code = $_GET['device_code'];
                                 $personel = $_GET['personel'];
                                 $sql .= " WHERE user = $personel AND device_number = '$device_code'";
                             }
                             if(isset($_GET['personel'], $_GET['piece_name']) 
                                     && $_GET['personel'] !== '' && $_GET['piece_name'] !== '' 
-                                    && $_GET['dates'] === '' &&  $_GET['device_code']=== ''){
+                                    && $_GET['dates'] === '' &&  $_GET['device_code']=== '' && $_GET['piece_size'] === ''){
                                 $piece_name = $_GET['piece_name'];
                                 $personel = $_GET['personel'];
                                 $sql .= " WHERE user = $personel AND piece_name = '$piece_name'";
                             }
                             if(isset($_GET['device_code'], $_GET['piece_name']) 
                                     && $_GET['device_code'] !== '' && $_GET['piece_name'] !== '' 
-                                    && $_GET['dates'] === '' &&  $_GET['personel']=== ''){
+                                    && $_GET['dates'] === '' &&  $_GET['personel']=== '' && $_GET['piece_size'] === ''){
                                 $piece_name = $_GET['piece_name'];
                                 $device_code = $_GET['device_code'];
                                 $sql .= " WHERE device_number = '$device_code' AND piece_name = '$piece_name'";
                             }
                             if(isset($_GET['dates'], $_GET['device_code']) 
                                     && $_GET['device_code'] !== '' && $_GET['dates'] !== '' 
-                                    && $_GET['personel'] === '' && $_GET['piece_name'] ===''){
+                                    && $_GET['personel'] === '' && $_GET['piece_name'] ==='' && $_GET['piece_size'] === ''){
                                 $device_code = $_GET['device_code'];
                                 $dates = $_GET['dates'];
                                 $sql .= " WHERE date = '$dates' AND device_number = '$device_code'";
                             }
                             if(isset($_GET['dates'], $_GET['piece_name']) 
                                     && $_GET['piece_name'] !== '' && $_GET['dates'] !== '' 
-                                && $_GET['personel'] === '' && $_GET['device_code'] === ''){
+                                && $_GET['personel'] === '' && $_GET['device_code'] === '' && $_GET['piece_size'] === ''){
                                 $piece_name = $_GET['piece_name'];
                                 $dates = $_GET['dates'];
                                 $sql .= " WHERE date = '$dates' AND piece_name = '$piece_name'";
                             }
+                            if(isset($_GET['piece_size'], $_GET['piece_name']) 
+                                    && $_GET['piece_name'] !== '' && $_GET['piece_size'] !== '' 
+                                && $_GET['personel'] === '' && $_GET['device_code'] === '' && $_GET['dates'] === '' ){
+                                $piece_name = $_GET['piece_name'];
+                                $piece_size = $_GET['piece_size'];
+                                $sql .= " WHERE size = '$piece_size' AND piece_name = '$piece_name'";
+                            }
+
+
+
+
 
 
 
                             if(isset($_GET['piece_name'], $_GET['device_code'], $_GET['personel']) 
                                     && $_GET['device_code'] !== '' && $_GET['piece_name'] !== '' 
-                                    && $_GET['personel'] !== '' && $_GET['dates'] === ''){
+                                    && $_GET['personel'] !== '' && $_GET['dates'] === '' && $_GET['piece_size'] === ''){
                                 $device_code = $_GET['device_code'];
                                 $piece_name = $_GET['piece_name'];
                                 $personel = $_GET['personel'];
@@ -307,7 +318,7 @@ if (!isset($_SESSION["all_data"])) {
                             }
                             if(isset($_GET['dates'], $_GET['device_code'], $_GET['personel']) 
                                     && $_GET['device_code'] !== '' && $_GET['dates'] !== '' 
-                                    && $_GET['personel'] !== '' && $_GET['piece_name'] === ''){
+                                    && $_GET['personel'] !== '' && $_GET['piece_name'] === '' && $_GET['piece_size'] === ''){
                                 $device_code = $_GET['device_code'];
                                 $dates = $_GET['dates'];
                                 $personel = $_GET['personel'];
@@ -315,7 +326,7 @@ if (!isset($_SESSION["all_data"])) {
                             }
                             if(isset($_GET['dates'], $_GET['piece_name'], $_GET['personel']) 
                                     && $_GET['piece_name'] !== '' && $_GET['dates'] !== '' 
-                                    && $_GET['personel'] !== '' && $_GET['device_code'] === ''){
+                                    && $_GET['personel'] !== '' && $_GET['device_code'] === '' && $_GET['piece_size'] === ''){
                                 $piece_name = $_GET['piece_name'];
                                 $dates = $_GET['dates'];
                                 $personel = $_GET['personel'];
@@ -324,16 +335,69 @@ if (!isset($_SESSION["all_data"])) {
                            
                             if(isset($_GET['dates'], $_GET['device_code'], $_GET['piece_name']) 
                                     && $_GET['device_code'] !== '' && $_GET['dates'] !== '' 
-                                    && $_GET['piece_name'] !== '' && $_GET['personel'] === ''){
+                                    && $_GET['piece_name'] !== '' && $_GET['personel'] === '' && $_GET['piece_size'] === ''){
                                 $device_code = $_GET['device_code'];
                                 $dates = $_GET['dates'];
                                 $piece_name = $_GET['piece_name'];
                                 $sql .= " WHERE date = '$dates' AND device_number = '$device_code' AND piece_name = '$piece_name' ";
                             }
+                            if(isset($_GET['personel'], $_GET['piece_size'], $_GET['piece_name']) 
+                                    && $_GET['piece_size'] !== '' && $_GET['personel'] !== '' 
+                                    && $_GET['piece_name'] !== '' && $_GET['dates'] === '' && $_GET['device_code'] === ''){
+                                $piece_size = $_GET['piece_size'];
+                                $personel = $_GET['personel'];
+                                $piece_name = $_GET['piece_name'];
+                                $sql .= " WHERE user = $personel AND size = '$piece_size' AND piece_name = '$piece_name' ";
+                            }
+                            if(isset($_GET['device_code'], $_GET['piece_size'], $_GET['piece_name']) 
+                                    && $_GET['piece_size'] !== '' && $_GET['device_code'] !== '' 
+                                    && $_GET['piece_name'] !== '' && $_GET['dates'] === '' && $_GET['personel'] === ''){
+                                $piece_size = $_GET['piece_size'];
+                                $device_code = $_GET['device_code'];
+                                $piece_name = $_GET['piece_name'];
+                                $sql .= " WHERE device_number = '$device_code' AND size = '$piece_size' AND piece_name = '$piece_name' ";
+                            }
+                            if(isset($_GET['dates'], $_GET['piece_size'], $_GET['piece_name']) 
+                                    && $_GET['piece_size'] !== '' && $_GET['dates'] !== '' 
+                                    && $_GET['piece_name'] !== '' && $_GET['device_code'] === '' && $_GET['personel'] === ''){
+                                $piece_size = $_GET['piece_size'];
+                                $dates = $_GET['dates'];
+                                $piece_name = $_GET['piece_name'];
+                                $sql .= " WHERE date = '$dates' AND size = '$piece_size' AND piece_name = '$piece_name' ";
+                            }
 
 
 
 
+
+
+                            if(isset($_GET['device_code'], $_GET['piece_size'], $_GET['piece_name'], $_GET['personel']) 
+                                    && $_GET['piece_size'] !== '' && $_GET['device_code'] !== '' 
+                                    && $_GET['piece_name'] !== '' && $_GET['personel'] !== '' && $_GET['dates'] === '') {
+                                $piece_size = $_GET['piece_size'];
+                                $device_code = $_GET['device_code'];
+                                $piece_name = $_GET['piece_name'];
+                                $personel = $_GET['personel'];
+                                $sql .= " WHERE device_number = '$device_code' AND size = '$piece_size' AND piece_name = '$piece_name' AND user = $personel ";
+                            }
+                            if(isset($_GET['dates'], $_GET['piece_size'], $_GET['piece_name'], $_GET['personel']) 
+                                    && $_GET['piece_size'] !== '' && $_GET['dates'] !== '' 
+                                    && $_GET['piece_name'] !== '' && $_GET['personel'] !== '' && $_GET['device_code'] === '') {
+                                $piece_size = $_GET['piece_size'];
+                                $dates = $_GET['dates'];
+                                $piece_name = $_GET['piece_name'];
+                                $personel = $_GET['personel'];
+                                $sql .= " WHERE date = '$dates' AND size = '$piece_size' AND piece_name = '$piece_name' AND user = $personel ";
+                            }
+                            if(isset($_GET['device_code'], $_GET['piece_size'], $_GET['piece_name'], $_GET['dates']) 
+                                    && $_GET['piece_size'] !== '' && $_GET['device_code'] !== '' 
+                                    && $_GET['piece_name'] !== '' && $_GET['dates'] !== '' && $_GET['personel'] === '') {
+                                $piece_size = $_GET['piece_size'];
+                                $device_code = $_GET['device_code'];
+                                $piece_name = $_GET['piece_name'];
+                                $dates = $_GET['dates'];
+                                $sql .= " WHERE device_number = '$device_code' AND size = '$piece_size' AND piece_name = '$piece_name' AND date = '$dates' ";
+                            }
                             if(isset($_GET['dates'], $_GET['device_code'], $_GET['piece_name'] , $_GET['personel']) 
                                     && $_GET['device_code'] !== '' && $_GET['dates'] !== '' 
                                     && $_GET['piece_name'] !== '' && $_GET['personel'] !== ''){
@@ -342,6 +406,22 @@ if (!isset($_SESSION["all_data"])) {
                                 $personel = $_GET['personel'];
                                 $piece_name = $_GET['piece_name'];
                                 $sql .= " WHERE date = '$dates' AND device_number = '$device_code' AND piece_name = '$piece_name' AND user = $personel ";
+                            }
+
+
+
+
+
+
+                            if(isset($_GET['dates'], $_GET['device_code'], $_GET['piece_name'] , $_GET['personel'], $_GET['piece_size']) 
+                                    && $_GET['device_code'] !== '' && $_GET['dates'] !== '' 
+                                    && $_GET['piece_name'] !== '' && $_GET['personel'] !== '' && $_GET['piece_size'] !== ''){
+                                $device_code = $_GET['device_code'];
+                                $dates = $_GET['dates'];
+                                $personel = $_GET['personel'];
+                                $piece_name = $_GET['piece_name'];
+                                $piece_size = $_GET['piece_size'];
+                                $sql .= " WHERE date = '$dates' AND device_number = '$device_code' AND piece_name = '$piece_name' AND user = $personel AND size = '$piece_size'";
                             }
 
 
@@ -394,6 +474,8 @@ if (!isset($_SESSION["all_data"])) {
                             ?>
                         </tbody>
                     </table>
+
+
                 </div>
 
 
@@ -433,35 +515,39 @@ if (!isset($_SESSION["all_data"])) {
 
                             if(isset($_GET['personel'],$_GET['piece_name']) 
                                 && $_GET['personel'] !== '' && $_GET['piece_name'] !== '' 
-                                && $_GET['device_code'] === '' && $_GET['dates'] === ''){
-                                echo '&piece_name=' . $_GET['piece_name']. '&personel='. $_GET['personel'].'&device_code='.'&dates=';  
+                                && $_GET['device_code'] === '' && $_GET['dates'] === '' && $_GET['piece_size'] === ''){
+                                echo '&piece_name=' . $_GET['piece_name']. '&personel='. $_GET['personel'].'&device_code='.'&dates='.'&piece_size=';   
                             }
                             if(isset($_GET['personel'],$_GET['dates']) 
                                 && $_GET['personel'] !== '' && $_GET['dates'] !== ''
-                             && $_GET['device_code'] === '' && $_GET['piece_name'] === ''){
-                                echo '&dates=' . $_GET['dates']. '&personel='. $_GET['personel'].'&device_code='.'&piece_name=';  
+                             && $_GET['device_code'] === '' && $_GET['piece_name'] === '' && $_GET['piece_size'] === ''){
+                                echo '&dates=' . $_GET['dates']. '&personel='. $_GET['personel'].'&device_code='.'&piece_name='.'&piece_size=';   
                             }
                             if(isset($_GET['personel'],$_GET['device_code']) 
                                 && $_GET['personel'] !== '' && $_GET['device_code'] !== '' 
-                                && $_GET['dates'] === '' && $_GET['piece_name'] === ''){
-                                echo '&device_code=' . $_GET['device_code']. '&personel='. $_GET['personel'].'&dates='.'&piece_name='; 
+                                && $_GET['dates'] === '' && $_GET['piece_name'] === '' && $_GET['piece_size'] === ''){
+                                echo '&device_code=' . $_GET['device_code']. '&personel='. $_GET['personel'].'&dates='.'&piece_name='.'&piece_size=';   
                             }
                             if(isset($_GET['dates'],$_GET['device_code']) 
                                 && $_GET['dates'] !== '' && $_GET['device_code'] !== ''  
-                                && $_GET['personel'] === '' && $_GET['piece_name'] === ''){
-                                echo '&device_code=' . $_GET['device_code']. '&dates='. $_GET['dates']. '&personel='.'&piece_name='; 
+                                && $_GET['personel'] === '' && $_GET['piece_name'] === '' && $_GET['piece_size'] === ''){
+                                echo '&device_code=' . $_GET['device_code']. '&dates='. $_GET['dates']. '&personel='.'&piece_name='.'&piece_size=';   
                             }
                             if(isset($_GET['piece_name'],$_GET['device_code']) 
                                 && $_GET['piece_name'] !== '' && $_GET['device_code'] !== ''  
-                                && $_GET['personel'] === '' && $_GET['dates'] === ''){
-                                echo '&device_code=' . $_GET['device_code']. '&piece_name='. $_GET['piece_name']. '&personel='.'&dates='; 
+                                && $_GET['personel'] === '' && $_GET['dates'] === '' && $_GET['piece_size'] === ''){
+                                echo '&device_code=' . $_GET['device_code']. '&piece_name='. $_GET['piece_name']. '&personel='.'&dates='.'&piece_size=';  
                             }
                             if(isset($_GET['piece_name'],$_GET['dates']) 
                                 && $_GET['piece_name'] !== '' && $_GET['dates'] !== ''  
-                                && $_GET['personel'] === '' && $_GET['device_code'] === ''){
-                                echo '&dates=' . $_GET['dates']. '&piece_name='. $_GET['piece_name']. '&personel='.'&device_code='; 
+                                && $_GET['personel'] === '' && $_GET['device_code'] === '' && $_GET['piece_size'] === ''){
+                                echo '&dates=' . $_GET['dates']. '&piece_name='. $_GET['piece_name']. '&personel='.'&device_code='.'&piece_size='; 
                             }
-
+                            if(isset($_GET['piece_name'],$_GET['piece_size']) 
+                                && $_GET['piece_name'] !== '' && $_GET['piece_size'] !== ''  
+                                && $_GET['personel'] === '' && $_GET['device_code'] === '' && $_GET['dates'] === ''){
+                                echo '&piece_size=' . $_GET['piece_size']. '&piece_name='. $_GET['piece_name']. '&personel='.'&device_code='.'&dates='; 
+                            }
 
 
 
@@ -469,23 +555,38 @@ if (!isset($_SESSION["all_data"])) {
 
                             if(isset($_GET['personel'],$_GET['device_code'], $_GET['piece_name']) 
                                 && $_GET['personel'] !== '' && $_GET['device_code'] !== '' && $_GET['piece_name'] !== '' 
-                                && $_GET['dates'] === '' ){
-                                echo '&device_code=' . $_GET['device_code']. '&personel='. $_GET['personel']. '&piece_name='. $_GET['piece_name']. '&dates=';
+                                && $_GET['dates'] === '' && $_GET['piece_size'] !== ''){
+                                echo '&device_code=' . $_GET['device_code']. '&personel='. $_GET['personel']. '&piece_name='. $_GET['piece_name']. '&dates='. '&piece_size=';
                             }
                             if(isset($_GET['personel'],$_GET['device_code'], $_GET['dates']) 
                                 && $_GET['personel'] !== '' && $_GET['device_code'] !== '' && $_GET['dates'] !== '' 
-                                && $_GET['piece_name'] === ''){
-                                echo '&device_code=' . $_GET['device_code']. '&personel='. $_GET['personel']. '&dates='. $_GET['dates']. '&piece_name=';
+                                && $_GET['piece_name'] === '' && $_GET['piece_size'] !== ''){
+                                echo '&device_code=' . $_GET['device_code']. '&personel='. $_GET['personel']. '&dates='. $_GET['dates']. '&piece_name='. '&piece_size=';
                             }
                             if(isset($_GET['piece_name'],$_GET['device_code'], $_GET['dates']) 
                                 && $_GET['piece_name'] !== '' && $_GET['device_code'] !== '' && $_GET['dates'] !== '' 
-                                && $_GET['personel'] === ''){
-                                echo '&device_code=' . $_GET['device_code']. '&piece_name='. $_GET['piece_name']. '&dates='. $_GET['dates']. '&personel=';
+                                && $_GET['personel'] === '' && $_GET['piece_size'] !== ''){
+                                echo '&device_code=' . $_GET['device_code']. '&piece_name='. $_GET['piece_name']. '&dates='. $_GET['dates']. '&personel='. '&piece_size=';
                             }
                             if(isset($_GET['piece_name'],$_GET['personel'], $_GET['dates']) 
                                 && $_GET['piece_name'] !== '' && $_GET['personel'] !== '' && $_GET['dates'] !== '' 
-                                && $_GET['device_code'] === ''){
-                                echo '&personel=' . $_GET['personel']. '&piece_name='. $_GET['piece_name']. '&dates='. $_GET['dates']. '&device_code=';
+                                && $_GET['device_code'] === '' && $_GET['piece_size'] !== ''){
+                                echo '&personel=' . $_GET['personel']. '&piece_name='. $_GET['piece_name']. '&dates='. $_GET['dates']. '&device_code='. '&piece_size=';
+                            }
+                            if(isset($_GET['piece_name'],$_GET['piece_size'], $_GET['dates']) 
+                                && $_GET['piece_name'] !== '' && $_GET['piece_size'] !== '' && $_GET['dates'] !== '' 
+                                && $_GET['device_code'] === '' && $_GET['personel'] === ''){
+                                echo '&piece_size=' . $_GET['piece_size']. '&piece_name='. $_GET['piece_name']. '&dates='. $_GET['dates']. '&device_code='. '&personel=';
+                            }
+                            if(isset($_GET['piece_name'],$_GET['piece_size'], $_GET['personel']) 
+                                && $_GET['piece_name'] !== '' && $_GET['piece_size'] !== '' && $_GET['personel'] !== '' 
+                                && $_GET['device_code'] === '' && $_GET['dates'] === ''){
+                                echo '&piece_size=' . $_GET['piece_size']. '&piece_name='. $_GET['piece_name']. '&personel='. $_GET['personel']. '&device_code='. '&dates=';
+                            }
+                            if(isset($_GET['piece_name'],$_GET['piece_size'], $_GET['device_code']) 
+                                && $_GET['piece_name'] !== '' && $_GET['piece_size'] !== '' && $_GET['device_code'] !== '' 
+                                && $_GET['personel'] === '' && $_GET['dates'] === ''){
+                                echo '&piece_size=' . $_GET['piece_size']. '&piece_name='. $_GET['piece_name']. '&device_code='. $_GET['device_code']. '&personel='. '&dates=';
                             }
                             
 
@@ -494,9 +595,35 @@ if (!isset($_SESSION["all_data"])) {
 
                             if(isset($_GET['personel'],$_GET['device_code'],$_GET['dates'], $_GET['piece_name'])
                                 && $_GET['dates'] !== '' && $_GET['device_code'] !== '' 
-                                && $_GET['personel'] !== '' && $_GET['piece_name'] !== ''){
-                                echo '&device_code=' . $_GET['device_code']. '&dates='. $_GET['dates']. '&personel='.$_GET['personel']. '&piece_name='.$_GET['piece_name']; 
+                                && $_GET['personel'] !== '' && $_GET['piece_name'] !== '' && $_GET['piece_size'] === ''){
+                                echo '&device_code=' . $_GET['device_code']. '&dates='. $_GET['dates']. '&personel='.$_GET['personel']. '&piece_name='.$_GET['piece_name']. '&piece_size='; 
                             }
+                            if(isset($_GET['personel'],$_GET['device_code'],$_GET['piece_size'], $_GET['piece_name'])
+                                && $_GET['piece_size'] !== '' && $_GET['device_code'] !== '' 
+                                && $_GET['personel'] !== '' && $_GET['piece_name'] !== '' && $_GET['dates'] === ''){
+                                echo '&device_code=' . $_GET['device_code']. '&piece_size='. $_GET['piece_size']. '&personel='.$_GET['personel']. '&piece_name='.$_GET['piece_name']. '&dates='; 
+                            }
+                            if(isset($_GET['dates'],$_GET['device_code'],$_GET['piece_size'], $_GET['piece_name'])
+                                && $_GET['piece_size'] !== '' && $_GET['device_code'] !== '' 
+                                && $_GET['dates'] !== '' && $_GET['piece_name'] !== '' && $_GET['personel'] === ''){
+                                echo '&device_code=' . $_GET['device_code']. '&piece_size='. $_GET['piece_size']. '&dates='.$_GET['dates']. '&piece_name='.$_GET['piece_name']. '&personel='; 
+                            }
+                            if(isset($_GET['dates'],$_GET['personel'],$_GET['piece_size'], $_GET['piece_name'])
+                                && $_GET['piece_size'] !== '' && $_GET['personel'] !== '' 
+                                && $_GET['dates'] !== '' && $_GET['piece_name'] !== '' && $_GET['device_code'] === ''){
+                                echo '&personel=' . $_GET['personel']. '&piece_size='. $_GET['piece_size']. '&dates='.$_GET['dates']. '&piece_name='.$_GET['piece_name']. '&device_code='; 
+                            }
+
+
+
+
+
+                            if(isset($_GET['dates'],$_GET['personel'],$_GET['piece_size'], $_GET['piece_name'] ,$_GET['device_code'])
+                                && $_GET['piece_size'] !== '' && $_GET['personel'] !== '' 
+                                && $_GET['dates'] !== '' && $_GET['piece_name'] !== '' && $_GET['device_code'] !== ''){
+                                echo '&personel=' . $_GET['personel']. '&piece_size='. $_GET['piece_size']. '&dates='.$_GET['dates']. '&piece_name='.$_GET['piece_name']. '&device_code='. $_GET['device_code']; 
+                            }
+
 
 
                           
@@ -522,11 +649,11 @@ if (!isset($_SESSION["all_data"])) {
                                 
                                 
                                 if(isset($_GET['personel']) && $_GET['personel'] !== '' 
-                                    && $_GET['dates'] === '' && $_GET['device_code'] === '' ) {
+                                        && $_GET['dates'] === '' && $_GET['device_code'] === '' && $_GET['piece_name'] === '') {
                                     echo '&personel=' . $_GET['personel'] .'&dates='.'&device_code='.'$piece_name=';
                                 }
                                 if(isset($_GET['dates']) && $_GET['dates'] !== '' 
-                                        && $_GET['personel'] === '' && $_GET['device_code'] === '') {
+                                        && $_GET['personel'] === '' && $_GET['device_code'] === '' && $_GET['piece_name'] === '') {
                                     echo '&dates=' . $_GET['dates']. '&personel='.'&device_code='.'$piece_name=';
                                 }
                                 if(isset($_GET['device_code']) && $_GET['device_code'] !== '' 
@@ -540,36 +667,40 @@ if (!isset($_SESSION["all_data"])) {
 
 
 
-        
                                 if(isset($_GET['personel'],$_GET['piece_name']) 
                                     && $_GET['personel'] !== '' && $_GET['piece_name'] !== '' 
-                                    && $_GET['device_code'] === '' && $_GET['dates'] === ''){
-                                    echo '&piece_name=' . $_GET['piece_name']. '&personel='. $_GET['personel'].'&device_code='.'&dates=';  
+                                    && $_GET['device_code'] === '' && $_GET['dates'] === '' && $_GET['piece_size'] === ''){
+                                    echo '&piece_name=' . $_GET['piece_name']. '&personel='. $_GET['personel'].'&device_code='.'&dates='.'&piece_size=';   
                                 }
                                 if(isset($_GET['personel'],$_GET['dates']) 
                                     && $_GET['personel'] !== '' && $_GET['dates'] !== ''
-                                    && $_GET['device_code'] === '' && $_GET['piece_name'] === ''){
-                                    echo '&dates=' . $_GET['dates']. '&personel='. $_GET['personel'].'&device_code='.'&piece_name=';  
+                                && $_GET['device_code'] === '' && $_GET['piece_name'] === '' && $_GET['piece_size'] === ''){
+                                    echo '&dates=' . $_GET['dates']. '&personel='. $_GET['personel'].'&device_code='.'&piece_name='.'&piece_size=';   
                                 }
                                 if(isset($_GET['personel'],$_GET['device_code']) 
                                     && $_GET['personel'] !== '' && $_GET['device_code'] !== '' 
-                                    && $_GET['dates'] === '' && $_GET['piece_name'] === ''){
-                                    echo '&device_code=' . $_GET['device_code']. '&personel='. $_GET['personel'].'&dates='.'&piece_name='; 
+                                    && $_GET['dates'] === '' && $_GET['piece_name'] === '' && $_GET['piece_size'] === ''){
+                                    echo '&device_code=' . $_GET['device_code']. '&personel='. $_GET['personel'].'&dates='.'&piece_name='.'&piece_size=';   
                                 }
                                 if(isset($_GET['dates'],$_GET['device_code']) 
                                     && $_GET['dates'] !== '' && $_GET['device_code'] !== ''  
-                                    && $_GET['personel'] === '' && $_GET['piece_name'] === ''){
-                                    echo '&device_code=' . $_GET['device_code']. '&dates='. $_GET['dates']. '&personel='.'&piece_name='; 
+                                    && $_GET['personel'] === '' && $_GET['piece_name'] === '' && $_GET['piece_size'] === ''){
+                                    echo '&device_code=' . $_GET['device_code']. '&dates='. $_GET['dates']. '&personel='.'&piece_name='.'&piece_size=';   
                                 }
                                 if(isset($_GET['piece_name'],$_GET['device_code']) 
                                     && $_GET['piece_name'] !== '' && $_GET['device_code'] !== ''  
-                                    && $_GET['personel'] === '' && $_GET['dates'] === ''){
-                                    echo '&device_code=' . $_GET['device_code']. '&piece_name='. $_GET['piece_name']. '&personel='.'&dates='; 
+                                    && $_GET['personel'] === '' && $_GET['dates'] === '' && $_GET['piece_size'] === ''){
+                                    echo '&device_code=' . $_GET['device_code']. '&piece_name='. $_GET['piece_name']. '&personel='.'&dates='.'&piece_size=';  
                                 }
                                 if(isset($_GET['piece_name'],$_GET['dates']) 
                                     && $_GET['piece_name'] !== '' && $_GET['dates'] !== ''  
-                                    && $_GET['personel'] === '' && $_GET['device_code'] === ''){
-                                    echo '&dates=' . $_GET['dates']. '&piece_name='. $_GET['piece_name']. '&personel='.'&device_code='; 
+                                    && $_GET['personel'] === '' && $_GET['device_code'] === '' && $_GET['piece_size'] === ''){
+                                    echo '&dates=' . $_GET['dates']. '&piece_name='. $_GET['piece_name']. '&personel='.'&device_code='.'&piece_size='; 
+                                }
+                                if(isset($_GET['piece_name'],$_GET['piece_size']) 
+                                    && $_GET['piece_name'] !== '' && $_GET['piece_size'] !== ''  
+                                    && $_GET['personel'] === '' && $_GET['device_code'] === '' && $_GET['dates'] === ''){
+                                    echo '&piece_size=' . $_GET['piece_size']. '&piece_name='. $_GET['piece_name']. '&personel='.'&device_code='.'&dates='; 
                                 }
 
 
@@ -578,32 +709,73 @@ if (!isset($_SESSION["all_data"])) {
 
                                 if(isset($_GET['personel'],$_GET['device_code'], $_GET['piece_name']) 
                                     && $_GET['personel'] !== '' && $_GET['device_code'] !== '' && $_GET['piece_name'] !== '' 
-                                    && $_GET['dates'] === '' ){
-                                    echo '&device_code=' . $_GET['device_code']. '&personel='. $_GET['personel']. '&piece_name='. $_GET['piece_name']. '&dates=';
+                                    && $_GET['dates'] === '' && $_GET['piece_size'] !== ''){
+                                    echo '&device_code=' . $_GET['device_code']. '&personel='. $_GET['personel']. '&piece_name='. $_GET['piece_name']. '&dates='. '&piece_size=';
                                 }
                                 if(isset($_GET['personel'],$_GET['device_code'], $_GET['dates']) 
                                     && $_GET['personel'] !== '' && $_GET['device_code'] !== '' && $_GET['dates'] !== '' 
-                                    && $_GET['piece_name'] === ''){
-                                    echo '&device_code=' . $_GET['device_code']. '&personel='. $_GET['personel']. '&dates='. $_GET['dates']. '&piece_name=';
+                                    && $_GET['piece_name'] === '' && $_GET['piece_size'] !== ''){
+                                    echo '&device_code=' . $_GET['device_code']. '&personel='. $_GET['personel']. '&dates='. $_GET['dates']. '&piece_name='. '&piece_size=';
                                 }
                                 if(isset($_GET['piece_name'],$_GET['device_code'], $_GET['dates']) 
                                     && $_GET['piece_name'] !== '' && $_GET['device_code'] !== '' && $_GET['dates'] !== '' 
-                                    && $_GET['personel'] === ''){
-                                    echo '&device_code=' . $_GET['device_code']. '&piece_name='. $_GET['piece_name']. '&dates='. $_GET['dates']. '&personel=';
+                                    && $_GET['personel'] === '' && $_GET['piece_size'] !== ''){
+                                    echo '&device_code=' . $_GET['device_code']. '&piece_name='. $_GET['piece_name']. '&dates='. $_GET['dates']. '&personel='. '&piece_size=';
                                 }
                                 if(isset($_GET['piece_name'],$_GET['personel'], $_GET['dates']) 
                                     && $_GET['piece_name'] !== '' && $_GET['personel'] !== '' && $_GET['dates'] !== '' 
-                                    && $_GET['device_code'] === ''){
-                                    echo '&personel=' . $_GET['personel']. '&piece_name='. $_GET['piece_name']. '&dates='. $_GET['dates']. '&device_code=';
+                                    && $_GET['device_code'] === '' && $_GET['piece_size'] !== ''){
+                                    echo '&personel=' . $_GET['personel']. '&piece_name='. $_GET['piece_name']. '&dates='. $_GET['dates']. '&device_code='. '&piece_size=';
                                 }
+                                if(isset($_GET['piece_name'],$_GET['piece_size'], $_GET['dates']) 
+                                    && $_GET['piece_name'] !== '' && $_GET['piece_size'] !== '' && $_GET['dates'] !== '' 
+                                    && $_GET['device_code'] === '' && $_GET['personel'] === ''){
+                                    echo '&piece_size=' . $_GET['piece_size']. '&piece_name='. $_GET['piece_name']. '&dates='. $_GET['dates']. '&device_code='. '&personel=';
+                                }
+                                if(isset($_GET['piece_name'],$_GET['piece_size'], $_GET['personel']) 
+                                    && $_GET['piece_name'] !== '' && $_GET['piece_size'] !== '' && $_GET['personel'] !== '' 
+                                    && $_GET['device_code'] === '' && $_GET['dates'] === ''){
+                                    echo '&piece_size=' . $_GET['piece_size']. '&piece_name='. $_GET['piece_name']. '&personel='. $_GET['personel']. '&device_code='. '&dates=';
+                                }
+                                if(isset($_GET['piece_name'],$_GET['piece_size'], $_GET['device_code']) 
+                                    && $_GET['piece_name'] !== '' && $_GET['piece_size'] !== '' && $_GET['device_code'] !== '' 
+                                    && $_GET['personel'] === '' && $_GET['dates'] === ''){
+                                    echo '&piece_size=' . $_GET['piece_size']. '&piece_name='. $_GET['piece_name']. '&device_code='. $_GET['device_code']. '&personel='. '&dates=';
+                                }
+                        
 
 
 
 
                                 if(isset($_GET['personel'],$_GET['device_code'],$_GET['dates'], $_GET['piece_name'])
                                     && $_GET['dates'] !== '' && $_GET['device_code'] !== '' 
-                                    && $_GET['personel'] !== '' && $_GET['piece_name'] !== ''){
-                                    echo '&device_code=' . $_GET['device_code']. '&dates='. $_GET['dates']. '&personel='.$_GET['personel']. '&piece_name='.$_GET['piece_name']; 
+                                    && $_GET['personel'] !== '' && $_GET['piece_name'] !== '' && $_GET['piece_size'] === ''){
+                                    echo '&device_code=' . $_GET['device_code']. '&dates='. $_GET['dates']. '&personel='.$_GET['personel']. '&piece_name='.$_GET['piece_name']. '&piece_size='; 
+                                }
+                                if(isset($_GET['personel'],$_GET['device_code'],$_GET['piece_size'], $_GET['piece_name'])
+                                    && $_GET['piece_size'] !== '' && $_GET['device_code'] !== '' 
+                                    && $_GET['personel'] !== '' && $_GET['piece_name'] !== '' && $_GET['dates'] === ''){
+                                    echo '&device_code=' . $_GET['device_code']. '&piece_size='. $_GET['piece_size']. '&personel='.$_GET['personel']. '&piece_name='.$_GET['piece_name']. '&dates='; 
+                                }
+                                if(isset($_GET['dates'],$_GET['device_code'],$_GET['piece_size'], $_GET['piece_name'])
+                                    && $_GET['piece_size'] !== '' && $_GET['device_code'] !== '' 
+                                    && $_GET['dates'] !== '' && $_GET['piece_name'] !== '' && $_GET['personel'] === ''){
+                                    echo '&device_code=' . $_GET['device_code']. '&piece_size='. $_GET['piece_size']. '&dates='.$_GET['dates']. '&piece_name='.$_GET['piece_name']. '&personel='; 
+                                }
+                                if(isset($_GET['dates'],$_GET['personel'],$_GET['piece_size'], $_GET['piece_name'])
+                                    && $_GET['piece_size'] !== '' && $_GET['personel'] !== '' 
+                                    && $_GET['dates'] !== '' && $_GET['piece_name'] !== '' && $_GET['device_code'] === ''){
+                                    echo '&personel=' . $_GET['personel']. '&piece_size='. $_GET['piece_size']. '&dates='.$_GET['dates']. '&piece_name='.$_GET['piece_name']. '&device_code='; 
+                                }
+
+
+
+
+
+                                if(isset($_GET['dates'],$_GET['personel'],$_GET['piece_size'], $_GET['piece_name'] ,$_GET['device_code'])
+                                    && $_GET['piece_size'] !== '' && $_GET['personel'] !== '' 
+                                    && $_GET['dates'] !== '' && $_GET['piece_name'] !== '' && $_GET['device_code'] !== ''){
+                                    echo '&personel=' . $_GET['personel']. '&piece_size='. $_GET['piece_size']. '&dates='.$_GET['dates']. '&piece_name='.$_GET['piece_name']. '&device_code='. $_GET['device_code']; 
                                 }
 
 
@@ -615,11 +787,11 @@ if (!isset($_SESSION["all_data"])) {
 
 
                                 if(isset($_GET['personel']) && $_GET['personel'] !== '' 
-                                    && $_GET['dates'] === '' && $_GET['device_code'] === '' ) {
+                                        && $_GET['dates'] === '' && $_GET['device_code'] === '' && $_GET['piece_name'] === '') {
                                     echo '&personel=' . $_GET['personel'] .'&dates='.'&device_code='.'$piece_name=';
                                 }
                                 if(isset($_GET['dates']) && $_GET['dates'] !== '' 
-                                        && $_GET['personel'] === '' && $_GET['device_code'] === '') {
+                                        && $_GET['personel'] === '' && $_GET['device_code'] === '' && $_GET['piece_name'] === '') {
                                     echo '&dates=' . $_GET['dates']. '&personel='.'&device_code='.'$piece_name=';
                                 }
                                 if(isset($_GET['device_code']) && $_GET['device_code'] !== '' 
@@ -633,69 +805,115 @@ if (!isset($_SESSION["all_data"])) {
 
 
 
-    
                                 if(isset($_GET['personel'],$_GET['piece_name']) 
                                     && $_GET['personel'] !== '' && $_GET['piece_name'] !== '' 
-                                    && $_GET['device_code'] === '' && $_GET['dates'] === ''){
-                                    echo '&piece_name=' . $_GET['piece_name']. '&personel='. $_GET['personel'].'&device_code='.'&dates=';  
+                                    && $_GET['device_code'] === '' && $_GET['dates'] === '' && $_GET['piece_size'] === ''){
+                                    echo '&piece_name=' . $_GET['piece_name']. '&personel='. $_GET['personel'].'&device_code='.'&dates='.'&piece_size=';   
                                 }
                                 if(isset($_GET['personel'],$_GET['dates']) 
                                     && $_GET['personel'] !== '' && $_GET['dates'] !== ''
-                                    && $_GET['device_code'] === '' && $_GET['piece_name'] === ''){
-                                    echo '&dates=' . $_GET['dates']. '&personel='. $_GET['personel'].'&device_code='.'&piece_name=';  
+                                && $_GET['device_code'] === '' && $_GET['piece_name'] === '' && $_GET['piece_size'] === ''){
+                                    echo '&dates=' . $_GET['dates']. '&personel='. $_GET['personel'].'&device_code='.'&piece_name='.'&piece_size=';   
                                 }
                                 if(isset($_GET['personel'],$_GET['device_code']) 
                                     && $_GET['personel'] !== '' && $_GET['device_code'] !== '' 
-                                    && $_GET['dates'] === '' && $_GET['piece_name'] === ''){
-                                    echo '&device_code=' . $_GET['device_code']. '&personel='. $_GET['personel'].'&dates='.'&piece_name='; 
+                                    && $_GET['dates'] === '' && $_GET['piece_name'] === '' && $_GET['piece_size'] === ''){
+                                    echo '&device_code=' . $_GET['device_code']. '&personel='. $_GET['personel'].'&dates='.'&piece_name='.'&piece_size=';   
                                 }
                                 if(isset($_GET['dates'],$_GET['device_code']) 
                                     && $_GET['dates'] !== '' && $_GET['device_code'] !== ''  
-                                    && $_GET['personel'] === '' && $_GET['piece_name'] === ''){
-                                    echo '&device_code=' . $_GET['device_code']. '&dates='. $_GET['dates']. '&personel='.'&piece_name='; 
+                                    && $_GET['personel'] === '' && $_GET['piece_name'] === '' && $_GET['piece_size'] === ''){
+                                    echo '&device_code=' . $_GET['device_code']. '&dates='. $_GET['dates']. '&personel='.'&piece_name='.'&piece_size=';   
                                 }
                                 if(isset($_GET['piece_name'],$_GET['device_code']) 
                                     && $_GET['piece_name'] !== '' && $_GET['device_code'] !== ''  
-                                    && $_GET['personel'] === '' && $_GET['dates'] === ''){
-                                    echo '&device_code=' . $_GET['device_code']. '&piece_name='. $_GET['piece_name']. '&personel='.'&dates='; 
+                                    && $_GET['personel'] === '' && $_GET['dates'] === '' && $_GET['piece_size'] === ''){
+                                    echo '&device_code=' . $_GET['device_code']. '&piece_name='. $_GET['piece_name']. '&personel='.'&dates='.'&piece_size=';  
                                 }
                                 if(isset($_GET['piece_name'],$_GET['dates']) 
                                     && $_GET['piece_name'] !== '' && $_GET['dates'] !== ''  
-                                    && $_GET['personel'] === '' && $_GET['device_code'] === ''){
-                                    echo '&dates=' . $_GET['dates']. '&piece_name='. $_GET['piece_name']. '&personel='.'&device_code='; 
+                                    && $_GET['personel'] === '' && $_GET['device_code'] === '' && $_GET['piece_size'] === ''){
+                                    echo '&dates=' . $_GET['dates']. '&piece_name='. $_GET['piece_name']. '&personel='.'&device_code='.'&piece_size='; 
                                 }
+                                if(isset($_GET['piece_name'],$_GET['piece_size']) 
+                                    && $_GET['piece_name'] !== '' && $_GET['piece_size'] !== ''  
+                                    && $_GET['personel'] === '' && $_GET['device_code'] === '' && $_GET['dates'] === ''){
+                                    echo '&piece_size=' . $_GET['piece_size']. '&piece_name='. $_GET['piece_name']. '&personel='.'&device_code='.'&dates='; 
+                                }
+
 
 
 
 
                                 if(isset($_GET['personel'],$_GET['device_code'], $_GET['piece_name']) 
                                     && $_GET['personel'] !== '' && $_GET['device_code'] !== '' && $_GET['piece_name'] !== '' 
-                                    && $_GET['dates'] === '' ){
-                                    echo '&device_code=' . $_GET['device_code']. '&personel='. $_GET['personel']. '&piece_name='. $_GET['piece_name']. '&dates=';
+                                    && $_GET['dates'] === '' && $_GET['piece_size'] !== ''){
+                                    echo '&device_code=' . $_GET['device_code']. '&personel='. $_GET['personel']. '&piece_name='. $_GET['piece_name']. '&dates='. '&piece_size=';
                                 }
                                 if(isset($_GET['personel'],$_GET['device_code'], $_GET['dates']) 
                                     && $_GET['personel'] !== '' && $_GET['device_code'] !== '' && $_GET['dates'] !== '' 
-                                    && $_GET['piece_name'] === ''){
-                                    echo '&device_code=' . $_GET['device_code']. '&personel='. $_GET['personel']. '&dates='. $_GET['dates']. '&piece_name=';
+                                    && $_GET['piece_name'] === '' && $_GET['piece_size'] !== ''){
+                                    echo '&device_code=' . $_GET['device_code']. '&personel='. $_GET['personel']. '&dates='. $_GET['dates']. '&piece_name='. '&piece_size=';
                                 }
                                 if(isset($_GET['piece_name'],$_GET['device_code'], $_GET['dates']) 
                                     && $_GET['piece_name'] !== '' && $_GET['device_code'] !== '' && $_GET['dates'] !== '' 
-                                    && $_GET['personel'] === ''){
-                                    echo '&device_code=' . $_GET['device_code']. '&piece_name='. $_GET['piece_name']. '&dates='. $_GET['dates']. '&personel=';
+                                    && $_GET['personel'] === '' && $_GET['piece_size'] !== ''){
+                                    echo '&device_code=' . $_GET['device_code']. '&piece_name='. $_GET['piece_name']. '&dates='. $_GET['dates']. '&personel='. '&piece_size=';
                                 }
                                 if(isset($_GET['piece_name'],$_GET['personel'], $_GET['dates']) 
                                     && $_GET['piece_name'] !== '' && $_GET['personel'] !== '' && $_GET['dates'] !== '' 
-                                    && $_GET['device_code'] === ''){
-                                    echo '&personel=' . $_GET['personel']. '&piece_name='. $_GET['piece_name']. '&dates='. $_GET['dates']. '&device_code=';
+                                    && $_GET['device_code'] === '' && $_GET['piece_size'] !== ''){
+                                    echo '&personel=' . $_GET['personel']. '&piece_name='. $_GET['piece_name']. '&dates='. $_GET['dates']. '&device_code='. '&piece_size=';
                                 }
+                                if(isset($_GET['piece_name'],$_GET['piece_size'], $_GET['dates']) 
+                                    && $_GET['piece_name'] !== '' && $_GET['piece_size'] !== '' && $_GET['dates'] !== '' 
+                                    && $_GET['device_code'] === '' && $_GET['personel'] === ''){
+                                    echo '&piece_size=' . $_GET['piece_size']. '&piece_name='. $_GET['piece_name']. '&dates='. $_GET['dates']. '&device_code='. '&personel=';
+                                }
+                                if(isset($_GET['piece_name'],$_GET['piece_size'], $_GET['personel']) 
+                                    && $_GET['piece_name'] !== '' && $_GET['piece_size'] !== '' && $_GET['personel'] !== '' 
+                                    && $_GET['device_code'] === '' && $_GET['dates'] === ''){
+                                    echo '&piece_size=' . $_GET['piece_size']. '&piece_name='. $_GET['piece_name']. '&personel='. $_GET['personel']. '&device_code='. '&dates=';
+                                }
+                                if(isset($_GET['piece_name'],$_GET['piece_size'], $_GET['device_code']) 
+                                    && $_GET['piece_name'] !== '' && $_GET['piece_size'] !== '' && $_GET['device_code'] !== '' 
+                                    && $_GET['personel'] === '' && $_GET['dates'] === ''){
+                                    echo '&piece_size=' . $_GET['piece_size']. '&piece_name='. $_GET['piece_name']. '&device_code='. $_GET['device_code']. '&personel='. '&dates=';
+                                }
+                                
 
 
 
 
                                 if(isset($_GET['personel'],$_GET['device_code'],$_GET['dates'], $_GET['piece_name'])
                                     && $_GET['dates'] !== '' && $_GET['device_code'] !== '' 
-                                    && $_GET['personel'] !== '' && $_GET['piece_name'] !== ''){
-                                    echo '&device_code=' . $_GET['device_code']. '&dates='. $_GET['dates']. '&personel='.$_GET['personel']. '&piece_name='.$_GET['piece_name']; 
+                                    && $_GET['personel'] !== '' && $_GET['piece_name'] !== '' && $_GET['piece_size'] === ''){
+                                    echo '&device_code=' . $_GET['device_code']. '&dates='. $_GET['dates']. '&personel='.$_GET['personel']. '&piece_name='.$_GET['piece_name']. '&piece_size='; 
+                                }
+                                if(isset($_GET['personel'],$_GET['device_code'],$_GET['piece_size'], $_GET['piece_name'])
+                                    && $_GET['piece_size'] !== '' && $_GET['device_code'] !== '' 
+                                    && $_GET['personel'] !== '' && $_GET['piece_name'] !== '' && $_GET['dates'] === ''){
+                                    echo '&device_code=' . $_GET['device_code']. '&piece_size='. $_GET['piece_size']. '&personel='.$_GET['personel']. '&piece_name='.$_GET['piece_name']. '&dates='; 
+                                }
+                                if(isset($_GET['dates'],$_GET['device_code'],$_GET['piece_size'], $_GET['piece_name'])
+                                    && $_GET['piece_size'] !== '' && $_GET['device_code'] !== '' 
+                                    && $_GET['dates'] !== '' && $_GET['piece_name'] !== '' && $_GET['personel'] === ''){
+                                    echo '&device_code=' . $_GET['device_code']. '&piece_size='. $_GET['piece_size']. '&dates='.$_GET['dates']. '&piece_name='.$_GET['piece_name']. '&personel='; 
+                                }
+                                if(isset($_GET['dates'],$_GET['personel'],$_GET['piece_size'], $_GET['piece_name'])
+                                    && $_GET['piece_size'] !== '' && $_GET['personel'] !== '' 
+                                    && $_GET['dates'] !== '' && $_GET['piece_name'] !== '' && $_GET['device_code'] === ''){
+                                    echo '&personel=' . $_GET['personel']. '&piece_size='. $_GET['piece_size']. '&dates='.$_GET['dates']. '&piece_name='.$_GET['piece_name']. '&device_code='; 
+                                }
+
+
+
+
+
+                                if(isset($_GET['dates'],$_GET['personel'],$_GET['piece_size'], $_GET['piece_name'] ,$_GET['device_code'])
+                                    && $_GET['piece_size'] !== '' && $_GET['personel'] !== '' 
+                                    && $_GET['dates'] !== '' && $_GET['piece_name'] !== '' && $_GET['device_code'] !== ''){
+                                    echo '&personel=' . $_GET['personel']. '&piece_size='. $_GET['piece_size']. '&dates='.$_GET['dates']. '&piece_name='.$_GET['piece_name']. '&device_code='. $_GET['device_code']; 
                                 }
 
 
@@ -711,11 +929,11 @@ if (!isset($_SESSION["all_data"])) {
 
 
                             if(isset($_GET['personel']) && $_GET['personel'] !== '' 
-                                && $_GET['dates'] === '' && $_GET['device_code'] === '' ) {
+                                    && $_GET['dates'] === '' && $_GET['device_code'] === '' && $_GET['piece_name'] === '') {
                                 echo '&personel=' . $_GET['personel'] .'&dates='.'&device_code='.'$piece_name=';
                             }
                             if(isset($_GET['dates']) && $_GET['dates'] !== '' 
-                                    && $_GET['personel'] === '' && $_GET['device_code'] === '') {
+                                    && $_GET['personel'] === '' && $_GET['device_code'] === '' && $_GET['piece_name'] === '') {
                                 echo '&dates=' . $_GET['dates']. '&personel='.'&device_code='.'$piece_name=';
                             }
                             if(isset($_GET['device_code']) && $_GET['device_code'] !== '' 
@@ -729,68 +947,115 @@ if (!isset($_SESSION["all_data"])) {
 
 
 
-
                             if(isset($_GET['personel'],$_GET['piece_name']) 
                                 && $_GET['personel'] !== '' && $_GET['piece_name'] !== '' 
-                                && $_GET['device_code'] === '' && $_GET['dates'] === ''){
-                                echo '&piece_name=' . $_GET['piece_name']. '&personel='. $_GET['personel'].'&device_code='.'&dates=';  
+                                && $_GET['device_code'] === '' && $_GET['dates'] === '' && $_GET['piece_size'] === ''){
+                                echo '&piece_name=' . $_GET['piece_name']. '&personel='. $_GET['personel'].'&device_code='.'&dates='.'&piece_size=';   
                             }
                             if(isset($_GET['personel'],$_GET['dates']) 
                                 && $_GET['personel'] !== '' && $_GET['dates'] !== ''
-                                && $_GET['device_code'] === '' && $_GET['piece_name'] === ''){
-                                echo '&dates=' . $_GET['dates']. '&personel='. $_GET['personel'].'&device_code='.'&piece_name=';  
+                            && $_GET['device_code'] === '' && $_GET['piece_name'] === '' && $_GET['piece_size'] === ''){
+                                echo '&dates=' . $_GET['dates']. '&personel='. $_GET['personel'].'&device_code='.'&piece_name='.'&piece_size=';   
                             }
                             if(isset($_GET['personel'],$_GET['device_code']) 
                                 && $_GET['personel'] !== '' && $_GET['device_code'] !== '' 
-                                && $_GET['dates'] === '' && $_GET['piece_name'] === ''){
-                                echo '&device_code=' . $_GET['device_code']. '&personel='. $_GET['personel'].'&dates='.'&piece_name='; 
+                                && $_GET['dates'] === '' && $_GET['piece_name'] === '' && $_GET['piece_size'] === ''){
+                                echo '&device_code=' . $_GET['device_code']. '&personel='. $_GET['personel'].'&dates='.'&piece_name='.'&piece_size=';   
                             }
                             if(isset($_GET['dates'],$_GET['device_code']) 
                                 && $_GET['dates'] !== '' && $_GET['device_code'] !== ''  
-                                && $_GET['personel'] === '' && $_GET['piece_name'] === ''){
-                                echo '&device_code=' . $_GET['device_code']. '&dates='. $_GET['dates']. '&personel='.'&piece_name='; 
+                                && $_GET['personel'] === '' && $_GET['piece_name'] === '' && $_GET['piece_size'] === ''){
+                                echo '&device_code=' . $_GET['device_code']. '&dates='. $_GET['dates']. '&personel='.'&piece_name='.'&piece_size=';   
                             }
                             if(isset($_GET['piece_name'],$_GET['device_code']) 
                                 && $_GET['piece_name'] !== '' && $_GET['device_code'] !== ''  
-                                && $_GET['personel'] === '' && $_GET['dates'] === ''){
-                                echo '&device_code=' . $_GET['device_code']. '&piece_name='. $_GET['piece_name']. '&personel='.'&dates='; 
+                                && $_GET['personel'] === '' && $_GET['dates'] === '' && $_GET['piece_size'] === ''){
+                                echo '&device_code=' . $_GET['device_code']. '&piece_name='. $_GET['piece_name']. '&personel='.'&dates='.'&piece_size=';  
                             }
                             if(isset($_GET['piece_name'],$_GET['dates']) 
                                 && $_GET['piece_name'] !== '' && $_GET['dates'] !== ''  
-                                && $_GET['personel'] === '' && $_GET['device_code'] === ''){
-                                echo '&dates=' . $_GET['dates']. '&piece_name='. $_GET['piece_name']. '&personel='.'&device_code='; 
+                                && $_GET['personel'] === '' && $_GET['device_code'] === '' && $_GET['piece_size'] === ''){
+                                echo '&dates=' . $_GET['dates']. '&piece_name='. $_GET['piece_name']. '&personel='.'&device_code='.'&piece_size='; 
                             }
+                            if(isset($_GET['piece_name'],$_GET['piece_size']) 
+                                && $_GET['piece_name'] !== '' && $_GET['piece_size'] !== ''  
+                                && $_GET['personel'] === '' && $_GET['device_code'] === '' && $_GET['dates'] === ''){
+                                echo '&piece_size=' . $_GET['piece_size']. '&piece_name='. $_GET['piece_name']. '&personel='.'&device_code='.'&dates='; 
+                            }
+
+
 
 
 
                             if(isset($_GET['personel'],$_GET['device_code'], $_GET['piece_name']) 
                                 && $_GET['personel'] !== '' && $_GET['device_code'] !== '' && $_GET['piece_name'] !== '' 
-                                && $_GET['dates'] === '' ){
-                                echo '&device_code=' . $_GET['device_code']. '&personel='. $_GET['personel']. '&piece_name='. $_GET['piece_name']. '&dates=';
+                                && $_GET['dates'] === '' && $_GET['piece_size'] !== ''){
+                                echo '&device_code=' . $_GET['device_code']. '&personel='. $_GET['personel']. '&piece_name='. $_GET['piece_name']. '&dates='. '&piece_size=';
                             }
                             if(isset($_GET['personel'],$_GET['device_code'], $_GET['dates']) 
                                 && $_GET['personel'] !== '' && $_GET['device_code'] !== '' && $_GET['dates'] !== '' 
-                                && $_GET['piece_name'] === ''){
-                                echo '&device_code=' . $_GET['device_code']. '&personel='. $_GET['personel']. '&dates='. $_GET['dates']. '&piece_name=';
+                                && $_GET['piece_name'] === '' && $_GET['piece_size'] !== ''){
+                                echo '&device_code=' . $_GET['device_code']. '&personel='. $_GET['personel']. '&dates='. $_GET['dates']. '&piece_name='. '&piece_size=';
                             }
                             if(isset($_GET['piece_name'],$_GET['device_code'], $_GET['dates']) 
                                 && $_GET['piece_name'] !== '' && $_GET['device_code'] !== '' && $_GET['dates'] !== '' 
-                                && $_GET['personel'] === ''){
-                                echo '&device_code=' . $_GET['device_code']. '&piece_name='. $_GET['piece_name']. '&dates='. $_GET['dates']. '&personel=';
+                                && $_GET['personel'] === '' && $_GET['piece_size'] !== ''){
+                                echo '&device_code=' . $_GET['device_code']. '&piece_name='. $_GET['piece_name']. '&dates='. $_GET['dates']. '&personel='. '&piece_size=';
                             }
                             if(isset($_GET['piece_name'],$_GET['personel'], $_GET['dates']) 
                                 && $_GET['piece_name'] !== '' && $_GET['personel'] !== '' && $_GET['dates'] !== '' 
-                                && $_GET['device_code'] === ''){
-                                echo '&personel=' . $_GET['personel']. '&piece_name='. $_GET['piece_name']. '&dates='. $_GET['dates']. '&device_code=';
+                                && $_GET['device_code'] === '' && $_GET['piece_size'] !== ''){
+                                echo '&personel=' . $_GET['personel']. '&piece_name='. $_GET['piece_name']. '&dates='. $_GET['dates']. '&device_code='. '&piece_size=';
                             }
+                            if(isset($_GET['piece_name'],$_GET['piece_size'], $_GET['dates']) 
+                                && $_GET['piece_name'] !== '' && $_GET['piece_size'] !== '' && $_GET['dates'] !== '' 
+                                && $_GET['device_code'] === '' && $_GET['personel'] === ''){
+                                echo '&piece_size=' . $_GET['piece_size']. '&piece_name='. $_GET['piece_name']. '&dates='. $_GET['dates']. '&device_code='. '&personel=';
+                            }
+                            if(isset($_GET['piece_name'],$_GET['piece_size'], $_GET['personel']) 
+                                && $_GET['piece_name'] !== '' && $_GET['piece_size'] !== '' && $_GET['personel'] !== '' 
+                                && $_GET['device_code'] === '' && $_GET['dates'] === ''){
+                                echo '&piece_size=' . $_GET['piece_size']. '&piece_name='. $_GET['piece_name']. '&personel='. $_GET['personel']. '&device_code='. '&dates=';
+                            }
+                            if(isset($_GET['piece_name'],$_GET['piece_size'], $_GET['device_code']) 
+                                && $_GET['piece_name'] !== '' && $_GET['piece_size'] !== '' && $_GET['device_code'] !== '' 
+                                && $_GET['personel'] === '' && $_GET['dates'] === ''){
+                                echo '&piece_size=' . $_GET['piece_size']. '&piece_name='. $_GET['piece_name']. '&device_code='. $_GET['device_code']. '&personel='. '&dates=';
+                            }
+                            
 
 
 
 
                             if(isset($_GET['personel'],$_GET['device_code'],$_GET['dates'], $_GET['piece_name'])
                                 && $_GET['dates'] !== '' && $_GET['device_code'] !== '' 
-                                && $_GET['personel'] !== '' && $_GET['piece_name'] !== ''){
-                                echo '&device_code=' . $_GET['device_code']. '&dates='. $_GET['dates']. '&personel='.$_GET['personel']. '&piece_name='.$_GET['piece_name']; 
+                                && $_GET['personel'] !== '' && $_GET['piece_name'] !== '' && $_GET['piece_size'] === ''){
+                                echo '&device_code=' . $_GET['device_code']. '&dates='. $_GET['dates']. '&personel='.$_GET['personel']. '&piece_name='.$_GET['piece_name']. '&piece_size='; 
+                            }
+                            if(isset($_GET['personel'],$_GET['device_code'],$_GET['piece_size'], $_GET['piece_name'])
+                                && $_GET['piece_size'] !== '' && $_GET['device_code'] !== '' 
+                                && $_GET['personel'] !== '' && $_GET['piece_name'] !== '' && $_GET['dates'] === ''){
+                                echo '&device_code=' . $_GET['device_code']. '&piece_size='. $_GET['piece_size']. '&personel='.$_GET['personel']. '&piece_name='.$_GET['piece_name']. '&dates='; 
+                            }
+                            if(isset($_GET['dates'],$_GET['device_code'],$_GET['piece_size'], $_GET['piece_name'])
+                                && $_GET['piece_size'] !== '' && $_GET['device_code'] !== '' 
+                                && $_GET['dates'] !== '' && $_GET['piece_name'] !== '' && $_GET['personel'] === ''){
+                                echo '&device_code=' . $_GET['device_code']. '&piece_size='. $_GET['piece_size']. '&dates='.$_GET['dates']. '&piece_name='.$_GET['piece_name']. '&personel='; 
+                            }
+                            if(isset($_GET['dates'],$_GET['personel'],$_GET['piece_size'], $_GET['piece_name'])
+                                && $_GET['piece_size'] !== '' && $_GET['personel'] !== '' 
+                                && $_GET['dates'] !== '' && $_GET['piece_name'] !== '' && $_GET['device_code'] === ''){
+                                echo '&personel=' . $_GET['personel']. '&piece_size='. $_GET['piece_size']. '&dates='.$_GET['dates']. '&piece_name='.$_GET['piece_name']. '&device_code='; 
+                            }
+
+
+
+
+
+                            if(isset($_GET['dates'],$_GET['personel'],$_GET['piece_size'], $_GET['piece_name'] ,$_GET['device_code'])
+                                && $_GET['piece_size'] !== '' && $_GET['personel'] !== '' 
+                                && $_GET['dates'] !== '' && $_GET['piece_name'] !== '' && $_GET['device_code'] !== ''){
+                                echo '&personel=' . $_GET['personel']. '&piece_size='. $_GET['piece_size']. '&dates='.$_GET['dates']. '&piece_name='.$_GET['piece_name']. '&device_code='. $_GET['device_code']; 
                             }
 
 
@@ -801,6 +1066,13 @@ if (!isset($_SESSION["all_data"])) {
                         ?>
                     </ul>
                 </nav>
+
+
+
+
+                <p>نکات : </p>
+                <p>* سایز قطعه را به تنهایی نمی توانید انتخاب کنید</p>
+
 
             </div>
 
@@ -934,6 +1206,45 @@ if (!isset($_SESSION["all_data"])) {
 
         });
     </script>
+
+
+
+    <script>
+        // $(document).ready(function() {
+        //     getSizes(); // Call getSizes() function when the page is ready
+        // });
+
+        function getSizes() {
+            var pieceName = document.getElementById("piece_name").value;
+
+            $.ajax({
+                type: 'GET',
+                url: 'get_sizes.php',
+                data: { piece_name: pieceName },
+                dataType: 'json', // Specify JSON data type
+                success: function(data) {
+                    console.log("Received data:", data); // Log received data
+                    var sizesHtml = '';
+
+                    // Construct HTML for sizes
+                    data.forEach(function(item) {
+                        sizesHtml += '<option value="' + item.id + '">' + item.size + '</option>';
+                    });
+
+                    console.log("Generated HTML:", sizesHtml); // Log generated HTML
+
+                    // Replace the default option with the sizes
+                    $('#piece_size').html(sizesHtml);
+                },
+                error: function() {
+                    // Handle errors
+                    alert("Error fetching sizes");
+                }
+            });
+        }
+    </script>
+
+
 
 
 

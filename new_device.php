@@ -65,7 +65,7 @@ if (!isset($_SESSION["all_data"])) {
                  
                     <div class="row mt-4">
                         <div class="col-md-6">
-                            <button name="enter" class="btn btn-primary">ثبت</button>
+                            <button name="enter" class="btn btn-outline-primary">ثبت</button>
                         </div>
                     </div>
                 </form>
@@ -87,6 +87,22 @@ if (!isset($_SESSION["all_data"])) {
                 $('.nav-link').removeClass('active');
                 $(this).addClass('active');
             });
+        });
+    </script>
+    
+    <script>
+        // Function to prevent Persian numbers from being entered
+        function preventPersianNumbers(event) {
+            var persianNumbersRegex = /[\u06F0-\u06F9]/; // Range of Persian numbers in Unicode
+            var inputKey = String.fromCharCode(event.keyCode);
+            if (persianNumbersRegex.test(inputKey)) {
+                event.preventDefault();
+            }
+        }
+
+        // Attach the preventPersianNumbers function to input fields
+        document.querySelectorAll('input').forEach(function(input) {
+            input.addEventListener('keypress', preventPersianNumbers);
         });
     </script>
 

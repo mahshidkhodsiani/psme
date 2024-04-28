@@ -15,6 +15,7 @@ if (!isset($_SESSION["all_data"])) {
     include 'includes.php';
     include 'config.php';
     ?>
+    <link rel="stylesheet" href="style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 </style>

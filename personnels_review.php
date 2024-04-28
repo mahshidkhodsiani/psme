@@ -31,6 +31,11 @@ if (!isset($_SESSION["all_data"])) {
     <script src="persianDate/js/prism.js"></script>
     <script src="persianDate/js/vertical-responsive-menu.min.js"></script>
 
+
+
+
+    
+
     </style>
 </head>
 
@@ -172,7 +177,7 @@ if (!isset($_SESSION["all_data"])) {
                    
                           
 
-                                <button type="submit" class="btn btn-primary">اعمال فیلترها</button>
+                                <button type="submit" class="btn btn-outline-primary">اعمال فیلترها</button>
                     
                         </form>
                     </div>
@@ -182,21 +187,60 @@ if (!isset($_SESSION["all_data"])) {
                 <br>
 
 
+                <div class="row">
+                    <div class="col-md-6">
+                         <form action="export_exel.php" method="post">
+                            <button class="btn btn-outline-success" name="get_excel">خروجی اکسل</button>
+                        </form>
+                    </div>
+                    <div class="col-md-6">
+                        
+                    </div>
+                </div>
+
+               
+
+
+                
+
+                <br>
+
+
+
 
               
              
                 
                 <div class="table-responsive">
-                    <table class="table border">
+                    <table class="table border border-4 ">
+                        <!-- Select dropdown for number of rows per page -->
+                        <select id="rowsPerPage" onchange="changeRowsPerPage()">
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                            <option value="40">40</option>
+                            <option value="80">80</option>
+                            <option value="100">100</option>
+                        </select>
+
+                        <script>
+                            function changeRowsPerPage() {
+                                var selectedValue = document.getElementById("rowsPerPage").value;
+                                window.location.href = 'personnels_review.php?rows=' + selectedValue;
+                            }
+                        </script>
+
+
                         <thead>
                             <tr>
-                                <th scope="col">ردیف</th>
-                                <th scope="col">نام شخص</th>
-                                <th scope="col">کد دستگاه</th>
-                                <th scope="col">نام قطعه</th>
-                                <th scope="col">سایز قطعه</th>
-                                <th scope="col">شیفت</th>
-                                <th scope="col">تاریخ</th>
+                                <th scope="col" class="text-center">ردیف</th>
+                                <th scope="col" class="text-center">نام شخص</th>
+                                <th scope="col" class="text-center">کد دستگاه</th>
+                                <th scope="col" class="text-center">نام قطعه</th>
+                                <th scope="col" class="text-center">سایز قطعه</th>
+                                <th scope="col" class="text-center">شیفت</th>
+                                <th scope="col" class="text-center">تاریخ</th>
+                                <th scope="col" class="text-center">تعداد</th>
+                                <th scope="col" class="text-center">قیمت(تومان)</th>
                                 
                             </tr>
                         </thead>
@@ -205,16 +249,27 @@ if (!isset($_SESSION["all_data"])) {
                         <tbody>
                             <?php
                             // Pagination
-                            $results_per_page = 10; // Number of records per page
-                            if (!isset($_GET['page'])) {
-                                $page = 1; // Default page
-                            } else {
-                                $page = $_GET['page'];
-                            }
+                            // $results_per_page = 10; // Number of records per page
+                            // if (!isset($_GET['page'])) {
+                            //     $page = 1; // Default page
+                            // } else {
+                            //     $page = $_GET['page'];
+                            // }
+
+
+                            $results_per_page = isset($_GET['rows']) ? intval($_GET['rows']) : 10; // Number of records per page, default is 10
+                            $page = isset($_GET['page']) ? intval($_GET['page']) : 1; // Default page
                             $start_from = ($page - 1) * $results_per_page;
 
+
+
+                            // $start_from = ($page - 1) * $results_per_page;
+
+
+                            
+
                             // Fetch records with filters
-                            $sql = "SELECT * FROM products";
+                            $sql = "SELECT * FROM products ";
 
 
 
@@ -261,7 +316,7 @@ if (!isset($_SESSION["all_data"])) {
                             }
                             if(isset($_GET['personel'], $_GET['device_code']) 
                                     && $_GET['personel'] !== '' && $_GET['device_code'] !== '' 
-                                    && $_GET['dates'] === '' && $_GET['piece_name'] === '' && $_GET['piece_size'] === ''){
+                                    && $_GET['dates'] === '' && $_GET['piece_name'] ==='' && $_GET['piece_size']===''){
                                 $device_code = $_GET['device_code'];
                                 $personel = $_GET['personel'];
                                 $sql .= " WHERE user = $personel AND device_number = '$device_code'";
@@ -430,7 +485,12 @@ if (!isset($_SESSION["all_data"])) {
                             $sql .= " ORDER BY id LIMIT $start_from, $results_per_page";
 
 
-                            echo $sql;
+                            $_SESSION['query'] = $sql;
+
+
+
+
+                            // echo $sql;
                             
                             $result = $conn->query($sql);
 
@@ -440,13 +500,13 @@ if (!isset($_SESSION["all_data"])) {
                                     ?>
                                     <!-- Table rows -->
                                     <tr>
-                                        <th scope="row"><?= $a ?></th>
-                                        <td><?= givePerson($row['user']) ?></td>
-                                        <td><?= giveDeviceCode($row['device_number']) ?></td>
+                                        <th scope="row" class="text-center"><?= $a ?></th>
+                                        <td class="text-center"><?= givePerson($row['user']) ?></td>
+                                        <td class="text-center"><?= giveDeviceCode($row['device_number']) ?></td>
 
-                                        <td><?= $row['piece_name'] ?></td>
-                                        <td><?= giveName($row['size']) ?></td>
-                                        <td>
+                                        <td class="text-center"><?= $row['piece_name'] ?></td>
+                                        <td class="text-center"><?= giveName($row['size'])['size'] ?></td>
+                                        <td class="text-center">
                                             <?php
                                             if($row['shift']==1){
                                                 echo 'روز' ;
@@ -460,7 +520,9 @@ if (!isset($_SESSION["all_data"])) {
                                             ?>
                                         </td>
                                    
-                                        <td><?= $row['date'] ?></td>
+                                        <td class="text-center"><?= $row['date'] ?></td>
+                                        <td class="text-center"><?= $row['numbers'] ?></td>
+                                        <td class="text-center"><?= number_format(giveName($row['size'])['price'] * $row['numbers']) ?></td>
                           
 
 
@@ -490,25 +552,27 @@ if (!isset($_SESSION["all_data"])) {
                         <?php
                         // Previous page link
                         if ($page > 1) {
-                            echo '<li class="page-item"><a class="page-link" href="?page=' . ($page - 1);
+                            echo '<li class="page-item"><a class="page-link" href="?page=' . ($page - 1). '&rows=' . $results_per_page;
 
 
                     
                             if(isset($_GET['personel']) && $_GET['personel'] !== '' 
-                                    && $_GET['dates'] === '' && $_GET['device_code'] === '' && $_GET['piece_name'] === '') {
-                                echo '&personel=' . $_GET['personel'] .'&dates='.'&device_code='.'$piece_name=';
+                                && $_GET['dates'] === '' && $_GET['device_code'] === '' && $_GET['piece_name'] === '' && $_GET['piece_size'] === '') {
+                                // Ensure piece_name and piece_size are present, even if empty
+                                echo '&personel=' . $_GET['personel'] .'&dates='.'&device_code='.'&piece_name='.'&piece_size=';
                             }
+
                             if(isset($_GET['dates']) && $_GET['dates'] !== '' 
-                                    && $_GET['personel'] === '' && $_GET['device_code'] === '' && $_GET['piece_name'] === '') {
-                                echo '&dates=' . $_GET['dates']. '&personel='.'&device_code='.'$piece_name=';
+                                    && $_GET['personel'] === '' && $_GET['device_code'] === '' && $_GET['piece_name'] === '' && $_GET['piece_size'] === '') {
+                                echo '&dates=' . $_GET['dates']. '&personel='.'&device_code='.'&piece_name='.'&piece_size=';
                             }
                             if(isset($_GET['device_code']) && $_GET['device_code'] !== '' 
-                                    && $_GET['personel'] === '' && $_GET['dates'] === '' && $_GET['piece_name'] === '') {
-                                echo '&device_code=' . $_GET['device_code']. '&personel='.'&dates='.'$piece_name=';
+                                    && $_GET['personel'] === '' && $_GET['dates'] === '' && $_GET['piece_name'] === '' && $_GET['piece_size'] === '') {
+                                echo '&device_code=' . $_GET['device_code']. '&personel='.'&dates='.'&piece_name='.'&piece_size=';
                             }
                             if(isset($_GET['piece_name']) && $_GET['piece_name'] !== '' 
-                                    && $_GET['personel'] === '' && $_GET['dates'] === '' && $_GET['device_code'] === '') {
-                                echo '&piece_name=' . $_GET['piece_name']. '&personel='.'&dates='.'&device_code=';
+                                    && $_GET['personel'] === '' && $_GET['dates'] === '' && $_GET['device_code'] === '' && $_GET['piece_size'] === '') {
+                                echo '&piece_name=' . $_GET['piece_name']. '&personel='.'&dates='.'&device_code='.'&piece_size=';
                             }
 
 
@@ -645,24 +709,24 @@ if (!isset($_SESSION["all_data"])) {
 
                         for ($i = $start_page; $i <= $end_page; $i++) {
                             if ($i == $page) {
-                                echo '<li class="page-item active"><a class="page-link" href="?page=' . $i;
+                                echo '<li class="page-item active"><a class="page-link" href="?page=' . $i . '&rows=' . $results_per_page;
                                 
                                 
                                 if(isset($_GET['personel']) && $_GET['personel'] !== '' 
-                                        && $_GET['dates'] === '' && $_GET['device_code'] === '' && $_GET['piece_name'] === '') {
-                                    echo '&personel=' . $_GET['personel'] .'&dates='.'&device_code='.'$piece_name=';
+                                        && $_GET['dates'] === '' && $_GET['device_code'] === '' && $_GET['piece_name'] === '' && $_GET['piece_size'] === '') {
+                                    echo '&personel=' . $_GET['personel'] .'&dates='.'&device_code='.'&piece_name='.'&piece_size='; 
                                 }
                                 if(isset($_GET['dates']) && $_GET['dates'] !== '' 
-                                        && $_GET['personel'] === '' && $_GET['device_code'] === '' && $_GET['piece_name'] === '') {
-                                    echo '&dates=' . $_GET['dates']. '&personel='.'&device_code='.'$piece_name=';
+                                        && $_GET['personel'] === '' && $_GET['device_code'] === '' && $_GET['piece_name'] === '' && $_GET['piece_size'] === '') {
+                                    echo '&dates=' . $_GET['dates']. '&personel='.'&device_code='.'&piece_name='.'&piece_size=';
                                 }
                                 if(isset($_GET['device_code']) && $_GET['device_code'] !== '' 
-                                        && $_GET['personel'] === '' && $_GET['dates'] === '' && $_GET['piece_name'] === '') {
-                                    echo '&device_code=' . $_GET['device_code']. '&personel='.'&dates='.'$piece_name=';
+                                        && $_GET['personel'] === '' && $_GET['dates'] === '' && $_GET['piece_name'] === '' && $_GET['piece_size'] === '') {
+                                    echo '&device_code=' . $_GET['device_code']. '&personel='.'&dates='.'&piece_name='.'&piece_size=';
                                 }
                                 if(isset($_GET['piece_name']) && $_GET['piece_name'] !== '' 
-                                        && $_GET['personel'] === '' && $_GET['dates'] === '' && $_GET['device_code'] === '') {
-                                    echo '&piece_name=' . $_GET['piece_name']. '&personel='.'&dates='.'&device_code=';
+                                        && $_GET['personel'] === '' && $_GET['dates'] === '' && $_GET['device_code'] === '' && $_GET['piece_size'] === '') {
+                                    echo '&piece_name=' . $_GET['piece_name']. '&personel='.'&dates='.'&device_code='.'&piece_size=';
                                 }
 
 
@@ -783,24 +847,24 @@ if (!isset($_SESSION["all_data"])) {
 
                                 echo '">' . $i . '</a></li>';
                             } else {
-                                echo '<li class="page-item"><a class="page-link" href="?page=' . $i;
+                                echo '<li class="page-item"><a class="page-link" href="?page=' . $i . '&rows=' . $results_per_page;
 
 
                                 if(isset($_GET['personel']) && $_GET['personel'] !== '' 
-                                        && $_GET['dates'] === '' && $_GET['device_code'] === '' && $_GET['piece_name'] === '') {
-                                    echo '&personel=' . $_GET['personel'] .'&dates='.'&device_code='.'$piece_name=';
+                                        && $_GET['dates'] === '' && $_GET['device_code'] === '' && $_GET['piece_name'] === '' && $_GET['piece_size'] === '') {
+                                    echo '&personel=' . $_GET['personel'] .'&dates='.'&device_code='.'&piece_name='.'&piece_size='; 
                                 }
                                 if(isset($_GET['dates']) && $_GET['dates'] !== '' 
-                                        && $_GET['personel'] === '' && $_GET['device_code'] === '' && $_GET['piece_name'] === '') {
-                                    echo '&dates=' . $_GET['dates']. '&personel='.'&device_code='.'$piece_name=';
+                                        && $_GET['personel'] === '' && $_GET['device_code'] === '' && $_GET['piece_name'] === '' && $_GET['piece_size'] === '') {
+                                    echo '&dates=' . $_GET['dates']. '&personel='.'&device_code='.'&piece_name='.'&piece_size=';
                                 }
                                 if(isset($_GET['device_code']) && $_GET['device_code'] !== '' 
-                                        && $_GET['personel'] === '' && $_GET['dates'] === '' && $_GET['piece_name'] === '') {
-                                    echo '&device_code=' . $_GET['device_code']. '&personel='.'&dates='.'$piece_name=';
+                                        && $_GET['personel'] === '' && $_GET['dates'] === '' && $_GET['piece_name'] === '' && $_GET['piece_size'] === '') {
+                                    echo '&device_code=' . $_GET['device_code']. '&personel='.'&dates='.'&piece_name='.'&piece_size=';
                                 }
                                 if(isset($_GET['piece_name']) && $_GET['piece_name'] !== '' 
-                                        && $_GET['personel'] === '' && $_GET['dates'] === '' && $_GET['device_code'] === '') {
-                                    echo '&piece_name=' . $_GET['piece_name']. '&personel='.'&dates='.'&device_code=';
+                                        && $_GET['personel'] === '' && $_GET['dates'] === '' && $_GET['device_code'] === '' && $_GET['piece_size'] === '') {
+                                    echo '&piece_name=' . $_GET['piece_name']. '&personel='.'&dates='.'&device_code='.'&piece_size=';
                                 }
 
 
@@ -924,25 +988,25 @@ if (!isset($_SESSION["all_data"])) {
 
                         // Next page link
                         if ($page < $total_pages) {
-                            echo '<li class="page-item"><a class="page-link" href="?page=' . ($page + 1);
+                            echo '<li class="page-item"><a class="page-link" href="?page=' . ($page + 1) . '&rows=' . $results_per_page;
 
 
 
                             if(isset($_GET['personel']) && $_GET['personel'] !== '' 
-                                    && $_GET['dates'] === '' && $_GET['device_code'] === '' && $_GET['piece_name'] === '') {
-                                echo '&personel=' . $_GET['personel'] .'&dates='.'&device_code='.'$piece_name=';
+                                    && $_GET['dates'] === '' && $_GET['device_code'] === '' && $_GET['piece_name'] === '' && $_GET['piece_size'] === '') {
+                                echo '&personel=' . $_GET['personel'] .'&dates='.'&device_code='.'&piece_name='.'&piece_size='; 
                             }
                             if(isset($_GET['dates']) && $_GET['dates'] !== '' 
-                                    && $_GET['personel'] === '' && $_GET['device_code'] === '' && $_GET['piece_name'] === '') {
-                                echo '&dates=' . $_GET['dates']. '&personel='.'&device_code='.'$piece_name=';
+                                    && $_GET['personel'] === '' && $_GET['device_code'] === '' && $_GET['piece_name'] === '' && $_GET['piece_size'] === '') {
+                                echo '&dates=' . $_GET['dates']. '&personel='.'&device_code='.'&piece_name='.'&piece_size=';
                             }
                             if(isset($_GET['device_code']) && $_GET['device_code'] !== '' 
-                                    && $_GET['personel'] === '' && $_GET['dates'] === '' && $_GET['piece_name'] === '') {
-                                echo '&device_code=' . $_GET['device_code']. '&personel='.'&dates='.'$piece_name=';
+                                    && $_GET['personel'] === '' && $_GET['dates'] === '' && $_GET['piece_name'] === '' && $_GET['piece_size'] === '') {
+                                echo '&device_code=' . $_GET['device_code']. '&personel='.'&dates='.'&piece_name='.'&piece_size=';
                             }
                             if(isset($_GET['piece_name']) && $_GET['piece_name'] !== '' 
-                                    && $_GET['personel'] === '' && $_GET['dates'] === '' && $_GET['device_code'] === '') {
-                                echo '&piece_name=' . $_GET['piece_name']. '&personel='.'&dates='.'&device_code=';
+                                    && $_GET['personel'] === '' && $_GET['dates'] === '' && $_GET['device_code'] === '' && $_GET['piece_size'] === '') {
+                                echo '&piece_name=' . $_GET['piece_name']. '&personel='.'&dates='.'&device_code='.'&piece_size=';
                             }
 
 

@@ -54,28 +54,28 @@ if (!isset($_SESSION["all_data"])) {
                 <form id="newPieceForm" action="new_device.php" method="POST" enctype="multipart/form-data" class="p-3 border mt-4">
                     <div class="row">
                         <div class="col-md-6">
-                            <label for="name" class="form-label fw-semibold">نام دستگاه</label>
+                            <label for="name" class="form-label fw-semibold">نام قطعه</label>
                             <input type="text" name="name" id="name" class="form-control" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="size" class="form-label fw-semibold">کد دستگاه</label>
+                            <label for="size" class="form-label fw-semibold">سایز قطعه</label>
                             <input type="text" name="size" id="size" class="form-control" required>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row mt-4">
                         <div class="col-md-6">
-                            <label for="price" class="form-label fw-semibold">نام دستگاه</label>
-                            <input type="text" name="price" id="price" class="form-control" required>
+                            <label for="price" class="form-label fw-semibold">قیمت قطعه(تومان)</label>
+                            <input type="number" name="price" id="price" placeholder="به انگلیسی وارد کنید" class="form-control" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="time" class="form-label fw-semibold">کد دستگاه</label>
-                            <input type="text" name="time" id="time" class="form-control" required>
+                            <label for="time" class="form-label fw-semibold">زمان لازم برای تولید</label>
+                            <input type="number" name="time" id="time" placeholder="به انگلیسی وارد کنید" class="form-control" required>
                         </div>
                     </div>
                  
                     <div class="row mt-4">
                         <div class="col-md-6">
-                            <button name="enter" class="btn btn-primary">ثبت</button>
+                            <button name="enter" class="btn btn-outline-primary">ثبت</button>
                         </div>
                     </div>
                 </form>
@@ -90,6 +90,7 @@ if (!isset($_SESSION["all_data"])) {
         </div>
     </div>
 
+    
 
     <script>
         $(document).ready(function() {
@@ -97,6 +98,23 @@ if (!isset($_SESSION["all_data"])) {
                 $('.nav-link').removeClass('active');
                 $(this).addClass('active');
             });
+        });
+    </script>
+
+
+    <script>
+        // Function to prevent Persian numbers from being entered
+        function preventPersianNumbers(event) {
+            var persianNumbersRegex = /[\u06F0-\u06F9]/; // Range of Persian numbers in Unicode
+            var inputKey = String.fromCharCode(event.keyCode);
+            if (persianNumbersRegex.test(inputKey)) {
+                event.preventDefault();
+            }
+        }
+
+        // Attach the preventPersianNumbers function to input fields
+        document.querySelectorAll('input').forEach(function(input) {
+            input.addEventListener('keypress', preventPersianNumbers);
         });
     </script>
 

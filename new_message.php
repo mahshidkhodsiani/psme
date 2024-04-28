@@ -43,7 +43,7 @@ if (!isset($_SESSION["all_data"])) {
                 
                     <div class="row mt-4">
                         <div class="col-md-6">
-                            <button name="enter" class="btn btn-primary">ثبت</button>
+                            <button name="enter" class="btn btn-outline-primary">ثبت</button>
                         </div>
 
                     </div>

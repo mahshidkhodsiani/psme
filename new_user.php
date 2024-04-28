@@ -35,36 +35,53 @@ if (!isset($_SESSION["all_data"])) {
                     <div class="row">
                         <div class="col-md-6">
                             <label for="name" class="form-label fw-semibold">
-                                نام </label>
+                                نام
+                            </label>
                             <input type="text" name="name" class="form-control">
                         </div>
                         <div class="col-md-6">
                             <label for="family" class="form-label fw-semibold">
-                                نام خانوادگی</label>
+                                نام خانوادگی
+                            </label>
                             <input type="text" name="family" class="form-control">
                         </div>
                     </div>
                     <div class="row mt-1">
                         <div class="col-md-6">
                             <label for="username" class="form-label fw-semibold">
-                                یوزرنیم </label>
-                            <input type="text" name="username" class="form-control">
+                                یوزرنیم
+                            </label>
+                            <input type="text" name="username" class="form-control" autocomplete="off">
                         </div>
                         <div class="col-md-6">
                             <label for="password" class="form-label fw-semibold">
-                                پسورد</label>
-                            <input type="password" name="password" class="form-control">
+                                پسورد
+                            </label>
+                            <input type="password" name="password" class="form-control" autocomplete="off">
                         </div>
-                    </div>
-                
-                    <div class="row mt-4">
-                        <div class="col-md-6">
-                            <button name="enter" class="btn btn-primary">ثبت</button>
-                        </div>
-                    
                     </div>
 
+                    <div class="row mt-2">
+                        
+                        <div class="col-md-1">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="isAdmin" name="isAdmin">
+                                <label class="form-check-label" for="isAdmin" >
+                                    ادمین
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-10">
+                            
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <button name="enter" class="btn btn-outline-primary">ثبت</button>
+                        </div>
+                    </div>
                 </form>
+
             </div>
         </div> 
     </div>
@@ -98,9 +115,17 @@ if(isset($_POST['enter'])){
     $password = $conn->real_escape_string($_POST['password']);
     $date = date('Y-m-d H:i:s');
 
-    // Construct the SQL query using placeholders
-    $sql = "INSERT INTO users (name, family, username, password, date)
-            VALUES ('$name', '$family', '$username', '$password', '$date')";
+
+    if(isset($_POST['isAdmin'])){
+      
+        $sql = "INSERT INTO users (name, family, username, password, date, admin)
+            VALUES ('$name', '$family', '$username', '$password', '$date', 1)";
+    }else{
+        
+        $sql = "INSERT INTO users (name, family, username, password, date , admin)
+            VALUES ('$name', '$family', '$username', '$password', '$date', 0)";
+    }
+    
 
     // Execute the query
     $result = $conn->query($sql);

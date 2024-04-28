@@ -68,14 +68,14 @@ if ($_SESSION["all_data"]['admin'] == 1) {
 ?>
 
 <div class="sidebar">
-<h4><?= $_SESSION['all_data']['name']. " ".$_SESSION['all_data']['family']?></h4>
+<h5 class="p-3"><?= $_SESSION['all_data']['name']. " ".$_SESSION['all_data']['family']?></h5>
     <a href="index" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'index') echo 'active'; ?>">
         <img src="img/review.png" height="20px" width="20px">
         صفحه اول
     </a>
     <a href="personnels_review" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'personnels_review') echo 'active'; ?>">
         <img src="img/review.png" height="20px" width="20px">
-        بررسی سوابق کارکرد پرسنل
+        گزارش گیری
     </a>
     <a href="confirmations" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'confirmations') echo 'active'; ?>">
         <img src="img/review.png" height="20px" width="20px">
@@ -88,6 +88,10 @@ if ($_SESSION["all_data"]['admin'] == 1) {
     <a href="new_piece" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'new_piece') echo 'active'; ?>">
         <img src="img/add_pro.png" height="20px" width="20px">
         ثبت قطعه جدید
+    </a>
+    <a href="new_user" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'new_user') echo 'active'; ?>">
+        <img src="img/add_pro.png" height="20px" width="20px">
+        ثبت یوزر جدید
     </a>
   
 </div>
@@ -102,6 +106,10 @@ if ($_SESSION["all_data"]['admin'] == 1) {
 
 <div class="sidebar">
     <h4><?= $_SESSION['all_data']['name']. " ".$_SESSION['all_data']['family']?></h4>
+    <a href="index" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'index') echo 'active'; ?>">
+        <img src="img/review.png" height="20px" width="20px">
+        صفحه اول
+    </a>
     <a href="submit_pro" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'submit_pro') echo 'active'; ?>">
         <img src="img/add_pro.png" height="20px" width="20px">
         ثبت محصول جدید

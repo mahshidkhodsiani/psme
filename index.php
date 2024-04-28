@@ -7,6 +7,7 @@ if (!isset($_SESSION["all_data"])) {
 }
 
 $id = $_SESSION["all_data"]['id'];
+$admin = $_SESSION["all_data"]['admin'];
 ?>
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
@@ -20,7 +21,10 @@ $id = $_SESSION["all_data"]['id'];
     include 'includes.php';
     include 'config.php';
     ?>
-    
+    <!-- <link rel="stylesheet" href="styles.css"> -->
+
+
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
@@ -46,7 +50,18 @@ $id = $_SESSION["all_data"]['id'];
                     <div class="col-md-6">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">آخرین محصولات شما </h5>
+                                <?php
+                                        if($admin == 1){
+                                            ?>
+                                            <h5 class="card-title">آخرین محصولات  </h5>
+                                            <?php
+                                        }else{
+                                            ?>
+                                            <h5 class="card-title">آخرین محصولات شما </h5>
+                                        <?php
+                                        }
+                               
+                                ?>
                                 <table class="table border">
                                     <thead>
                                         <tr>
@@ -61,9 +76,15 @@ $id = $_SESSION["all_data"]['id'];
 
                                         $a = 1;
 
-                                        // Fetch records
-                                        $sql = "SELECT * FROM products WHERE user = '$id'
-                                                ORDER BY id DESC LIMIT 10";
+                                        if($admin == 1){
+                                            $sql = "SELECT * FROM products
+                                                ORDER BY id DESC LIMIT 10"; 
+                                         }else{
+                                            $sql = "SELECT * FROM products WHERE user = '$id'
+                                            ORDER BY id DESC LIMIT 10";
+                                         }
+
+                                        
                                         $result = $conn->query($sql);
 
                                         if ($result->num_rows > 0) {
@@ -106,8 +127,15 @@ $id = $_SESSION["all_data"]['id'];
 
                                         $a = 1;
 
-                                        // Fetch records
-                                        $sql = "SELECT * FROM messages LIMIT 10";
+                                        if($admin == 1){
+                                           $sql = "SELECT * FROM messages 
+                                                ORDER BY id DESC LIMIT 10"; 
+                                        }else{
+                                             $sql = "SELECT * FROM messages WHERE to_user = '$id'
+                                                ORDER BY id DESC LIMIT 10";
+                                        }
+                                       
+                                        
                                         $result = $conn->query($sql);
 
                                         if ($result->num_rows > 0) {
@@ -129,6 +157,73 @@ $id = $_SESSION["all_data"]['id'];
                         </div>
                     </div>
                 </div>
+
+
+
+                <?php
+                if ($admin == 1) {
+                ?>
+
+                <div class="row mt-5">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                             
+                                <h5 class="card-title">آخرین کاربران اضافه شده  </h5>
+              
+                              
+                                <table class="table border">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">ردیف</th>
+                                            <th scope="col">نام </th>
+                                            <th scope="col">کد خانوادگی</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+
+                                        $a = 1;
+
+                                       
+                                        $sql = "SELECT * FROM users ";
+                                         
+
+                                        
+                                        $result = $conn->query($sql);
+
+                                        if ($result->num_rows > 0) {
+                                            $a++;
+                                            while ($row = $result->fetch_assoc()) {
+                                        ?>
+                                                <tr>
+                                                    <th scope="row"><?= $a ?></th>
+                                                    <td><?= $row['name'] ?></td>
+                                                    <td><?= $row['family'] ?></td>
+                                                </tr>
+                                        <?php
+                                                $a++;
+                                            }
+                                        }
+                                        ?>
+                                    </tbody>
+                                </table>
+
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                 
+                </div>
+
+                <?php
+                }
+                ?>
+
+               
+
+                
             </div>
         </div>
     </div>

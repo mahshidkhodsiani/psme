@@ -19,6 +19,10 @@ if (!isset($_SESSION["all_data"])) {
     include 'config.php';
     include 'functions.php';
     ?>
+
+
+    <link rel="stylesheet" href="style.css">
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     </style>
@@ -44,91 +48,6 @@ if (!isset($_SESSION["all_data"])) {
                     
 
 
-                <div class="card m-2" >
-                    <div class="card-body">
-                        <h5 class="card-title">اعمال فیلتر</h5>
-                        
-                        <form method="GET" action="">
-                            <div class="row">
-
-                                <div class="col-md-6">
-                                    <label for="status" class="form-label">پرسنل:</label>
-                                    <select class="form-select" name="personel">
-                                    <option value="">همه</option>
-                                    <?php
-                                        $sql = "SELECT * FROM users";
-                                        $result = $conn ->query($sql);
-                                        if($result->num_rows >0){
-                                            while($row = $result-> fetch_assoc()){?>
-
-                                                <option value="<?=$row['id']?>" <?php if(isset($_GET['personel']) && $_GET['personel'] === $row['id']) echo 'selected'; ?>>
-                                                    <?=$row['name']. " " .$row['family']?>
-                                                </option>
-                                        <?php
-                                            }
-                                        }
-                                    ?>
-
-                                    </select>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label for="shifts" class="form-label">شیفت:</label>
-                                    <select class="form-select" name="shifts">
-                                        <option value="">همه</option>
-                                        <option value="1" <?php if(isset($_GET['shifts']) && $_GET['shifts'] === '1') echo 'selected'; ?>>روز</option>
-                                        <option value="2" <?php if(isset($_GET['shifts']) && $_GET['shifts'] === '2') echo 'selected'; ?>>عصر</option>
-                                        <option value="3" <?php if(isset($_GET['shifts']) && $_GET['shifts'] === '3') echo 'selected'; ?>>شب</option>
-                                    </select>
-                                </div>
-
-                                
-
-                                
-                            </div>
-
-
-
-                            <div class="row mt-3">
-                                <div class="col-md-6">
-                                    <label for="status" class="form-label">نام دستگاه :</label>
-                                    <select class="form-select" name="devices">
-                                        <option value="">همه</option>
-                                        <?php
-                                       $sql = "SELECT DISTINCT name FROM devices GROUP BY name ORDER BY name ASC";
-
-                                        $result = $conn->query($sql);
-                                        if ($result && $result->num_rows > 0) {
-                                            while ($row = $result->fetch_assoc()) {
-                                                ?>
-                                                <option value="<?= $row['name'] ?>" <?php if (isset($_GET['devices']) && $_GET['devices'] === $row['name']) echo 'selected'; ?>>
-                                                    <?= $row['name'] ?>
-                                                </option>
-                                                <?php
-                                            }
-                                        }
-                                        ?>
-                                    </select>
-                                </div>
-
-
-                                <div class="col-md-6">
-                                    <label for="status" class="form-label">وضعیت:</label>
-                                    <select class="form-select" name="status">
-                                        <option value="">همه</option>
-                                        <option value="0" <?php if(isset($_GET['status']) && $_GET['status'] === '0') echo 'selected'; ?>>تایید نشده</option>
-                                        <option value="1" <?php if(isset($_GET['status']) && $_GET['status'] === '1') echo 'selected'; ?>>تایید شده</option>
-                                        <option value="2" <?php if(isset($_GET['status']) && $_GET['status'] === '2') echo 'selected'; ?>>رد شده</option>
-                                    </select>
-                                </div>
-                            </div>
-                          
-
-                                <button type="submit" class="btn btn-primary">اعمال فیلترها</button>
-                    
-                        </form>
-                    </div>
-                </div>
 
 
                 <br>
@@ -218,137 +137,13 @@ if (!isset($_SESSION["all_data"])) {
                             // Fetch records with filters
                             $sql = "SELECT * FROM products";
 
-                            // Add WHERE clause based on filter values
-                            if(isset($_GET['status']) && $_GET['status'] !== '' 
-                                        && $_GET['personel'] === '' && $_GET['devices'] === '' && $_GET['shifts']==='') {
-                                $status = $_GET['status'];
-                                $sql .= " WHERE status = $status";
-                            }
-
-                            if(isset($_GET['personel']) && $_GET['personel'] !== '' 
-                                        && $_GET['status'] === ''  && $_GET['devices'] === '' && $_GET['shifts']==='') {
-                                $personel = $_GET['personel'];
-                                $sql .= " WHERE `user` = $personel ";
-                            }
-
-                            if(isset($_GET['devices']) && $_GET['devices'] !== '' 
-                                    && $_GET['status'] === '' && $_GET['personel'] === '' && $_GET['shifts']==='') {
-                                $devices = $_GET['devices'];
-                                $sql .= " WHERE `device_name` = '$devices' ";
-                            }
-
-                            if(isset($_GET['shifts']) && $_GET['shifts'] !== '' 
-                                    && $_GET['status'] === '' && $_GET['personel'] === '' && $_GET['devices'] === '') {
-                                $shifts = $_GET['shifts'];
-                                $sql .= " WHERE `shift` = '$shifts' ";
-                            }
-
-
-
-                            if(isset($_GET['personel'], $_GET['status']) && $_GET['personel'] !== '' 
-                                && $_GET['status'] !== '' && $_GET['devices'] === '' && $_GET['status']==='' 
-                                && $_GET['shifts']===''){
-                                $personel = $_GET['personel'];
-                                $status = $_GET['status'];
-                                $sql .= " WHERE status = $status AND user= $personel";
-                            }
-
-                            if(isset($_GET['status'], $_GET['devices']) && $_GET['status'] !== '' 
-                                && $_GET['devices'] !== '' && $_GET['personel'] === '' && $_GET['shifts']===''){
-                                $devices = $_GET['devices'];
-                                $status = $_GET['status'];
-                                $sql .= " WHERE status = $status AND device_name= '$devices'";
-                            }
-
-                            if(isset($_GET['personel'], $_GET['devices']) && $_GET['personel'] !== '' 
-                                && $_GET['devices'] !== '' && $_GET['status'] === '' && $_GET['shifts']===''){
-                                $devices = $_GET['devices'];
-                                $personel = $_GET['personel'];
-                                $sql .= " WHERE user = $personel AND device_name= '$devices'";
-                            }
-
-                            if(isset($_GET['personel'], $_GET['shifts']) && $_GET['personel'] !== '' 
-                                && $_GET['shifts'] !== '' && $_GET['status'] === '' && $_GET['devices']===''){
-                                $shifts = $_GET['shifts'];
-                                $personel = $_GET['personel'];
-                                $sql .= " WHERE user = $personel AND shift= '$shifts'";
-                            }
-
-                            if(isset($_GET['devices'], $_GET['shifts']) && $_GET['devices'] !== '' 
-                                && $_GET['shifts'] !== '' && $_GET['status'] === '' && $_GET['personel']===''){
-                                $shifts = $_GET['shifts'];
-                                $devices = $_GET['devices'];
-                                $sql .= " WHERE device_name = '$devices' AND shift= '$shifts'";
-                            }
-
-                            if(isset($_GET['status'], $_GET['shifts']) && $_GET['status'] !== '' 
-                                && $_GET['shifts'] !== '' && $_GET['devices'] === '' && $_GET['personel']===''){
-                                $shifts = $_GET['shifts'];
-                                $status = $_GET['status'];
-                                $sql .= " WHERE status = $status AND shift= '$shifts'";
-                            }
-
-
-
-
-
-
-                            if(isset($_GET['personel'], $_GET['status'], $_GET['devices']) 
-                                    && $_GET['personel'] !== '' && $_GET['status'] !== '' && $_GET['devices']!==''
-                                    && $_GET['shifts']===''){
-                                $personel = $_GET['personel'];
-                                $status = $_GET['status'];
-                                $devices = $_GET['devices'];
-                                $sql .= " WHERE status = $status AND user= $personel AND device_name ='$devices'";
-                            }
-
-                            if(isset($_GET['personel'], $_GET['status'], $_GET['shifts']) 
-                                    && $_GET['personel'] !== '' && $_GET['status'] !== '' && $_GET['shifts']!==''
-                                    && $_GET['devices']===''){
-                                $personel = $_GET['personel'];
-                                $status = $_GET['status'];
-                                $shifts = $_GET['shifts'];
-                                $sql .= " WHERE status = $status AND user= $personel AND shift =$shifts";
-                            }
-
-                            if(isset($_GET['devices'], $_GET['status'], $_GET['shifts']) 
-                                    && $_GET['devices'] !== '' && $_GET['status'] !== '' && $_GET['shifts']!==''
-                                    && $_GET['personel']===''){
-                                $devices = $_GET['devices'];
-                                $status = $_GET['status'];
-                                $shifts = $_GET['shifts'];
-                                $sql .= " WHERE status = $status AND device_name= '$devices' AND shift =$shifts";
-                            }
-
-                            if(isset($_GET['devices'], $_GET['personel'], $_GET['shifts']) 
-                                    && $_GET['devices'] !== '' && $_GET['personel'] !== '' && $_GET['shifts']!==''
-                                    && $_GET['status']===''){
-                                $devices = $_GET['devices'];
-                                $personel = $_GET['personel'];
-                                $shifts = $_GET['shifts'];
-                                $sql .= " WHERE user = $personel AND device_name= '$devices' AND shift =$shifts";
-                            }
-
-
-
                             
 
-                            if(isset($_GET['personel'], $_GET['status'], $_GET['devices'] , $_GET['shifts']) 
-                                    && $_GET['personel'] !== '' && $_GET['status'] !== '' && $_GET['devices']!==''
-                                    && $_GET['shifts']!==''){
-                                $personel = $_GET['personel'];
-                                $status = $_GET['status'];
-                                $devices = $_GET['devices'];
-                                $shifts = $_GET['shifts'];
-                                $sql .= " WHERE status = $status AND user= $personel 
-                                AND device_name ='$devices' AND shift =$shifts";
-                            }
-
                             // Add LIMIT clause for pagination
-                            $sql .= " ORDER BY id LIMIT $start_from, $results_per_page";
+                            $sql .= " ORDER BY date DESC LIMIT $start_from, $results_per_page";
 
 
-                            echo $sql;
+                            // echo $sql;
                             
                             $result = $conn->query($sql);
 
@@ -422,94 +217,8 @@ if (!isset($_SESSION["all_data"])) {
                             echo '<li class="page-item"><a class="page-link" href="?page=' . ($page - 1);
 
 
-                            if(isset($_GET['status']) && $_GET['status'] !== '' 
-                                        && $_GET['personel'] === '' && $_GET['devices'] === '') {
-                                echo '&status=' . $_GET['status']. '&personel='. '&devices='. '&shifts=';
-                            }
-                            if(isset($_GET['personel']) && $_GET['personel'] !== '' 
-                                    && $_GET['status'] === '' && $_GET['devices'] === '') {
-                                echo '&personel=' . $_GET['personel']. '&status='. '&devices='. '&shifts=';
-                            }
-                            if(isset($_GET['devices']) && $_GET['devices'] !== '' 
-                                    && $_GET['status'] === '' && $_GET['personel'] === '') {
-                                echo '&devices=' . $_GET['devices']. '&status='. '&personel='. '&shifts=';
-                            }
-                            if(isset($_GET['shifts']) && $_GET['shifts'] !== '' 
-                                    && $_GET['status'] === '' && $_GET['personel'] === '') {
-                                echo '&shifts=' . $_GET['shifts']. '&status='. '&personel='. '&devices=';
-                            }
-
-
-
-                            if(isset($_GET['personel'], $_GET['status']) 
-                                && $_GET['personel'] !== '' && $_GET['status'] !== '' && $_GET['devices'] === '' && $_GET['shifts'] === ''){
-                                echo '&personel=' . $_GET['personel']. '&status='. $_GET['status']. '&devices='. '&shifts=';
-                            }
-                            if(isset($_GET['personel'], $_GET['devices']) 
-                                && $_GET['personel'] !== '' && $_GET['devices'] !== '' && $_GET['status'] === '' && $_GET['shifts'] === ''){
-                                echo '&personel=' . $_GET['personel']. '&devices='. $_GET['devices']. '&status='. '&shifts=';
-                            }
-                            if(isset($_GET['devices'], $_GET['status']) 
-                                && $_GET['devices'] !== '' && $_GET['status'] !== '' && $_GET['devices'] === '' && $_GET['shifts'] === ''){
-                                echo '&devices=' . $_GET['devices']. '&status='. $_GET['status']. '&personel='. '&shifts=';
-                            }
-                            if(isset($_GET['shifts'], $_GET['status']) 
-                                && $_GET['shifts'] !== '' && $_GET['status'] !== '' && $_GET['personel'] === '' && $_GET['devices'] === ''){
-                                echo '&shifts=' . $_GET['shifts']. '&status='. $_GET['status']. '&personel='. '&devices=';
-                            }
-                            if(isset($_GET['devices'], $_GET['shifts']) 
-                                && $_GET['devices'] !== '' && $_GET['shifts'] !== '' && $_GET['personel'] === '' && $_GET['status'] === ''){
-                                echo '&devices=' . $_GET['devices']. '&shifts='. $_GET['shifts']. '&personel='. '&status=';
-                            }
-                            if(isset($_GET['shifts'], $_GET['personel']) 
-                                && $_GET['shifts'] !== '' && $_GET['personel'] !== '' && $_GET['status'] === '' && $_GET['devices'] === ''){
-                                echo '&shifts=' . $_GET['shifts']. '&personel='. $_GET['personel']. '&status='. '&devices=';
-                            }
-
-
-
-
-
-
-
-
-
-                        if(isset($_GET['personel'], $_GET['status'], $_GET['devices']) 
-                                && $_GET['personel'] !== '' && $_GET['status'] !== '' && $_GET['devices']!==''
-                                && $_GET['shifts']===''){
-                                echo '&devices=' . $_GET['devices']. '&personel='. $_GET['personel']. '&status='.$_GET['status']. '&shifts=';
-
-                        }
-
-                        if(isset($_GET['personel'], $_GET['status'], $_GET['shifts']) 
-                                && $_GET['personel'] !== '' && $_GET['status'] !== '' && $_GET['shifts']!==''
-                                && $_GET['devices']===''){
-                                echo '&shifts=' . $_GET['shifts']. '&personel='. $_GET['personel']. '&status='.$_GET['status']. '&devices=';
-
-                        }
-
-                        if(isset($_GET['devices'], $_GET['status'], $_GET['shifts']) 
-                                && $_GET['devices'] !== '' && $_GET['status'] !== '' && $_GET['shifts']!==''
-                                && $_GET['personel']===''){
-                                echo '&shifts=' . $_GET['shifts']. '&devices='. $_GET['devices']. '&status='.$_GET['status']. '&personel=';
-
-                        }
-
-                        if(isset($_GET['devices'], $_GET['personel'], $_GET['shifts']) 
-                                && $_GET['devices'] !== '' && $_GET['personel'] !== '' && $_GET['shifts']!==''
-                                && $_GET['status']===''){
-                                echo '&shifts=' . $_GET['shifts']. '&devices='. $_GET['devices']. '&personel='.$_GET['personel']. '&status=';
-
-                        }
                             
 
-
-
-
-                            if(isset($_GET['devices'], $_GET['status'], $_GET['personel'], $_GET['shifts']) 
-                                && $_GET['devices'] !== '' && $_GET['status'] !== '' && $_GET['personel'] !== '' && $_GET['shifts'] !== ''){
-                                echo '&devices=' . $_GET['devices']. '&status='. $_GET['status']. '&personel='.$_GET['personel']. '&shifts='.$_GET['shifts'];
-                            }
                           
                             echo '">قبلی</a></li>';
                         } else {
@@ -532,85 +241,7 @@ if (!isset($_SESSION["all_data"])) {
                                 echo '<li class="page-item active"><a class="page-link" href="?page=' . $i;
                                 
                                 
-                                if(isset($_GET['status']) && $_GET['status'] !== '' 
-                                        && $_GET['personel'] === '' && $_GET['devices'] === '') {
-                                echo '&status=' . $_GET['status']. '&personel='. '&devices='. '&shifts=';
-                                }
-                                if(isset($_GET['personel']) && $_GET['personel'] !== '' 
-                                        && $_GET['status'] === '' && $_GET['devices'] === '') {
-                                    echo '&personel=' . $_GET['personel']. '&status='. '&devices='. '&shifts=';
-                                }
-                                if(isset($_GET['devices']) && $_GET['devices'] !== '' 
-                                        && $_GET['status'] === '' && $_GET['personel'] === '') {
-                                    echo '&devices=' . $_GET['devices']. '&status='. '&personel='. '&shifts=';
-                                }
-                                if(isset($_GET['shifts']) && $_GET['shifts'] !== '' 
-                                        && $_GET['status'] === '' && $_GET['personel'] === '') {
-                                    echo '&shifts=' . $_GET['shifts']. '&status='. '&personel='. '&devices=';
-                                }
-
-
-
-                                if(isset($_GET['personel'], $_GET['status']) 
-                                    && $_GET['personel'] !== '' && $_GET['status'] !== '' && $_GET['devices'] === '' && $_GET['shifts'] === ''){
-                                    echo '&personel=' . $_GET['personel']. '&status='. $_GET['status']. '&devices='. '&shifts=';
-                                }
-                                if(isset($_GET['personel'], $_GET['devices']) 
-                                    && $_GET['personel'] !== '' && $_GET['devices'] !== '' && $_GET['status'] === '' && $_GET['shifts'] === ''){
-                                    echo '&personel=' . $_GET['personel']. '&devices='. $_GET['devices']. '&status='. '&shifts=';
-                                }
-                                if(isset($_GET['devices'], $_GET['status']) 
-                                    && $_GET['devices'] !== '' && $_GET['status'] !== '' && $_GET['devices'] === '' && $_GET['shifts'] === ''){
-                                    echo '&devices=' . $_GET['devices']. '&status='. $_GET['status']. '&personel='. '&shifts=';
-                                }
-                                if(isset($_GET['shifts'], $_GET['status']) 
-                                    && $_GET['shifts'] !== '' && $_GET['status'] !== '' && $_GET['personel'] === '' && $_GET['devices'] === ''){
-                                    echo '&shifts=' . $_GET['shifts']. '&status='. $_GET['status']. '&personel='. '&devices=';
-                                }
-                                if(isset($_GET['devices'], $_GET['shifts']) 
-                                    && $_GET['devices'] !== '' && $_GET['shifts'] !== '' && $_GET['personel'] === '' && $_GET['status'] === ''){
-                                    echo '&devices=' . $_GET['devices']. '&shifts='. $_GET['shifts']. '&personel='. '&status=';
-                                }
-                                if(isset($_GET['shifts'], $_GET['personel']) 
-                                    && $_GET['shifts'] !== '' && $_GET['personel'] !== '' && $_GET['status'] === '' && $_GET['devices'] === ''){
-                                    echo '&shifts=' . $_GET['shifts']. '&personel='. $_GET['personel']. '&status='. '&devices=';
-                                }
-
-
-
-                                if(isset($_GET['personel'], $_GET['status'], $_GET['devices']) 
-                                    && $_GET['personel'] !== '' && $_GET['status'] !== '' && $_GET['devices']!==''
-                                    && $_GET['shifts']===''){
-                                    echo '&devices=' . $_GET['devices']. '&personel='. $_GET['personel']. '&status='.$_GET['status']. '&shifts=';
-
-                                    }
-
-                                if(isset($_GET['personel'], $_GET['status'], $_GET['shifts']) 
-                                        && $_GET['personel'] !== '' && $_GET['status'] !== '' && $_GET['shifts']!==''
-                                        && $_GET['devices']===''){
-                                        echo '&shifts=' . $_GET['shifts']. '&personel='. $_GET['personel']. '&status='.$_GET['status']. '&devices=';
-
-                                }
-
-                                if(isset($_GET['devices'], $_GET['status'], $_GET['shifts']) 
-                                        && $_GET['devices'] !== '' && $_GET['status'] !== '' && $_GET['shifts']!==''
-                                        && $_GET['personel']===''){
-                                        echo '&shifts=' . $_GET['shifts']. '&devices='. $_GET['devices']. '&status='.$_GET['status']. '&personel=';
-
-                                }
-
-                                if(isset($_GET['devices'], $_GET['personel'], $_GET['shifts']) 
-                                        && $_GET['devices'] !== '' && $_GET['personel'] !== '' && $_GET['shifts']!==''
-                                        && $_GET['status']===''){
-                                        echo '&shifts=' . $_GET['shifts']. '&devices='. $_GET['devices']. '&personel='.$_GET['personel']. '&status=';
-
-                                }
-
-
-                                if(isset($_GET['devices'], $_GET['status'], $_GET['personel'], $_GET['shifts']) 
-                                    && $_GET['devices'] !== '' && $_GET['status'] !== '' && $_GET['personel'] !== '' && $_GET['shifts'] !== ''){
-                                    echo '&devices=' . $_GET['devices']. '&status='. $_GET['status']. '&personel='.$_GET['personel']. '&shifts='.$_GET['shifts'];
-                                }
+                               
 
 
                                 echo '">' . $i . '</a></li>';
@@ -618,87 +249,6 @@ if (!isset($_SESSION["all_data"])) {
                                 echo '<li class="page-item"><a class="page-link" href="?page=' . $i;
 
 
-                                if(isset($_GET['status']) && $_GET['status'] !== '' 
-                                        && $_GET['personel'] === '' && $_GET['devices'] === '') {
-                                echo '&status=' . $_GET['status']. '&personel='. '&devices='. '&shifts=';
-                                }
-                                if(isset($_GET['personel']) && $_GET['personel'] !== '' 
-                                        && $_GET['status'] === '' && $_GET['devices'] === '') {
-                                    echo '&personel=' . $_GET['personel']. '&status='. '&devices='. '&shifts=';
-                                }
-                                if(isset($_GET['devices']) && $_GET['devices'] !== '' 
-                                        && $_GET['status'] === '' && $_GET['personel'] === '') {
-                                    echo '&devices=' . $_GET['devices']. '&status='. '&personel='. '&shifts=';
-                                }
-                                if(isset($_GET['shifts']) && $_GET['shifts'] !== '' 
-                                        && $_GET['status'] === '' && $_GET['personel'] === '') {
-                                    echo '&shifts=' . $_GET['shifts']. '&status='. '&personel='. '&devices=';
-                                }
-
-
-
-                                if(isset($_GET['personel'], $_GET['status']) 
-                                    && $_GET['personel'] !== '' && $_GET['status'] !== '' && $_GET['devices'] === '' && $_GET['shifts'] === ''){
-                                    echo '&personel=' . $_GET['personel']. '&status='. $_GET['status']. '&devices='. '&shifts=';
-                                }
-                                if(isset($_GET['personel'], $_GET['devices']) 
-                                    && $_GET['personel'] !== '' && $_GET['devices'] !== '' && $_GET['status'] === '' && $_GET['shifts'] === ''){
-                                    echo '&personel=' . $_GET['personel']. '&devices='. $_GET['devices']. '&status='. '&shifts=';
-                                }
-                                if(isset($_GET['devices'], $_GET['status']) 
-                                    && $_GET['devices'] !== '' && $_GET['status'] !== '' && $_GET['devices'] === '' && $_GET['shifts'] === ''){
-                                    echo '&devices=' . $_GET['devices']. '&status='. $_GET['status']. '&personel='. '&shifts=';
-                                }
-                                if(isset($_GET['shifts'], $_GET['status']) 
-                                    && $_GET['shifts'] !== '' && $_GET['status'] !== '' && $_GET['personel'] === '' && $_GET['devices'] === ''){
-                                    echo '&shifts=' . $_GET['shifts']. '&status='. $_GET['status']. '&personel='. '&devices=';
-                                }
-                                if(isset($_GET['devices'], $_GET['shifts']) 
-                                    && $_GET['devices'] !== '' && $_GET['shifts'] !== '' && $_GET['personel'] === '' && $_GET['status'] === ''){
-                                    echo '&devices=' . $_GET['devices']. '&shifts='. $_GET['shifts']. '&personel='. '&status=';
-                                }
-                                if(isset($_GET['shifts'], $_GET['personel']) 
-                                    && $_GET['shifts'] !== '' && $_GET['personel'] !== '' && $_GET['status'] === '' && $_GET['devices'] === ''){
-                                    echo '&shifts=' . $_GET['shifts']. '&personel='. $_GET['personel']. '&status='. '&devices=';
-                                }
-
-
-
-                                if(isset($_GET['personel'], $_GET['status'], $_GET['devices']) 
-                                    && $_GET['personel'] !== '' && $_GET['status'] !== '' && $_GET['devices']!==''
-                                    && $_GET['shifts']===''){
-                                    echo '&devices=' . $_GET['devices']. '&personel='. $_GET['personel']. '&status='.$_GET['status']. '&shifts=';
-
-                                    }
-
-                                if(isset($_GET['personel'], $_GET['status'], $_GET['shifts']) 
-                                        && $_GET['personel'] !== '' && $_GET['status'] !== '' && $_GET['shifts']!==''
-                                        && $_GET['devices']===''){
-                                        echo '&shifts=' . $_GET['shifts']. '&personel='. $_GET['personel']. '&status='.$_GET['status']. '&devices=';
-
-                                }
-
-                                if(isset($_GET['devices'], $_GET['status'], $_GET['shifts']) 
-                                        && $_GET['devices'] !== '' && $_GET['status'] !== '' && $_GET['shifts']!==''
-                                        && $_GET['personel']===''){
-                                        echo '&shifts=' . $_GET['shifts']. '&devices='. $_GET['devices']. '&status='.$_GET['status']. '&personel=';
-
-                                }
-
-                                if(isset($_GET['devices'], $_GET['personel'], $_GET['shifts']) 
-                                        && $_GET['devices'] !== '' && $_GET['personel'] !== '' && $_GET['shifts']!==''
-                                        && $_GET['status']===''){
-                                        echo '&shifts=' . $_GET['shifts']. '&devices='. $_GET['devices']. '&personel='.$_GET['personel']. '&status=';
-
-                                }
-
-
-
-
-                                if(isset($_GET['devices'], $_GET['status'], $_GET['personel'], $_GET['shifts']) 
-                                    && $_GET['devices'] !== '' && $_GET['status'] !== '' && $_GET['personel'] !== '' && $_GET['shifts'] !== ''){
-                                    echo '&devices=' . $_GET['devices']. '&status='. $_GET['status']. '&personel='.$_GET['personel']. '&shifts='.$_GET['shifts'];
-                                }
 
                                 echo '">' . $i . '</a></li>';
                             }
@@ -710,86 +260,7 @@ if (!isset($_SESSION["all_data"])) {
 
 
 
-                                if(isset($_GET['status']) && $_GET['status'] !== '' 
-                                        && $_GET['personel'] === '' && $_GET['devices'] === '') {
-                                echo '&status=' . $_GET['status']. '&personel='. '&devices='. '&shifts=';
-                                }
-                                if(isset($_GET['personel']) && $_GET['personel'] !== '' 
-                                        && $_GET['status'] === '' && $_GET['devices'] === '') {
-                                    echo '&personel=' . $_GET['personel']. '&status='. '&devices='. '&shifts=';
-                                }
-                                if(isset($_GET['devices']) && $_GET['devices'] !== '' 
-                                        && $_GET['status'] === '' && $_GET['personel'] === '') {
-                                    echo '&devices=' . $_GET['devices']. '&status='. '&personel='. '&shifts=';
-                                }
-                                if(isset($_GET['shifts']) && $_GET['shifts'] !== '' 
-                                        && $_GET['status'] === '' && $_GET['personel'] === '') {
-                                    echo '&shifts=' . $_GET['shifts']. '&status='. '&personel='. '&devices=';
-                                }
-
-
-
-                                if(isset($_GET['personel'], $_GET['status']) 
-                                    && $_GET['personel'] !== '' && $_GET['status'] !== '' && $_GET['devices'] === '' && $_GET['shifts'] === ''){
-                                    echo '&personel=' . $_GET['personel']. '&status='. $_GET['status']. '&devices='. '&shifts=';
-                                }
-                                if(isset($_GET['personel'], $_GET['devices']) 
-                                    && $_GET['personel'] !== '' && $_GET['devices'] !== '' && $_GET['status'] === '' && $_GET['shifts'] === ''){
-                                    echo '&personel=' . $_GET['personel']. '&devices='. $_GET['devices']. '&status='. '&shifts=';
-                                }
-                                if(isset($_GET['devices'], $_GET['status']) 
-                                    && $_GET['devices'] !== '' && $_GET['status'] !== '' && $_GET['devices'] === '' && $_GET['shifts'] === ''){
-                                    echo '&devices=' . $_GET['devices']. '&status='. $_GET['status']. '&personel='. '&shifts=';
-                                }
-                                if(isset($_GET['shifts'], $_GET['status']) 
-                                    && $_GET['shifts'] !== '' && $_GET['status'] !== '' && $_GET['personel'] === '' && $_GET['devices'] === ''){
-                                    echo '&shifts=' . $_GET['shifts']. '&status='. $_GET['status']. '&personel='. '&devices=';
-                                }
-                                if(isset($_GET['devices'], $_GET['shifts']) 
-                                    && $_GET['devices'] !== '' && $_GET['shifts'] !== '' && $_GET['personel'] === '' && $_GET['status'] === ''){
-                                    echo '&devices=' . $_GET['devices']. '&shifts='. $_GET['shifts']. '&personel='. '&status=';
-                                }
-                                if(isset($_GET['shifts'], $_GET['personel']) 
-                                    && $_GET['shifts'] !== '' && $_GET['personel'] !== '' && $_GET['status'] === '' && $_GET['devices'] === ''){
-                                    echo '&shifts=' . $_GET['shifts']. '&personel='. $_GET['personel']. '&status='. '&devices=';
-                                }
-
-
-
-                                if(isset($_GET['personel'], $_GET['status'], $_GET['devices']) 
-                                    && $_GET['personel'] !== '' && $_GET['status'] !== '' && $_GET['devices']!==''
-                                    && $_GET['shifts']===''){
-                                    echo '&devices=' . $_GET['devices']. '&personel='. $_GET['personel']. '&status='.$_GET['status']. '&shifts=';
-
-                                    }
-
-                                if(isset($_GET['personel'], $_GET['status'], $_GET['shifts']) 
-                                        && $_GET['personel'] !== '' && $_GET['status'] !== '' && $_GET['shifts']!==''
-                                        && $_GET['devices']===''){
-                                        echo '&shifts=' . $_GET['shifts']. '&personel='. $_GET['personel']. '&status='.$_GET['status']. '&devices=';
-
-                                }
-
-                                if(isset($_GET['devices'], $_GET['status'], $_GET['shifts']) 
-                                        && $_GET['devices'] !== '' && $_GET['status'] !== '' && $_GET['shifts']!==''
-                                        && $_GET['personel']===''){
-                                        echo '&shifts=' . $_GET['shifts']. '&devices='. $_GET['devices']. '&status='.$_GET['status']. '&personel=';
-
-                                }
-
-                                if(isset($_GET['devices'], $_GET['personel'], $_GET['shifts']) 
-                                        && $_GET['devices'] !== '' && $_GET['personel'] !== '' && $_GET['shifts']!==''
-                                        && $_GET['status']===''){
-                                        echo '&shifts=' . $_GET['shifts']. '&devices='. $_GET['devices']. '&personel='.$_GET['personel']. '&status=';
-
-                                }
-
-
-
-                                if(isset($_GET['devices'], $_GET['status'], $_GET['personel'], $_GET['shifts']) 
-                                    && $_GET['devices'] !== '' && $_GET['status'] !== '' && $_GET['personel'] !== '' && $_GET['shifts'] !== ''){
-                                    echo '&devices=' . $_GET['devices']. '&status='. $_GET['status']. '&personel='.$_GET['personel']. '&shifts='.$_GET['shifts'];
-                                }
+                               
 
 
                             echo '">بعدی</a></li>';
@@ -812,25 +283,11 @@ if (!isset($_SESSION["all_data"])) {
                 $('.nav-link').removeClass('active');
                 $(this).addClass('active');
             });
-
-
-
         });
     </script>
 
 
-    <!-- <script>
-        // Function to show the "reason_reject" div
-        function showReasonReject() {
-            document.getElementById("reason_reject").style.display = "block";
-        }
-        
-        // Event listener for the "رد" button
-        document.getElementById("reject_button").addEventListener("click", function(event) {
-            event.preventDefault(); // Prevent default form submission behavior
-            showReasonReject(); // Call the function to show the "reason_reject" div
-        });
-    </script> -->
+
 
    
 </body>

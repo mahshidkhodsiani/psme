@@ -44,5 +44,6 @@ function giveName($id){
         $row = $result->fetch_assoc();
     }
 
-    return $row['size'];
+    return $row;
 }
+

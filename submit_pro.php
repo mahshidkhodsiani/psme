@@ -15,6 +15,7 @@ if (!isset($_SESSION["all_data"])) {
     <?php
     include 'includes.php';
     include 'config.php';
+    include 'functions.php';
     ?>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -62,24 +63,24 @@ if (!isset($_SESSION["all_data"])) {
                 <?php
                 include 'sidebar.php';
                 ?>
-               
+
             </div>
 
             <div class="col-md-8">
                 <h3 style="background-color: #dbd50c;" class="d-flex justify-content-center mt-2 p-3">فرم ثبت روزانه محصولات : </h3>
                 <form action="submit_pro.php" method="POST" enctype="multipart/form-data" class="p-3 border mt-4">
-                <div class="row">
-                    <div class="col-md-6">
-                        <label for="shift" class="form-label fw-semibold">
-                            شیفت</label>
-                        <select name="shift" class="form-select" aria-label="Default select example" required>
-                            <option value="" selected>یکی از شیفت های زیر را انتخاب کنید</option>
-                            <option value="1">روز</option>
-                            <option value="2">عصر</option>
-                            <option value="3">شب</option>
-                        </select>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="shift" class="form-label fw-semibold">
+                                شیفت</label>
+                            <select name="shift" class="form-select" aria-label="Default select example" required>
+                                <option value="" selected>یکی از شیفت های زیر را انتخاب کنید</option>
+                                <option value="1">روز</option>
+                                <option value="2">عصر</option>
+                                <option value="3">شب</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
 
 
 
@@ -91,7 +92,7 @@ if (!isset($_SESSION["all_data"])) {
                             <select name="device_name" id="device_name" class="form-select" aria-label="Default select example" required>
                                 <option value="" selected>یکی از دستگاه های زیر را انتخاب کنید</option>
                                 <?php
-                               $sql = "SELECT name, MIN(id) AS id FROM devices GROUP BY name ORDER BY name";
+                                $sql = "SELECT name, MIN(id) AS id FROM devices GROUP BY name ORDER BY name";
 
 
                                 $result = $conn->query($sql);
@@ -127,8 +128,8 @@ if (!isset($_SESSION["all_data"])) {
                         </div>
                     </div>
 
-                    
-           
+
+
 
                     <script>
                         document.addEventListener('DOMContentLoaded', function() {
@@ -176,7 +177,7 @@ if (!isset($_SESSION["all_data"])) {
 
 
                     <div class="row mt-3">
-                        
+
                         <div class="col-md-6">
                             <label for="piece_name" class="form-label fw-semibold">نام قطعه</label>
                             <select name="piece_name" id="piece_name" class="form-select" aria-label="Default select example" required>
@@ -239,48 +240,6 @@ if (!isset($_SESSION["all_data"])) {
 
 
 
-                    <!-- <script>
-                        document.addEventListener('DOMContentLoaded', function() {
-                            var pieceNameSelect = document.getElementById('piece_name');
-                            var sizeSelect = document.getElementById('size_piece');
-
-                            // Add initial option and disable size select
-                            sizeSelect.innerHTML = '<option value="" selected>ابتدا اسم قطعه را وارد کنید</option>';
-                            sizeSelect.disabled = true;
-
-                            pieceNameSelect.addEventListener('change', function() {
-                                var pieceName = this.value;
-
-                                // Clear previous options
-                                sizeSelect.innerHTML = '<option value="" selected>در حال بارگذاری...</option>';
-
-                                // Make AJAX request
-                                var xhr = new XMLHttpRequest();
-                                xhr.onreadystatechange = function() {
-                                    if (xhr.readyState === XMLHttpRequest.DONE) {
-                                        if (xhr.status === 200) {
-                                            var sizes = JSON.parse(xhr.responseText);
-                                            // Update size select options
-                                            sizeSelect.innerHTML = '<option value="" selected>یکی از سایزهای زیر را انتخاب کنید</option>';
-                                            sizes.forEach(function(size) {
-                                                var option = document.createElement('option');
-                                                option.value = size;
-                                                option.textContent = size;
-                                                sizeSelect.appendChild(option);
-                                            });
-                                            // Enable size select
-                                            sizeSelect.disabled = false;
-                                        } else {
-                                            console.error('Request failed: ' + xhr.status);
-                                        }
-                                    }
-                                };
-                                xhr.open('GET', 'get_sizes.php?piece_name=' + encodeURIComponent(pieceName), true);
-                                xhr.send();
-                            });
-                        });
-                    </script> -->
-
 
 
 
@@ -341,7 +300,7 @@ if (!isset($_SESSION["all_data"])) {
 
 
 
-          
+
 
 
 
@@ -370,18 +329,18 @@ if (!isset($_SESSION["all_data"])) {
 
 
 
-                
+
                     <div class="row mt-3">
-                      
+
                         <div class="col-md-6">
                             <label for="had_stop" class="form-label fw-semibold">
                                 توقف (دقیقه)</label>
                             <!-- <input type="text" name="had_stop" class="form-control"> -->
-                            <select name="had_stop" id="had_stop" class="form-select" aria-label="Default select example" >
-                                
+                            <select name="had_stop" id="had_stop" class="form-select" aria-label="Default select example">
+
                                 <option value="0">نداشتم</option>
                                 <option value="1">داشتم</option>
-                            
+
                             </select>
                         </div>
                     </div>
@@ -428,7 +387,7 @@ if (!isset($_SESSION["all_data"])) {
 
 
 
-    
+
                     <br>
                     <div class="row mt-3">
                         <div class="col-md-6">
@@ -443,7 +402,7 @@ if (!isset($_SESSION["all_data"])) {
                         </div>
                     </div>
                     <div class="row mt-3" style="margin-bottom: 200px;">
-                       
+
 
                         <div class="col-md-6">
                             <label for="sub_date" class="form-label fw-semibold">
@@ -454,10 +413,10 @@ if (!isset($_SESSION["all_data"])) {
                         <div class="col-md-6">
                             <label for="extra_explanation" class="form-label fw-semibold">
                                 توضیحات اضافی</label>
-                            <textarea name="extra_explanation" class="form-control" ></textarea>
+                            <textarea name="extra_explanation" class="form-control"></textarea>
                         </div>
 
-                     
+
                     </div>
 
 
@@ -480,6 +439,94 @@ if (!isset($_SESSION["all_data"])) {
 
 
                 </form>
+
+
+                <div class="row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-8">
+                        <div class="table-responsive">
+                            <table class="table border border-4 ">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="text-center">ردیف</th>
+                                        <th scope="col" class="text-center">کد دستگاه</th>
+                                        <th scope="col" class="text-center">نام قطعه</th>
+                                        <th scope="col" class="text-center">سایز قطعه</th>
+                                        <th scope="col" class="text-center">شیفت</th>
+                                        <th scope="col" class="text-center">تاریخ</th>
+                                        <th scope="col" class="text-center">تعداد</th>
+                                        <th scope="col" class="text-center">تایید و ادامه</th>
+
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <?php
+
+                                    $sql = "SELECT * FROM products WHERE status =0 AND user_confirm =0 LIMIT 5";
+                                    // echo $sql;
+
+                                    $result = $conn->query($sql);
+
+                                    if ($result->num_rows > 0) {
+                                        $a = 1;
+                                        while ($row = $result->fetch_assoc()) {
+                                    ?>
+                                            <!-- Table rows -->
+                                            <tr>
+                                                <th scope="row" class="text-center"><?= $a ?></th>
+                                                <td class="text-center"><?= giveDeviceCode($row['device_number']) ?></td>
+
+                                                <td class="text-center"><?= $row['piece_name'] ?></td>
+                                                <td class="text-center"><?= giveName($row['size'])['size'] ?></td>
+                                                <td class="text-center">
+                                                    <?php
+                                                    if ($row['shift'] == 1) {
+                                                        echo 'روز';
+                                                    }
+                                                    if ($row['shift'] == 2) {
+                                                        echo 'عصر';
+                                                    }
+                                                    if ($row['shift'] == 3) {
+                                                        echo 'شب';
+                                                    }
+                                                    ?>
+                                                </td>
+
+                                                <td class="text-center"><?= $row['date'] ?></td>
+                                                <td class="text-center"><?= $row['numbers'] ?></td>
+                                                <td class="text-center">
+
+                                                    <form action="" method="GET">
+                                                        <input type="hidden" value="<?= $row['id'] ?>" name="id_pro">
+                                                        <input type="hidden" value="<?= $row['user'] ?>" name="to_user">
+                                                        <button name="accept_user" class="btn btn-outline-success btn-sm">تایید میکنم</button>
+                                                        <!-- Change the type of the button to "button" -->
+                                                        <!-- <button name="edit_user" id="reject_button" class="btn btn-outline-warning btn-sm">نیاز به ویرایش</button> -->
+                                                        <a href="edit_pro.php?id_pro=<?= $row['id'] ?>" name="" id="reject_button" class="btn btn-outline-warning btn-sm">نیاز به ویرایش</a>
+                                                    </form>
+
+                                                </td>
+
+
+
+
+                                            </tr>
+                                    <?php
+                                            $a++;
+                                        }
+                                    }
+                                    ?>
+                                </tbody>
+
+
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-2"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -491,8 +538,6 @@ if (!isset($_SESSION["all_data"])) {
                 $(this).addClass('active');
             });
         });
-
-        
     </script>
 
 
@@ -531,7 +576,7 @@ if (!isset($_SESSION["all_data"])) {
 
 
 
-             // Initialize PersianDatepicker with desired options
+            // Initialize PersianDatepicker with desired options
             $("#pdpDark").persianDatepicker({
                 theme: "dark",
                 alwaysShow: false, // Datepicker will appear only when the input field is clicked
@@ -549,7 +594,7 @@ if (!isset($_SESSION["all_data"])) {
 
 
 
-            
+
 
             //size
             $("#pdpSmall").persianDatepicker({
@@ -702,7 +747,7 @@ if (!isset($_SESSION["all_data"])) {
 
 <?php
 
-if (isset($_POST['final_submit']) || isset($_POST['submit_go'])) {
+if (isset($_POST['submit_go'])) {
 
     $user = $_SESSION['all_data']['id'];
 
@@ -715,25 +760,25 @@ if (isset($_POST['final_submit']) || isset($_POST['submit_go'])) {
     $level = $conn->real_escape_string($_POST['level']);
     $numbers = $conn->real_escape_string($_POST['numbers']);
     $had_stop = $conn->real_escape_string($_POST['had_stop']);
-    if($had_stop == 1){
+    if ($had_stop == 1) {
         $start_stop = $conn->real_escape_string($_POST['start_stop']);
         $finish_stop = $conn->real_escape_string($_POST['finish_stop']);
         $couse_stop = $conn->real_escape_string($_POST['couse_stop']);
-    }else{
+    } else {
         $start_stop = NULL;
         $finish_stop = NULL;
         $couse_stop = NULL;
     }
-    
-   
+
+
 
     $sub_date = $conn->real_escape_string($_POST['sub_date']);
- 
+
     $start = $conn->real_escape_string($_POST['start']);
     $stop = $conn->real_escape_string($_POST['stop']);
-   
-   
-   
+
+
+
     $explanation = $conn->real_escape_string($_POST['extra_explanation']);
 
 
@@ -771,9 +816,6 @@ if (isset($_POST['final_submit']) || isset($_POST['submit_go'])) {
                     }, 3000);
                 });
               </script>";
-
-            
-
     } else {
         // Use Bootstrap's toast component to show an error toast message
         echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
@@ -796,9 +838,6 @@ if (isset($_POST['final_submit']) || isset($_POST['submit_go'])) {
                 });
               </script>";
 
-              echo "Error: " . $sql . "<br>" . $conn->error;
+        echo "Error: " . $sql . "<br>" . $conn->error;
     }
 }
-
-
-

@@ -1,12 +1,11 @@
 <?php
 
-
-
-
-function givePerson($id){
+function givePerson($id)
+{
 
     include 'config.php';
     $sql = "SELECT * FROM users WHERE id = $id";
+    // echo $sql;
 
     $result = $conn->query($sql);
 
@@ -14,14 +13,16 @@ function givePerson($id){
         $row = $result->fetch_assoc();
     }
 
-    return $row['name']." ".$row['family'];
+    return $row['name'] . " " . $row['family'];
 }
 
 
-function giveDeviceCode($id){
+function giveDeviceCode($id)
+{
 
     include 'config.php';
     $sql = "SELECT * FROM devices WHERE id = $id";
+    // echo $sql;
 
     $result = $conn->query($sql);
 
@@ -33,7 +34,8 @@ function giveDeviceCode($id){
 }
 
 
-function giveName($id){
+function giveName($id)
+{
 
     include 'config.php';
     $sql = "SELECT * FROM pieces WHERE id = $id";
@@ -46,4 +48,3 @@ function giveName($id){
 
     return $row;
 }
-

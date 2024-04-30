@@ -10,7 +10,9 @@ include 'functions.php';
 
 
 $html_table = '<table border="1">';
-$html_table .= '<thead><tr><th scope="col">ردیف</th><th scope="col">نام شخص</th><th scope="col">کد دستگاه</th><th scope="col">نام قطعه</th><th scope="col">سایز قطعه</th><th scope="col">شیفت</th><th scope="col">تاریخ</th></tr></thead>';
+$html_table .= '<thead><tr><th scope="col">ردیف</th><th scope="col">نام شخص</th><th scope="col">کد دستگاه</th>
+        <th scope="col">نام قطعه</th><th scope="col">سایز قطعه</th><th scope="col">شیفت</th><th scope="col">تاریخ</th>
+        <th scope="col">تعداد</th><th scope="col">قیمت</th></tr></thead>';
 $html_table .= '<tbody>';
 $a = 1;
 $result = $conn->query($_SESSION['query']);

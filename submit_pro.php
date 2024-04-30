@@ -463,7 +463,7 @@ if (!isset($_SESSION["all_data"])) {
                                 <tbody>
                                     <?php
 
-                                    $sql = "SELECT * FROM products WHERE status =0 AND user_confirm =0 LIMIT 5";
+                                    $sql = "SELECT * FROM products WHERE user= $id AND status =0 AND user_confirm =0 LIMIT 5";
                                     // echo $sql;
 
                                     $result = $conn->query($sql);

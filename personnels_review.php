@@ -14,6 +14,8 @@ if (!isset($_SESSION["all_data"])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>گزارش گیری از پرسنل</title>
+    <link rel="icon" href="img/logo.png" type="image/x-icon">
+
     <?php
     include 'includes.php';
     include 'config.php';
@@ -505,7 +507,17 @@ if (!isset($_SESSION["all_data"])) {
                                         <td class="text-center"><?= giveDeviceCode($row['device_number']) ?></td>
 
                                         <td class="text-center"><?= $row['piece_name'] ?></td>
-                                        <td class="text-center"><?= giveName($row['size'])['size'] ?></td>
+
+                                        <?php
+                                            $nameData = giveName($row['size']);
+                                            if (!empty($nameData) && is_array($nameData)) {
+                                                echo '<td class="text-center">' . $nameData['size'] . '</td>';
+                                            } else {
+                                                // Handle the case where giveName returns an empty array or non-array
+                                                echo '<td class="text-center">کاربر خالی وارد کرده</td>';
+                                            }
+                                        ?>
+
                                         <td class="text-center">
                                             <?php
                                             if($row['shift']==1){
@@ -522,8 +534,19 @@ if (!isset($_SESSION["all_data"])) {
                                    
                                         <td class="text-center"><?= $row['date'] ?></td>
                                         <td class="text-center"><?= $row['numbers'] ?></td>
-                                        <td class="text-center"><?= number_format(giveName($row['size'])['price'] * $row['numbers']) ?></td>
-                          
+                                        
+                                        <?php
+                                        $nameData = giveName($row['size']);
+                                        if (!empty($nameData) && is_array($nameData)) {
+                                            $price = isset($nameData['price']) ? $nameData['price'] : 0; // Providing default value if 'price' key is not defined
+                                            $totalPrice = $price * $row['numbers'];
+                                            echo '<td class="text-center">' . number_format($totalPrice) . '</td>';
+                                        } else {
+                                            // Handle the case where giveName returns an empty array or non-array
+                                            echo '<td class="text-center">کاربر خالی وارد کرده</td>';
+                                        }
+                                        ?>
+
 
 
 

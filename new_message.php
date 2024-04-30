@@ -11,7 +11,11 @@ if (!isset($_SESSION["all_data"])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>افزودن پیام جدید</title>
-    <?php include 'includes.php'; ?>
+    <link rel="icon" href="img/logo.png" type="image/x-icon">
+
+    <?php include 'includes.php';
+        include 'config.php'; 
+    ?>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
@@ -38,15 +42,41 @@ if (!isset($_SESSION["all_data"])) {
             <h3 style="background-color: #dbd50c;" class="d-flex justify-content-center mt-2 p-3">فرم ثبت پیام جدید :</h3>
 
                 <form action="new_message" method="POST" enctype="multipart/form-data" class="p-3 border mt-4">
-                    <label>لطفا پیام را داخل کادر بنویسید :</label>
-                    <textarea class="form-control" name="new_text" rows="3"></textarea>
+                    
+
+                    <div class="row">
+                        <div class="col-md-12">
+                        <label>لطفا پیام را داخل کادر بنویسید :</label>
+                        <br>
+                        <br>
+                        <textarea class="form-control" name="new_text" rows="3" required></textarea>
                 
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-5">
+                            <label>برای چه کسی ارسال شود</label>
+                            <select class="form-control" name="to_user" required>
+
+                                <option value="" selected>انتخاب کنید</option>
+                                <?php
+                                $sql = "SELECT * FROM users WHERE admin = 1";
+                                $result = $conn->query($sql);
+                                while ($row = $result->fetch_assoc()) {
+                                    echo "<option value='". $row['id']. "'>". $row['name']." ". $row['family']. "</option>";
+                                }
+                               ?>
+                            </select>
+                        </div>
+                        
+                    </div>
                     <div class="row mt-4">
                         <div class="col-md-6">
-                            <button name="enter" class="btn btn-outline-primary">ثبت</button>
+                            <button class="btn btn-outline-primary" name="enter">ثبت</button>
                         </div>
-
                     </div>
+                   
                 </form>
             </div>
             
@@ -77,10 +107,11 @@ if(isset($_POST['enter'])){
 
 
     $text = $conn->real_escape_string($_POST['new_text']);
+    $to_user = $conn->real_escape_string($_POST['to_user']);
 
     // Construct the SQL query using placeholders
-    $sql = "INSERT INTO messages (text)
-            VALUES ('$text')";
+    $sql = "INSERT INTO messages (text, to_user)
+            VALUES ('$text', '$to_user')";
 
     $result = $conn->query($sql);
 

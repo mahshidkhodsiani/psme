@@ -15,7 +15,9 @@ if (!isset($_SESSION["all_data"])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>ویرایش محصول</title>
+    <link rel="icon" href="img/logo.png" type="image/x-icon">
+
     <?php
     include 'includes.php';
     include 'config.php';
@@ -85,6 +87,8 @@ if (!isset($_SESSION["all_data"])) {
                 ?>
                     <form action="edit_pro.php" method="POST" enctype="multipart/form-data" class="p-3 border mt-4">
                         <div class="row">
+                            <p>نکات :</p>
+                            <p style="color: red;">* شماره دستگاه و سایز قطعه را حتما از اول وارد کنید</p>
                             <div class="col-md-6">
                                 <label for="shift" class="form-label fw-semibold">شیفت</label>
                                 <select name="shift" class="form-select" aria-label="Default select example" required>
@@ -101,7 +105,7 @@ if (!isset($_SESSION["all_data"])) {
 
                         <div class="row">
                             <div class="col-md-6">
-                                <label for="device_name" class="form-label fw-semibold">نام دستگاه</label>
+                                <label for="device_name" class="form-label fw-semibold">نام دستگاه *</label>
                                 <select name="device_name" id="device_name" class="form-select" aria-label="Default select example" required>
                                     <option value="" selected>یکی از دستگاه های زیر را انتخاب کنید</option>
                                     <?php
@@ -125,7 +129,7 @@ if (!isset($_SESSION["all_data"])) {
 
                             <div class="col-md-6">
                                 <label for="device_number" class="form-label fw-semibold">
-                                    شماره دستگاه</label>
+                                    شماره دستگاه *</label>
                                 <select name="device_number" id="device_number" class="form-select" aria-label="Default select example" required>
                                     <option value="" selected disabled>ابتدا اسم دستگاه را وارد کنید</option>
                                     <?php
@@ -194,7 +198,7 @@ if (!isset($_SESSION["all_data"])) {
                         <div class="row mt-3">
 
                             <div class="col-md-6">
-                                <label for="piece_name" class="form-label fw-semibold">نام قطعه</label>
+                                <label for="piece_name" class="form-label fw-semibold">نام قطعه *</label>
                                 <select name="piece_name" id="piece_name" class="form-select" aria-label="Default select example" required>
                                     <option value="" selected>یکی از قطعه های زیر را انتخاب کنید</option>
                                     <?php
@@ -216,7 +220,7 @@ if (!isset($_SESSION["all_data"])) {
 
 
                             <div class="col-md-6">
-                                <label for="size" class="form-label fw-semibold">سایز قطعه</label>
+                                <label for="size" class="form-label fw-semibold">سایز قطعه *</label>
 
                                 <select name="size" id="size" class="form-select" aria-label="Default select example" required>
                                     <option value="" selected disabled>ابتدا اسم قطعه را وارد کنید</option>
@@ -410,6 +414,7 @@ if (!isset($_SESSION["all_data"])) {
                                 <label for="extra_explanation" class="form-label fw-semibold">
                                     توضیحات اضافی</label>
                                 <textarea name="extra_explanation" class="form-control"><?php echo isset($row['explanation']) ? $row['explanation'] : ''; ?></textarea>
+                                <input type="hidden" name="id_pro" value="<?= $id_pro?>">
                             </div>
 
 
@@ -624,6 +629,10 @@ if (isset($_POST['submit_go'])) {
     // Get the user ID from the session
     $user = $_SESSION['all_data']['id'];
 
+    $id_pro = $_POST['id_pro'];
+
+    // var_dump($_POST);
+
     // Escape and retrieve form data
     $shift = $conn->real_escape_string($_POST['shift']);
     $device_name = $conn->real_escape_string($_POST['device_name']);
@@ -681,13 +690,15 @@ if (isset($_POST['submit_go'])) {
                     $('#successToast').toast('show');
                     setTimeout(function(){
                         $('#successToast').toast('hide');
+                        // Redirect after 3 seconds
+                        setTimeout(function(){
+                            window.location.href = 'submit_pro';
+                        }, 2000);
                     }, 3000);
                 });
-              </script>";
+            </script>";
 
-        // Redirect to submit_pro.php
-        header("Location: submit_pro.php");
-        exit; // Ensure that script execution stops after redirection
+      
     } else {
         // Show error message
         echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>

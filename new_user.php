@@ -11,7 +11,11 @@ if (!isset($_SESSION["all_data"])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>افزودن کاربر جدید</title>
-    <?php include 'includes.php'; ?>
+    <link rel="icon" href="img/logo.png" type="image/x-icon">
+
+    <?php include 'includes.php'; 
+    // include 'PersianCalendar.php';
+    ?>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 </style>
@@ -113,7 +117,7 @@ if(isset($_POST['enter'])){
     $family = $conn->real_escape_string($_POST['family']);
     $username = $conn->real_escape_string($_POST['username']);
     $password = $conn->real_escape_string($_POST['password']);
-    $date = date('Y-m-d H:i:s');
+    $date = mds_date("Y/m/d");
 
 
     if(isset($_POST['isAdmin'])){

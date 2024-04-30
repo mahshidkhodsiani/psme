@@ -17,6 +17,9 @@ $admin = $_SESSION["all_data"]['admin'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>خانه</title>
 
+
+    <link rel="icon" href="img/logo.png" type="image/x-icon">
+
     <?php
     include 'includes.php';
     include 'config.php';
@@ -57,7 +60,7 @@ $admin = $_SESSION["all_data"]['admin'];
                                             <?php
                                         }else{
                                             ?>
-                                            <h5 class="card-title">آخرین محصولات شما </h5>
+                                            <h5 class="card-title">آخرین محصولات من </h5>
                                         <?php
                                         }
                                

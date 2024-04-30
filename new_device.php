@@ -12,6 +12,8 @@ if (!isset($_SESSION["all_data"])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>افزودن دستگاه جدید</title>
+    <link rel="icon" href="img/logo.png" type="image/x-icon">
+
     <?php include 'includes.php'; ?>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -124,38 +126,11 @@ if (isset($_POST['enter'])) {
     $size = $conn->real_escape_string($_POST['size']);
 
 
-  
 
-    // Construct the SQL query using placeholders
-    $sql = "INSERT INTO devices (name, numbers)
-            VALUES ('$name', '$size')";
-
-    // Execute the query
-    $result = $conn->query($sql);
-
-    if ($result) {
-        // Use Bootstrap's toast component to show a success toast message
-        echo "<div id='successToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
-                <div class='toast-header bg-success text-white'>
-                    <strong class='mr-auto'>Success</strong>
-                    <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
-                        <span aria-hidden='true'>&times;</span>
-                    </button>
-                </div>
-                <div class='toast-body'>
-                    دستگاه به درستی اضافه شد!
-                </div>
-              </div>
-              <script>
-                $(document).ready(function(){
-                    $('#successToast').toast('show');
-                    setTimeout(function(){
-                        $('#successToast').toast('hide');
-                    }, 3000);
-                });
-              </script>";
-    } else {
-        // Use Bootstrap's toast component to show an error toast message
+    // check for duplicates :
+    $sql1 = "SELECT * FROM devices WHERE name = '$name'";
+    $result1 = $conn->query($sql1);
+    if ($result1-> num_rows > 0) {
         echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
                 <div class='toast-header bg-danger text-white'>
                     <strong class='mr-auto'>Error</strong>
@@ -164,7 +139,7 @@ if (isset($_POST['enter'])) {
                     </button>
                 </div>
                 <div class='toast-body'>
-                    خطایی در افزودن دستگاه پیش آمده!
+                    این دستگاه قبلا به ثبت رسیده لطفا دستگاه جدید وارد کنید !
                 </div>
               </div>
               <script>
@@ -175,6 +150,60 @@ if (isset($_POST['enter'])) {
                     }, 3000);
                 });
               </script>";
+    }else{
+
+        // Construct the SQL query using placeholders
+        $sql = "INSERT INTO devices (name, numbers)
+                VALUES ('$name', '$size')";
+
+        // Execute the query
+        $result = $conn->query($sql);
+
+        if ($result) {
+            // Use Bootstrap's toast component to show a success toast message
+            echo "<div id='successToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+                    <div class='toast-header bg-success text-white'>
+                        <strong class='mr-auto'>Success</strong>
+                        <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                            <span aria-hidden='true'>&times;</span>
+                        </button>
+                    </div>
+                    <div class='toast-body'>
+                        دستگاه به درستی اضافه شد!
+                    </div>
+                </div>
+                <script>
+                    $(document).ready(function(){
+                        $('#successToast').toast('show');
+                        setTimeout(function(){
+                            $('#successToast').toast('hide');
+                        }, 3000);
+                    });
+                </script>";
+        } else {
+            // Use Bootstrap's toast component to show an error toast message
+            echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+                    <div class='toast-header bg-danger text-white'>
+                        <strong class='mr-auto'>Error</strong>
+                        <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                            <span aria-hidden='true'>&times;</span>
+                        </button>
+                    </div>
+                    <div class='toast-body'>
+                        خطایی در افزودن دستگاه پیش آمده!
+                    </div>
+                </div>
+                <script>
+                    $(document).ready(function(){
+                        $('#errorToast').toast('show');
+                        setTimeout(function(){
+                            $('#errorToast').toast('hide');
+                        }, 3000);
+                    });
+                </script>";
+        }
     }
+  
+
 }
 ?>

@@ -4,6 +4,10 @@ if (!isset($_SESSION["all_data"])) {
     header("Location: login.php");
     exit();
 }
+
+
+$id = $_SESSION["all_data"]['id'];
+// $show_table_for_user = 0;
 ?>
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
@@ -11,7 +15,9 @@ if (!isset($_SESSION["all_data"])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>ثبت محصول جدید</title>
+    <link rel="icon" href="img/logo.png" type="image/x-icon">
+
     <?php
     include 'includes.php';
     include 'config.php';
@@ -441,92 +447,115 @@ if (!isset($_SESSION["all_data"])) {
                 </form>
 
 
-                <div class="row">
-                    <div class="col-md-2"></div>
-                    <div class="col-md-8">
-                        <div class="table-responsive">
-                            <table class="table border border-4 ">
-                                <thead>
-                                    <tr>
-                                        <th scope="col" class="text-center">ردیف</th>
-                                        <th scope="col" class="text-center">کد دستگاه</th>
-                                        <th scope="col" class="text-center">نام قطعه</th>
-                                        <th scope="col" class="text-center">سایز قطعه</th>
-                                        <th scope="col" class="text-center">شیفت</th>
-                                        <th scope="col" class="text-center">تاریخ</th>
-                                        <th scope="col" class="text-center">تعداد</th>
-                                        <th scope="col" class="text-center">تایید و ادامه</th>
 
-                                    </tr>
-                                </thead>
 
-                                <tbody>
-                                    <?php
+                <?php
 
-                                    $sql = "SELECT * FROM products WHERE user= $id AND status =0 AND user_confirm =0 LIMIT 5";
-                                    // echo $sql;
+                if($show_table_for_user = 1 ){?>
+                    <div class="row mt-5">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-8">
+                            <div class="table-responsive">
+                                
+                                <table class="table border border-4">
+                                    <h4>نگاه کلی :</h4>
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" class="text-center">ردیف</th>
+                                            <th scope="col" class="text-center">کد دستگاه</th>
+                                            <th scope="col" class="text-center">نام قطعه</th>
+                                            <th scope="col" class="text-center">سایز قطعه</th>
+                                            <th scope="col" class="text-center">شیفت</th>
+                                            <th scope="col" class="text-center">تاریخ</th>
+                                            <th scope="col" class="text-center">تعداد</th>
+                                            <th scope="col" class="text-center">تایید و ادامه</th>
 
-                                    $result = $conn->query($sql);
+                                        </tr>
+                                    </thead>
 
-                                    if ($result->num_rows > 0) {
-                                        $a = 1;
-                                        while ($row = $result->fetch_assoc()) {
-                                    ?>
-                                            <!-- Table rows -->
-                                            <tr>
-                                                <th scope="row" class="text-center"><?= $a ?></th>
-                                                <td class="text-center"><?= giveDeviceCode($row['device_number']) ?></td>
+                                    <tbody>
+                                        <?php
 
-                                                <td class="text-center"><?= $row['piece_name'] ?></td>
-                                                <td class="text-center"><?= giveName($row['size'])['size'] ?></td>
-                                                <td class="text-center">
+                                        $sql = "SELECT * FROM products WHERE user= $id AND status =0 AND user_confirm =0 
+                                                ORDER BY date DESC LIMIT 5";
+                                        // echo $sql;
+
+                                        $result = $conn->query($sql);
+
+                                        if ($result->num_rows > 0) {
+                                            $a = 1;
+                                            while ($row = $result->fetch_assoc()) {
+                                        ?>
+                                                <!-- Table rows -->
+                                                <tr>
+                                                    <th scope="row" class="text-center"><?= $a ?></th>
+                                                    <td class="text-center"><?= giveDeviceCode($row['device_number']) ?></td>
+
+                                                    <td class="text-center"><?= $row['piece_name'] ?></td>
+                                                
                                                     <?php
-                                                    if ($row['shift'] == 1) {
-                                                        echo 'روز';
-                                                    }
-                                                    if ($row['shift'] == 2) {
-                                                        echo 'عصر';
-                                                    }
-                                                    if ($row['shift'] == 3) {
-                                                        echo 'شب';
+                                                    $nameData = giveName($row['size']);
+                                                    if (!empty($nameData) && is_array($nameData)) {
+                                                        echo '<td class="text-center">' . $nameData['size'] . '</td>';
+                                                    } else {
+                                                        // Handle the case where giveName returns an empty array or non-array
+                                                        echo '<td class="text-center">کاربر خالی وارد کرده</td>';
                                                     }
                                                     ?>
-                                                </td>
-
-                                                <td class="text-center"><?= $row['date'] ?></td>
-                                                <td class="text-center"><?= $row['numbers'] ?></td>
-                                                <td class="text-center">
-
-                                                    <form action="" method="GET">
-                                                        <input type="hidden" value="<?= $row['id'] ?>" name="id_pro">
-                                                        <input type="hidden" value="<?= $row['user'] ?>" name="to_user">
-                                                        <button name="accept_user" class="btn btn-outline-success btn-sm">تایید میکنم</button>
-                                                        <!-- Change the type of the button to "button" -->
-                                                        <!-- <button name="edit_user" id="reject_button" class="btn btn-outline-warning btn-sm">نیاز به ویرایش</button> -->
-                                                        <a href="edit_pro.php?id_pro=<?= $row['id'] ?>" name="" id="reject_button" class="btn btn-outline-warning btn-sm">نیاز به ویرایش</a>
-                                                    </form>
-
-                                                </td>
 
 
+                                                    <td class="text-center">
+                                                        <?php
+                                                        if ($row['shift'] == 1) {
+                                                            echo 'روز';
+                                                        }
+                                                        if ($row['shift'] == 2) {
+                                                            echo 'عصر';
+                                                        }
+                                                        if ($row['shift'] == 3) {
+                                                            echo 'شب';
+                                                        }
+                                                        ?>
+                                                    </td>
+
+                                                    <td class="text-center"><?= $row['date'] ?></td>
+                                                    <td class="text-center"><?= $row['numbers'] ?></td>
+                                                    <td class="text-center">
+
+                                                        <form action="" method="GET">
+                                                            <input type="hidden" value="<?= $row['id'] ?>" name="id_pro">
+                                                            <input type="hidden" value="<?= $row['user'] ?>" name="to_user">
+                                                            <button name="accept_user" class="btn btn-outline-success btn-sm">تایید میکنم</button>
+                                                            <!-- Change the type of the button to "button" -->
+                                                            <!-- <button name="edit_user" id="reject_button" class="btn btn-outline-warning btn-sm">نیاز به ویرایش</button> -->
+                                                            <a href="edit_pro.php?id_pro=<?= $row['id'] ?>" name="" id="reject_button" class="btn btn-outline-warning btn-sm">نیاز به ویرایش</a>
+                                                        </form>
+
+                                                    </td>
 
 
-                                            </tr>
-                                    <?php
-                                            $a++;
+
+
+                                                </tr>
+                                        <?php
+                                                $a++;
+                                            }
                                         }
-                                    }
-                                    ?>
-                                </tbody>
+                                        ?>
+                                    </tbody>
 
 
 
-                                </tbody>
-                            </table>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
+                        <div class="col-md-2"></div>
                     </div>
-                    <div class="col-md-2"></div>
-                </div>
+                <?php                
+                }
+                ?>
+                
             </div>
         </div>
     </div>
@@ -783,6 +812,38 @@ if (isset($_POST['submit_go'])) {
 
 
 
+    $sql1 = "SELECT * FROM products WHERE date = ? AND device_name = ? AND start = ?";
+    $stmt = $conn->prepare($sql1);
+    $stmt->bind_param("sss", $sub_date, $device_name, $start);
+    $stmt->execute();
+    $result1 = $stmt->get_result();
+
+
+    
+    if($result1->num_rows >0){
+        echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+        <div class='toast-header bg-danger text-white'>
+            <strong class='mr-auto'>Error</strong>
+            <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                <span aria-hidden='true'>&times;</span>
+            </button>
+        </div>
+        <div class='toast-body'>
+            این محصول را قبلا وارد کردید!
+        </div>
+      </div>
+      <script>
+        $(document).ready(function(){
+            $('#errorToast').toast('show');
+            setTimeout(function(){
+                $('#errorToast').toast('hide');
+            }, 3000);
+        });
+      </script>";
+      exit;
+    }
+
+
     $sql = "INSERT INTO products (device_name, device_number, piece_name, shift, 
                     size, level, numbers, had_stop, start_stop, finish_stop,
                     date,start,stop,
@@ -827,6 +888,198 @@ if (isset($_POST['submit_go'])) {
                 </div>
                 <div class='toast-body'>
                     خطایی در افزودن محصول پیش آمده!
+                </div>
+              </div>
+              <script>
+                $(document).ready(function(){
+                    $('#errorToast').toast('show');
+                    setTimeout(function(){
+                        $('#errorToast').toast('hide');
+                    }, 3000);
+                });
+              </script>";
+
+        echo "Error: " . $sql . "<br>" . $conn->error;
+    }
+
+    $show_table_for_user = 1 ;
+}
+
+if (isset($_POST['final_submit'])) {
+
+    $user = $_SESSION['all_data']['id'];
+
+    $shift = $conn->real_escape_string($_POST['shift']);
+    $device_name = $conn->real_escape_string($_POST['device_name']);
+    $device_number = $conn->real_escape_string($_POST['device_number']);
+    $piece_name = $conn->real_escape_string($_POST['piece_name']);
+    // $piece_id = $conn->real_escape_string($_POST['piece_id']);
+    $size = $conn->real_escape_string($_POST['size']);
+    $level = $conn->real_escape_string($_POST['level']);
+    $numbers = $conn->real_escape_string($_POST['numbers']);
+    $had_stop = $conn->real_escape_string($_POST['had_stop']);
+    if ($had_stop == 1) {
+        $start_stop = $conn->real_escape_string($_POST['start_stop']);
+        $finish_stop = $conn->real_escape_string($_POST['finish_stop']);
+        $couse_stop = $conn->real_escape_string($_POST['couse_stop']);
+    } else {
+        $start_stop = NULL;
+        $finish_stop = NULL;
+        $couse_stop = NULL;
+    }
+
+
+
+    $sub_date = $conn->real_escape_string($_POST['sub_date']);
+
+    $start = $conn->real_escape_string($_POST['start']);
+    $stop = $conn->real_escape_string($_POST['stop']);
+
+
+
+    $explanation = $conn->real_escape_string($_POST['extra_explanation']);
+
+
+    $sql1 = "SELECT * FROM products WHERE date = ? AND device_name = ? AND start = ?";
+    $stmt = $conn->prepare($sql1);
+    $stmt->bind_param("sss", $sub_date, $device_name, $start);
+    $stmt->execute();
+    $result1 = $stmt->get_result();
+    
+    if($result1->num_rows >0){
+        echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+        <div class='toast-header bg-danger text-white'>
+            <strong class='mr-auto'>Error</strong>
+            <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                <span aria-hidden='true'>&times;</span>
+            </button>
+        </div>
+        <div class='toast-body'>
+            این محصول را قبلا وارد کردید!
+        </div>
+      </div>
+      <script>
+        $(document).ready(function(){
+            $('#errorToast').toast('show');
+            setTimeout(function(){
+                $('#errorToast').toast('hide');
+            }, 3000);
+        });
+      </script>";
+      exit;
+    }
+
+
+    $sql = "INSERT INTO products (device_name, device_number, piece_name, shift, 
+                    size, level, numbers, had_stop, start_stop, finish_stop,
+                    date,start,stop,
+                    couse_stop, explanation, user , user_confirm)
+            VALUES ('$device_name', '$device_number', '$piece_name', '$shift', 
+                    '$size', '$level', '$numbers', '$had_stop', '$start_stop', '$finish_stop', 
+                     '$sub_date', '$start', '$stop',
+                    '$couse_stop', '$explanation', '$user', 1)";
+
+    // Execute the query
+    $result = $conn->query($sql);
+
+    if ($result) {
+        // Use Bootstrap's toast component to show a success toast message
+        echo "<div id='successToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+                <div class='toast-header bg-success text-white'>
+                    <strong class='mr-auto'>Success</strong>
+                    <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                        <span aria-hidden='true'>&times;</span>
+                    </button>
+                </div>
+                <div class='toast-body'>
+                    محصول به درستی اضافه شد!
+                </div>
+              </div>
+              <script>
+                $(document).ready(function(){
+                    $('#successToast').toast('show');
+                    setTimeout(function(){
+                        $('#successToast').toast('hide');
+                    }, 3000);
+                });
+              </script>";
+    } else {
+        // Use Bootstrap's toast component to show an error toast message
+        echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+                <div class='toast-header bg-danger text-white'>
+                    <strong class='mr-auto'>Error</strong>
+                    <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                        <span aria-hidden='true'>&times;</span>
+                    </button>
+                </div>
+                <div class='toast-body'>
+                    خطایی در افزودن محصول پیش آمده!
+                </div>
+              </div>
+              <script>
+                $(document).ready(function(){
+                    $('#errorToast').toast('show');
+                    setTimeout(function(){
+                        $('#errorToast').toast('hide');
+                    }, 3000);
+                });
+              </script>";
+
+        echo "Error: " . $sql . "<br>" . $conn->error;
+    }
+
+
+    $show_table_for_user = 0 ;
+}
+
+
+
+
+
+
+if(isset($_GET['accept_user'])){
+
+    $id_pro = $_GET['id_pro'];
+    
+
+    $sql = "UPDATE products SET user_confirm = 1 WHERE id = $id_pro";
+    $result = $conn->query($sql);
+    if ($result) {
+        // Use Bootstrap's toast component to show a success toast message
+        echo "<div id='successToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+                <div class='toast-header bg-success text-white'>
+                    <strong class='mr-auto'>Success</strong>
+                    <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                        <span aria-hidden='true'>&times;</span>
+                    </button>
+                </div>
+                <div class='toast-body'>
+                    محصول با موفقیت تایید شد!
+                </div>
+              </div>
+              <script>
+                $(document).ready(function(){
+                    $('#successToast').toast('show');
+                    setTimeout(function(){
+                        $('#successToast').toast('hide');
+                        // Redirect after 3 seconds
+                        setTimeout(function(){
+                            window.location.href = 'submit_pro';
+                        }, 2000);
+                    }, 3000);
+                });
+            </script>";
+    } else {
+        // Use Bootstrap's toast component to show an error toast message
+        echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+                <div class='toast-header bg-danger text-white'>
+                    <strong class='mr-auto'>Error</strong>
+                    <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                        <span aria-hidden='true'>&times;</span>
+                    </button>
+                </div>
+                <div class='toast-body'>
+                    خطایی در تایید محصول پیش آمده!
                 </div>
               </div>
               <script>

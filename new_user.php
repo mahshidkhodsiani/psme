@@ -19,6 +19,7 @@ if (!isset($_SESSION["all_data"])) {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 </style>
+
 </head>
 <body>
     

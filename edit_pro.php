@@ -81,8 +81,11 @@ if (!isset($_SESSION["all_data"])) {
                     $id_pro = $_GET['id_pro'];
 
                     $sql = "SELECT * FROM products WHERE id = $id_pro";
+
+                    // echo $sql;
                     $result = $conn->query($sql);
                     $row = $result->fetch_assoc();
+                    // var_dump($row);
 
                 ?>
                     <form action="edit_pro.php" method="POST" enctype="multipart/form-data" class="p-3 border mt-4">
@@ -130,18 +133,20 @@ if (!isset($_SESSION["all_data"])) {
                             <div class="col-md-6">
                                 <label for="device_number" class="form-label fw-semibold">
                                     شماره دستگاه *</label>
-                                <select name="device_number" id="device_number" class="form-select" aria-label="Default select example" required>
-                                    <option value="" selected disabled>ابتدا اسم دستگاه را وارد کنید</option>
+                                    <select name="device_number" id="device_number" class="form-select" aria-label="Default select example" required>
+                                    <option value="" disabled>ابتدا اسم دستگاه را وارد کنید</option>
                                     <?php
                                     $sql = "SELECT * FROM devices";
                                     $result = $conn->query($sql);
                                     if ($result->num_rows > 0) {
-                                        while ($row1 = $result->fetch_assoc()) { ?>
-                                            <option id="<?= $row1['id'] ?>" value="<?= $row1['numbers'] ?>"><?= $row1['numbers'] ?></option>
-                                    <?php
+                                        while ($row1 = $result->fetch_assoc()) { 
+                                            // Check if the device number matches the value from the database
+                                            $selected = ($row1['numbers'] == $row['device_number']) ? 'selected' : '';
+                                            ?>
+                                            <option id="<?= $row1['id'] ?>" value="<?= $row1['numbers'] ?>" <?= $selected ?>><?= $row1['numbers'] ?></option>
+                                        <?php
                                         }
                                     }
-
                                     ?>
                                 </select>
                             </div>
@@ -155,8 +160,8 @@ if (!isset($_SESSION["all_data"])) {
                                 var deviceNameSelect = document.getElementById('device_name');
                                 var deviceNumberSelect = document.getElementById('device_number');
 
-                                // Disable device number select initially
-                                deviceNumberSelect.disabled = true;
+                                // Remove the line that disables the device number select initially
+                                // deviceNumberSelect.disabled = true;
 
                                 deviceNameSelect.addEventListener('change', function() {
                                     var selectedDeviceName = this.value;
@@ -195,6 +200,7 @@ if (!isset($_SESSION["all_data"])) {
 
 
 
+
                         <div class="row mt-3">
 
                             <div class="col-md-6">
@@ -218,25 +224,29 @@ if (!isset($_SESSION["all_data"])) {
                                 </select>
                             </div>
 
-
                             <div class="col-md-6">
                                 <label for="size" class="form-label fw-semibold">سایز قطعه *</label>
-
                                 <select name="size" id="size" class="form-select" aria-label="Default select example" required>
-                                    <option value="" selected disabled>ابتدا اسم قطعه را وارد کنید</option>
+                                    <option value="" disabled>ابتدا اسم قطعه را وارد کنید</option>
                                     <?php
                                     $sql = "SELECT * FROM pieces";
                                     $result = $conn->query($sql);
                                     if ($result->num_rows > 0) {
-                                        while ($row2 = $result->fetch_assoc()) { ?>
-                                            <option id="<?= $row2['id'] ?>" value="<?= $row2['size'] ?>"><?= $row2['size'] ?></option>
-                                    <?php
+                                        while ($row2 = $result->fetch_assoc()) {
+                                            // Check if the current size matches the saved size
+                                            $selected = ($row2['size'] == $row['size']) ? 'selected' : '';
+                                            ?>
+                                            <option value="<?= $row2['size'] ?>" <?= $selected ?>><?= $row2['size'] ?></option>
+                                        <?php
                                         }
                                     }
-
                                     ?>
                                 </select>
                             </div>
+
+
+
+
 
 
 
@@ -249,13 +259,14 @@ if (!isset($_SESSION["all_data"])) {
 
 
 
-                        <script>
+
+                        <!-- <script>
                             document.addEventListener('DOMContentLoaded', function() {
                                 var pieceNameSelect = document.getElementById('piece_name');
                                 var sizeSelect = document.getElementById('size');
 
-                                // Disable size select initially
-                                sizeSelect.disabled = true;
+                                // Remove the line that disables the size select initially
+                                // sizeSelect.disabled = true;
 
                                 pieceNameSelect.addEventListener('change', function() {
                                     var selectedPieceName = this.value;
@@ -299,7 +310,8 @@ if (!isset($_SESSION["all_data"])) {
                                     xhr.send();
                                 });
                             });
-                        </script>
+                        </script> -->
+
 
 
 
@@ -443,9 +455,7 @@ if (!isset($_SESSION["all_data"])) {
 
                 <?php
 
-                } else {
-                    echo "خطایی رخ داده";
-                }
+                } 
 
                 ?>
 
@@ -693,8 +703,8 @@ if (isset($_POST['submit_go'])) {
                         // Redirect after 3 seconds
                         setTimeout(function(){
                             window.location.href = 'submit_pro';
-                        }, 2000);
-                    }, 3000);
+                        }, 1000);
+                    }, 1000);
                 });
             </script>";
 
@@ -717,7 +727,7 @@ if (isset($_POST['submit_go'])) {
                     $('#errorToast').toast('show');
                     setTimeout(function(){
                         $('#errorToast').toast('hide');
-                    }, 3000);
+                    }, 1000);
                 });
               </script>";
 

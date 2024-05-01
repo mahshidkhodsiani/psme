@@ -23,6 +23,7 @@ $admin = $_SESSION["all_data"]['admin'];
     <?php
     include 'includes.php';
     include 'config.php';
+    include 'functions.php';
     ?>
     <!-- <link rel="stylesheet" href="styles.css"> -->
 
@@ -50,17 +51,17 @@ $admin = $_SESSION["all_data"]['admin'];
                 <h3 style="background-color: #dbd50c;" class="d-flex justify-content-center mt-2 p-3">صفحه اول : </h3>
 
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <div class="card">
                             <div class="card-body">
                                 <?php
                                         if($admin == 1){
                                             ?>
-                                            <h5 class="card-title">آخرین محصولات  </h5>
+                                            <h5 class="card-title">آخرین محصولات (از دیروز )  </h5>
                                             <?php
                                         }else{
                                             ?>
-                                            <h5 class="card-title">آخرین محصولات من </h5>
+                                            <h5 class="card-title">آخرین محصولات من (از دیروز) </h5>
                                         <?php
                                         }
                                
@@ -68,24 +69,30 @@ $admin = $_SESSION["all_data"]['admin'];
                                 <table class="table border">
                                     <thead>
                                         <tr>
-                                            <th scope="col">ردیف</th>
-                                            <th scope="col">نام دستگاه</th>
-                                            <th scope="col">کد دستگاه</th>
-                                            <th scope="col">اسم محصول</th>
+                                            <th class="text-center" scope="col">ردیف</th>
+                                            <th class="text-center" scope="col">نام شخص</th>
+                                            <th class="text-center" scope="col">نام دستگاه</th>
+                                            <th class="text-center" scope="col">کد دستگاه</th>
+                                            <th class="text-center" scope="col">اسم محصول</th>
+                                            <th class="text-center" scope="col">سایز محصول</th>
+                                            <th class="text-center" scope="col">تاریخ</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php
 
-                                        $a = 1;
+                                        $a = 0;
 
-                                        if($admin == 1){
+                                        if ($admin == 1) {
                                             $sql = "SELECT * FROM products
-                                                ORDER BY id DESC LIMIT 10"; 
-                                         }else{
-                                            $sql = "SELECT * FROM products WHERE user = '$id'
-                                            ORDER BY id DESC LIMIT 10";
-                                         }
+                                                    WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 1 DAY)
+                                                    ORDER BY id DESC LIMIT 10"; 
+                                        } else {
+                                            $sql = "SELECT * FROM products
+                                                    WHERE user = '$id' AND created_at >= DATE_SUB(CURDATE(), INTERVAL 1 DAY)
+                                                    ORDER BY id DESC LIMIT 10";
+                                        }
+                                        
 
                                         
                                         $result = $conn->query($sql);
@@ -96,9 +103,20 @@ $admin = $_SESSION["all_data"]['admin'];
                                         ?>
                                                 <tr>
                                                     <th scope="row"><?= $a ?></th>
-                                                    <td><?= $row['device_name'] ?></td>
-                                                    <td><?= $row['device_number'] ?></td>
-                                                    <td><?= $row['piece_name'] ?></td>
+                                                    <td class="text-center" ><?= givePerson($row['user']) ?></td>
+                                                    <td class="text-center"><?= $row['device_name'] ?></td>
+                                                    <td class="text-center"><?= $row['device_number'] ?></td>
+                                                    <td class="text-center"><?= $row['piece_name'] ?></td>
+                                                    <?php
+                                                        $nameData = giveName($row['size']);
+                                                        if (!empty($nameData) && is_array($nameData)) {
+                                                            echo '<td class="text-center" class="text-center">' . $nameData['size'] . '</td>';
+                                                        } else {
+                                                            // Handle the case where giveName returns an empty array or non-array
+                                                            echo '<td class="text-center" class="text-center">کاربر خالی وارد کرده</td>';
+                                                        }
+                                                    ?>
+                                                    <td class="text-center"><?= $row['date'] ?></td>
                                                 </tr>
                                         <?php
                                                 $a++;
@@ -112,6 +130,11 @@ $admin = $_SESSION["all_data"]['admin'];
                             </div>
                         </div>
                     </div>
+
+                 
+                </div>
+                <div class="row mt-2">
+                   
 
                     <div class="col-md-6">
                         <div class="card">
@@ -128,7 +151,7 @@ $admin = $_SESSION["all_data"]['admin'];
                                     <tbody>
                                         <?php
 
-                                        $a = 1;
+                                        $a = 0;
 
                                         if($admin == 1){
                                            $sql = "SELECT * FROM messages 
@@ -186,7 +209,7 @@ $admin = $_SESSION["all_data"]['admin'];
                                     <tbody>
                                         <?php
 
-                                        $a = 1;
+                                        $a = 0;
 
                                        
                                         $sql = "SELECT * FROM users ";

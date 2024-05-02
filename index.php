@@ -66,65 +66,76 @@ $admin = $_SESSION["all_data"]['admin'];
                                         }
                                
                                 ?>
-                                <table class="table border">
-                                    <thead>
-                                        <tr>
-                                            <th class="text-center" scope="col">ردیف</th>
-                                            <th class="text-center" scope="col">نام شخص</th>
-                                            <th class="text-center" scope="col">نام دستگاه</th>
-                                            <th class="text-center" scope="col">کد دستگاه</th>
-                                            <th class="text-center" scope="col">اسم محصول</th>
-                                            <th class="text-center" scope="col">سایز محصول</th>
-                                            <th class="text-center" scope="col">تاریخ</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php
+                                <div class="table-responsive">
+                                    <table class="table border">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center" scope="col">ردیف</th>
+                                                <th class="text-center" scope="col">نام شخص</th>
+                                                <th class="text-center" scope="col">نام دستگاه</th>
+                                                <th class="text-center" scope="col">کد دستگاه</th>
+                                                <th class="text-center" scope="col">اسم محصول</th>
+                                                <th class="text-center" scope="col">سایز محصول</th>
+                                                <th class="text-center" scope="col">تاریخ</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
 
-                                        $a = 0;
+                                            $a = 0;
 
-                                        if ($admin == 1) {
-                                            $sql = "SELECT * FROM products
-                                                    WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 1 DAY)
-                                                    ORDER BY id DESC LIMIT 10"; 
-                                        } else {
-                                            $sql = "SELECT * FROM products
-                                                    WHERE user = '$id' AND created_at >= DATE_SUB(CURDATE(), INTERVAL 1 DAY)
-                                                    ORDER BY id DESC LIMIT 10";
-                                        }
-                                        
-
-                                        
-                                        $result = $conn->query($sql);
-
-                                        if ($result->num_rows > 0) {
-                                            $a++;
-                                            while ($row = $result->fetch_assoc()) {
-                                        ?>
-                                                <tr>
-                                                    <th scope="row"><?= $a ?></th>
-                                                    <td class="text-center" ><?= givePerson($row['user']) ?></td>
-                                                    <td class="text-center"><?= $row['device_name'] ?></td>
-                                                    <td class="text-center"><?= $row['device_number'] ?></td>
-                                                    <td class="text-center"><?= $row['piece_name'] ?></td>
-                                                    <?php
-                                                        $nameData = giveName($row['size']);
-                                                        if (!empty($nameData) && is_array($nameData)) {
-                                                            echo '<td class="text-center" class="text-center">' . $nameData['size'] . '</td>';
-                                                        } else {
-                                                            // Handle the case where giveName returns an empty array or non-array
-                                                            echo '<td class="text-center" class="text-center">کاربر خالی وارد کرده</td>';
-                                                        }
-                                                    ?>
-                                                    <td class="text-center"><?= $row['date'] ?></td>
-                                                </tr>
-                                        <?php
-                                                $a++;
+                                            if ($admin == 1) {
+                                                $sql = "SELECT * FROM products
+                                                        WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 1 DAY)
+                                                        ORDER BY id DESC LIMIT 10"; 
+                                            } else {
+                                                $sql = "SELECT * FROM products
+                                                        WHERE user = '$id' AND created_at >= DATE_SUB(CURDATE(), INTERVAL 1 DAY)
+                                                        ORDER BY id DESC LIMIT 10";
                                             }
-                                        }
-                                        ?>
-                                    </tbody>
-                                </table>
+                                            
+
+                                            
+                                            $result = $conn->query($sql);
+
+                                            if ($result->num_rows > 0) {
+                                                $a++;
+                                                while ($row = $result->fetch_assoc()) {
+                                            ?>
+                                                    <tr>
+                                                        <th scope="row"><?= $a ?></th>
+                                                        <?php
+                                                        if ($admin == 1) {
+                                                        ?>
+                                                            <td class="text-center" ><a href="confirmations" style="text-decoration: none; color: black"><?= givePerson($row['user']) ?></a></td>
+                                                        <?php
+                                                        }else{?>
+                                                            <td class="text-center" ><?= givePerson($row['user']) ?></td>
+                                                        <?php
+                                                        }
+                                                        ?>
+                                                        <td class="text-center"><?= $row['device_name'] ?></td>
+                                                        <td class="text-center"><?= $row['device_number'] ?></td>
+                                                        <td class="text-center"><?= $row['piece_name'] ?></td>
+                                                        <?php
+                                                            $nameData = giveName($row['size']);
+                                                            if (!empty($nameData) && is_array($nameData)) {
+                                                                echo '<td class="text-center" class="text-center">' . $nameData['size'] . '</td>';
+                                                            } else {
+                                                                // Handle the case where giveName returns an empty array or non-array
+                                                                echo '<td class="text-center" class="text-center">کاربر خالی وارد کرده</td>';
+                                                            }
+                                                        ?>
+                                                        <td class="text-center"><?= $row['date'] ?></td>
+                                                    </tr>
+                                            <?php
+                                                    $a++;
+                                                }
+                                            }
+                                            ?>
+                                        </tbody>
+                                    </table>
+                                </div>
 
                                 
                             </div>
@@ -133,7 +144,9 @@ $admin = $_SESSION["all_data"]['admin'];
 
                  
                 </div>
-                <div class="row mt-2">
+
+
+                <div class="row mt-4">
                    
 
                     <div class="col-md-6">
@@ -182,15 +195,13 @@ $admin = $_SESSION["all_data"]['admin'];
                             </div>
                         </div>
                     </div>
-                </div>
 
 
+                    <?php
+                    if ($admin == 1) {
+                    ?>
 
-                <?php
-                if ($admin == 1) {
-                ?>
 
-                <div class="row mt-5">
                     <div class="col-md-6">
                         <div class="card">
                             <div class="card-body">
@@ -240,14 +251,15 @@ $admin = $_SESSION["all_data"]['admin'];
                         </div>
                     </div>
 
-                 
+                    <?php
+                    }
+                    ?>
+
                 </div>
 
-                <?php
-                }
-                ?>
 
-               
+
+                
 
                 
             </div>

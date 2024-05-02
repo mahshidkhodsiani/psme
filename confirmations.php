@@ -342,7 +342,29 @@ if(isset($_POST['accept_product'])){
 
     if($result){
 
-      echo "<meta http-equiv='refresh' content='0'>";
+        echo "<div id='successToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+        <div class='toast-header bg-success text-white'>
+            <strong class='mr-auto'>Success</strong>
+            <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                <span aria-hidden='true'>&times;</span>
+            </button>
+            </div>
+            <div class='toast-body'>
+                این محصول تایید شد!
+            </div>
+        </div>
+        <script>
+        $(document).ready(function(){
+            $('#successToast').toast('show');
+            setTimeout(function(){
+                $('#successToast').toast('hide');
+                // Redirect after 3 seconds
+                setTimeout(function(){
+                    window.location.href = 'confirmations';
+                }, 1000);
+            }, 1000);
+        });
+        </script>";
           
     }
 }
@@ -363,38 +385,33 @@ if(isset($_POST['text_reason'], $_POST['send_message'])){
         $sql2 = "INSERT INTO messages (text, to_user)
                 VALUES ('$message', '$person')" ;
                  $result2 = $conn->query($sql2);
-                 if($result2){
+                 if($result){
 
                     echo "<div id='successToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
-                        <div class='toast-header bg-success text-white'>
-                            <strong class='mr-auto'>Success</strong>
-                            <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
-                                <span aria-hidden='true'>&times;</span>
-                            </button>
-                            </div>
-                            <div class='toast-body'>
-                                پیام به درستی ارسال شد!
-                            </div>
+                    <div class='toast-header bg-success text-white'>
+                        <strong class='mr-auto'>Success</strong>
+                        <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                            <span aria-hidden='true'>&times;</span>
+                        </button>
                         </div>
-                        <script>
-                            $(document).ready(function(){
-                                $('#successToast').toast('show');
-                                setTimeout(function(){
-                                    $('#successToast').toast('hide');
-                                }, 3000);
-                            });
-                        </script>";
-
-                        $a = 1 ;
-                    
-
-                    
-                 }
-
-                 if($a == 1){
-                    echo "<meta http-equiv='refresh' content='0'>";
-                 }
-                 
+                        <div class='toast-body'>
+                            پیام به درستی ارسال شد!
+                        </div>
+                    </div>
+                    <script>
+                    $(document).ready(function(){
+                        $('#successToast').toast('show');
+                        setTimeout(function(){
+                            $('#successToast').toast('hide');
+                            // Redirect after 3 seconds
+                            setTimeout(function(){
+                                window.location.href = 'confirmations';
+                            }, 1000);
+                        }, 1000);
+                    });
+                    </script>";
+                      
+                }
 
       
           

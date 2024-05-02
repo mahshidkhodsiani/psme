@@ -92,9 +92,25 @@ if (!isset($_SESSION["all_data"])) {
 
                 <div class="row mt-4">
                     <div class="col-md-10">
-                        <div class="table-responsive">
-                            <table class="table border border-4">
-                                <h4>نگاه کلی :</h4>
+                        <?php
+                        // Pagination configuration
+                        $items_per_page = 10; // Number of items per page
+                        $current_page = isset($_GET['page']) ? $_GET['page'] : 1; // Current page, default is 1
+
+                        // Calculate the offset for the SQL query
+                        $offset = ($current_page - 1) * $items_per_page;
+
+                        // SQL query to retrieve a subset of rows based on pagination
+                        $sql = "SELECT * FROM users ORDER BY id DESC LIMIT $items_per_page OFFSET $offset";
+                        $result = $conn->query($sql);
+
+                        // Display the table
+                        if ($result->num_rows > 0) {
+                            $a = ($current_page - 1) * $items_per_page + 1; // Counter for row numbers
+                            ?>
+                            <div class="table-responsive">
+                                <table class="table border border-4">
+                                    <h4>نگاه کلی :</h4>
                                     <thead>
                                         <tr>
                                             <th scope="col" class="text-center">ردیف</th>
@@ -103,72 +119,70 @@ if (!isset($_SESSION["all_data"])) {
                                             <th scope="col" class="text-center">تاریخ ثبت نام</th>
                                             <th scope="col" class="text-center">وضعیت</th>
                                             <th scope="col" class="text-center">عملیات</th>
-
                                         </tr>
                                     </thead>
-
                                     <tbody>
                                         <?php
-
-                                        $sql = "SELECT * FROM users";
-                                        // echo $sql;
-                                        $result = $conn->query($sql);
-
-                                        
-                                        if ($result->num_rows > 0) {
-                                            $a = 1;
-                                            while ($row = $result->fetch_assoc()) {
-                                        ?>
-                                                <!-- Table rows -->
-                                                <tr>
-                                                    <th scope="row" class="text-center"><?= $a ?></th>
-                                                    <td class="text-center"><?=$row['name'] ?></td>
-                                                    <td class="text-center"><?=$row['family'] ?></td>
-                                                    <td class="text-center"><?=$sdate->toShaDate($row['date']) ?></td>
-                                                    <td class="text-center">
-
-                                                       <?php
-                                                        if ($row['status'] == 1) {
-                                                            echo 'فعال' ;
-                                                        }else{
-                                                            echo 'غیرفعال' ;
-                                                        }
-                                                       ?>
-
-                                                    </td>
-                                                    <td class="text-center">
-
-                                                        <form action="" method="GET">
-                                                            <input type="hidden" value="<?= $row['id'] ?>" name="id_user">
-                                                          
-                                                            <!-- <button name="edit_user" id="reject_button" class="btn btn-outline-warning btn-sm">نیاز به ویرایش</button> -->
-                                                            <a href="edit_user.php?id_user=<?= $row['id'] ?>" name="" id="" class="btn btn-outline-warning btn-sm"> ویرایش</a>
-                                                            <?php
-                                                            if ($row['status'] == 1) {?>
-                                                            <button name="deactive_user" class="btn btn-outline-secondary btn-sm">غیرفعال کردن</button>
-                                                            <?php
-                                                            }else{
-                                                            ?>
-                                                            <button name="active_user" class="btn btn-outline-secondary btn-sm">فعال کردن</button>
-                                                            <?php
-                                                            }
-                                                            ?>
-                                                           
-                                                            <button name="delete_user" class="btn btn-outline-danger btn-sm">حذف</button>
-
-                                                        </form>
-
-                                                    </td>
-
-                                                    <?php
-                                                $a++;
-                                            }
+                                        while ($row = $result->fetch_assoc()) {
+                                            ?>
+                                            <tr>
+                                                <th scope="row" class="text-center"><?= $a ?></th>
+                                                <td class="text-center"><?= $row['name'] ?></td>
+                                                <td class="text-center"><?= $row['family'] ?></td>
+                                                <td class="text-center"><?= $sdate->toShaDate($row['date']) ?></td>
+                                                <td class="text-center">
+                                                    <?= $row['status'] == 1 ? 'فعال' : 'غیرفعال' ?>
+                                                </td>
+                                                <td class="text-center">
+                                                    <form action="" method="GET">
+                                                        <input type="hidden" value="<?= $row['id'] ?>" name="id_user">
+                                                        <a href="edit_user.php?id_user=<?= $row['id'] ?>" class="btn btn-outline-warning btn-sm"> ویرایش</a>
+                                                        <?php if ($row['status'] == 1) { ?>
+                                                            <button name="deactivate_user" class="btn btn-outline-secondary btn-sm">غیرفعال کردن</button>
+                                                        <?php } else { ?>
+                                                            <button name="activate_user" class="btn btn-outline-secondary btn-sm">فعال کردن</button>
+                                                        <?php } ?>
+                                                        <button name="delete_user" class="btn btn-outline-danger btn-sm">حذف</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                            <?php
+                                            $a++;
                                         }
                                         ?>
                                     </tbody>
-                            
-                            </table>
-                        </div>
+                                </table>
+                            </div>
+                            <?php
+
+                            // Pagination links
+                            $sql = "SELECT COUNT(*) AS total FROM users";
+                            $result = $conn->query($sql);
+                            $row = $result->fetch_assoc();
+                            $total_items = $row['total'];
+                            $total_pages = ceil($total_items / $items_per_page);
+
+                            // Display pagination links
+                            ?>
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination justify-content-center">
+                                    <?php
+                                    for ($i = 1; $i <= $total_pages; $i++) {
+                                        ?>
+                                        <li class="page-item <?= $i == $current_page ? 'active' : '' ?>">
+                                            <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                                        </li>
+                                        <?php
+                                    }
+                                    ?>
+                                </ul>
+                            </nav>
+                            <?php
+                        } else {
+                            echo "<p>No records found.</p>";
+                        }
+                        ?>
+
                     </div>
                 
                 </div>

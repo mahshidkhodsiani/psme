@@ -498,7 +498,7 @@ if (!isset($_SESSION["all_data"])) {
 
 
 
-                            echo $sql;
+                            // echo $sql;
                             
                             $result = $conn->query($sql);
 

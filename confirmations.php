@@ -121,6 +121,8 @@ if (!isset($_SESSION["all_data"])) {
                                 <th scope="col">دستگاه</th>
                                 <th scope="col">کد دستگاه</th>
                                 <th scope="col">محصول</th>
+                                <th scope="col">توقف</th>
+                                <th scope="col">میزان توقف</th>
                                 <th scope="col">تاریخ</th>
                                 <th scope="col">تایید یا رد</th>
                             </tr>
@@ -174,7 +176,39 @@ if (!isset($_SESSION["all_data"])) {
                                         <td><?= $row['device_name'] ?></td>
                                         <td><?= $row['device_number'] ?></td>
                                         <td><?= $row['piece_name'] ?></td>
+                                        <td>
+                                        <?php
+                                            if($row['had_stop'] == 1){
+                                                echo 'داشته' ;
+                                            }else{
+                                                echo 'نداشته';
+                                            }
+                                        ?>
+                                        </td>
+                                        
+                                        
+                                        <?php
+                                        $start_time = strtotime($row['start_stop']);
+                                        $finish_time = strtotime($row['finish_stop']);
+
+                                        // Calculate the difference in seconds
+                                        $time_difference = $finish_time - $start_time;
+
+                                        // Convert seconds to hours and minutes
+                                        $hours = floor($time_difference / 3600); // 3600 seconds in an hour
+                                        $minutes = floor(($time_difference % 3600) / 60); // Get the remaining minutes
+
+                                        // Format hours and minutes as "hh:mm"
+                                        $net_hours = sprintf("%02d:%02d", $hours, $minutes);
+
+                                        ?>
+
+                                        <td><?= $net_hours ?></td>
+
+
                                         <td><?= $row['date'] ?></td>
+
+
                                         <td>
                                             <?php if($row['status'] == 0) { ?>
                                                 <form action="" method="POST">

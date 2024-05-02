@@ -14,6 +14,9 @@ if (!isset($_SESSION["all_data"])) {
     <link rel="icon" href="img/logo.png" type="image/x-icon">
 
     <?php include 'includes.php'; 
+    include 'config.php';
+    include 'jalaliDate.php';
+    $sdate = new SDate();
     // include 'PersianCalendar.php';
     ?>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -87,6 +90,89 @@ if (!isset($_SESSION["all_data"])) {
                     </div>
                 </form>
 
+                <div class="row mt-4">
+                    <div class="col-md-10">
+                        <div class="table-responsive">
+                            <table class="table border border-4">
+                                <h4>نگاه کلی :</h4>
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" class="text-center">ردیف</th>
+                                            <th scope="col" class="text-center">نام</th>
+                                            <th scope="col" class="text-center">نام خانوادگی</th>
+                                            <th scope="col" class="text-center">تاریخ ثبت نام</th>
+                                            <th scope="col" class="text-center">وضعیت</th>
+                                            <th scope="col" class="text-center">عملیات</th>
+
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        <?php
+
+                                        $sql = "SELECT * FROM users";
+                                        // echo $sql;
+                                        $result = $conn->query($sql);
+
+                                        
+                                        if ($result->num_rows > 0) {
+                                            $a = 1;
+                                            while ($row = $result->fetch_assoc()) {
+                                        ?>
+                                                <!-- Table rows -->
+                                                <tr>
+                                                    <th scope="row" class="text-center"><?= $a ?></th>
+                                                    <td class="text-center"><?=$row['name'] ?></td>
+                                                    <td class="text-center"><?=$row['family'] ?></td>
+                                                    <td class="text-center"><?=$sdate->toShaDate($row['date']) ?></td>
+                                                    <td class="text-center">
+
+                                                       <?php
+                                                        if ($row['status'] == 1) {
+                                                            echo 'فعال' ;
+                                                        }else{
+                                                            echo 'غیرفعال' ;
+                                                        }
+                                                       ?>
+
+                                                    </td>
+                                                    <td class="text-center">
+
+                                                        <form action="" method="GET">
+                                                            <input type="hidden" value="<?= $row['id'] ?>" name="id_user">
+                                                          
+                                                            <!-- <button name="edit_user" id="reject_button" class="btn btn-outline-warning btn-sm">نیاز به ویرایش</button> -->
+                                                            <a href="edit_user.php?id_user=<?= $row['id'] ?>" name="" id="" class="btn btn-outline-warning btn-sm"> ویرایش</a>
+                                                            <?php
+                                                            if ($row['status'] == 1) {?>
+                                                            <button name="deactive_user" class="btn btn-outline-secondary btn-sm">غیرفعال کردن</button>
+                                                            <?php
+                                                            }else{
+                                                            ?>
+                                                            <button name="active_user" class="btn btn-outline-secondary btn-sm">فعال کردن</button>
+                                                            <?php
+                                                            }
+                                                            ?>
+                                                           
+                                                            <button name="delete_user" class="btn btn-outline-danger btn-sm">حذف</button>
+
+                                                        </form>
+
+                                                    </td>
+
+                                                    <?php
+                                                $a++;
+                                            }
+                                        }
+                                        ?>
+                                    </tbody>
+                            
+                            </table>
+                        </div>
+                    </div>
+                
+                </div>
+
             </div>
         </div> 
     </div>
@@ -110,36 +196,279 @@ if (!isset($_SESSION["all_data"])) {
 <?php
 
 if(isset($_POST['enter'])){
-
-    include 'config.php';
-
-    // Sanitize user inputs to prevent SQL injection
-    $name = $conn->real_escape_string($_POST['name']);
-    $family = $conn->real_escape_string($_POST['family']);
-    $username = $conn->real_escape_string($_POST['username']);
-    $password = $conn->real_escape_string($_POST['password']);
-    $date = mds_date("Y/m/d");
-
-
+    $name = $_POST['name'];
+    $family = $_POST['family'];
+    $username = $_POST['username'];
+    $password = $_POST['password'];
     if(isset($_POST['isAdmin'])){
-      
-        $sql = "INSERT INTO users (name, family, username, password, date, admin)
-            VALUES ('$name', '$family', '$username', '$password', '$date', 1)";
+        $isAdmin = 1 ;
     }else{
-        
-        $sql = "INSERT INTO users (name, family, username, password, date , admin)
-            VALUES ('$name', '$family', '$username', '$password', '$date', 0)";
+        $isAdmin = 0 ;
+    }
+
+    $SQL1 = "SELECT * FROM users WHERE username = '$username'";
+    $result1 = $conn->query($SQL1);
+    if ($result1->num_rows > 0) {
+         // Use Bootstrap's toast component to show an error toast message
+         echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+         <div class='toast-header bg-danger text-white'>
+             <strong class='mr-auto'>Error</strong>
+             <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                 <span aria-hidden='true'>&times;</span>
+             </button>
+         </div>
+         <div class='toast-body'>
+             این یوزر نیم قبلا ثبت شده!
+         </div>
+       </div>
+       <script>
+        $(document).ready(function(){
+        $('#successToast').toast('show');
+        setTimeout(function(){
+            $('#successToast').toast('hide');
+            // Redirect after 3 seconds
+            setTimeout(function(){
+                window.location.href = 'new_user';
+            }, 1000);
+        }, 1000);
+         });
+       </script>";
+    }else{
+       $sql = "INSERT INTO users (name, family, username, password, isAdmin, date) 
+            VALUES ('$name', '$family', '$username', '$password', '$isAdmin', NOW())";
+        $result = $conn->query($sql); 
+
+        if ($result) {
+            // Use Bootstrap's toast component to show a success toast message
+            echo "<div id='successToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+                    <div class='toast-header bg-success text-white'>
+                        <strong class='mr-auto'>Success</strong>
+                        <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                            <span aria-hidden='true'>&times;</span>
+                        </button>
+                    </div>
+                    <div class='toast-body'>
+                        یوزر با موفقیت اضافه شد!
+                    </div>
+                  </div>
+                    <script>
+                    $(document).ready(function(){
+                        $('#successToast').toast('show');
+                        setTimeout(function(){
+                            $('#successToast').toast('hide');
+                            // Redirect after 3 seconds
+                            setTimeout(function(){
+                                window.location.href = 'new_user';
+                            }, 1000);
+                        }, 1000);
+                    });
+                    </script>";
+        } else {
+            // Use Bootstrap's toast component to show an error toast message
+            echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+                    <div class='toast-header bg-danger text-white'>
+                        <strong class='mr-auto'>Error</strong>
+                        <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                            <span aria-hidden='true'>&times;</span>
+                        </button>
+                    </div>
+                    <div class='toast-body'>
+                        خطایی در افزودن یوزر پیش آمده!
+                    </div>
+                  </div>
+                  <script>
+                    $(document).ready(function(){
+                        $('#errorToast').toast('show');
+                        setTimeout(function(){
+                            $('#errorToast').toast('hide');
+                        }, 1000);
+                    });
+                  </script>";
+    
+            echo "Error: " . $sql . "<br>" . $conn->error;
+        }
+
+    }
+
+    
+    
+}
+
+
+
+
+if(isset($_GET['delete_user'])){
+
+    $id_user = $_GET['id_user'];
+
+    $sql = "DELETE FROM users WHERE id = $id_user";
+    $result = $conn->query($sql);
+    if ($result) {
+        // Use Bootstrap's toast component to show a success toast message
+        echo "<div id='successToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+                <div class='toast-header bg-success text-white'>
+                    <strong class='mr-auto'>Success</strong>
+                    <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                        <span aria-hidden='true'>&times;</span>
+                    </button>
+                </div>
+                <div class='toast-body'>
+                    یوزر با موفقیت حذف شد!
+                </div>
+              </div>
+                <script>
+                $(document).ready(function(){
+                    $('#successToast').toast('show');
+                    setTimeout(function(){
+                        $('#successToast').toast('hide');
+                        // Redirect after 3 seconds
+                        setTimeout(function(){
+                            window.location.href = 'new_user';
+                        }, 1000);
+                    }, 1000);
+                });
+                </script>";
+    } else {
+        // Use Bootstrap's toast component to show an error toast message
+        echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+                <div class='toast-header bg-danger text-white'>
+                    <strong class='mr-auto'>Error</strong>
+                    <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                        <span aria-hidden='true'>&times;</span>
+                    </button>
+                </div>
+                <div class='toast-body'>
+                    خطایی در حذف یوزر پیش آمده!
+                </div>
+              </div>
+              <script>
+                $(document).ready(function(){
+                    $('#errorToast').toast('show');
+                    setTimeout(function(){
+                        $('#errorToast').toast('hide');
+                    }, 1000);
+                });
+              </script>";
+
+        echo "Error: " . $sql . "<br>" . $conn->error;
     }
     
+}
 
-    // Execute the query
+
+if(isset($_GET['deactive_user'])){
+
+    $id_user = $_GET['id_user'];
+
+    $sql = "UPDATE users set status = 0 WHERE id = $id_user";
     $result = $conn->query($sql);
-
-    if($result){
-        echo "<h3>کاربر به درستی اضافه شد !</h3>" ;
+    if ($result) {
+        // Use Bootstrap's toast component to show a success toast message
+        echo "<div id='successToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+                <div class='toast-header bg-success text-white'>
+                    <strong class='mr-auto'>Success</strong>
+                    <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                        <span aria-hidden='true'>&times;</span>
+                    </button>
+                </div>
+                <div class='toast-body'>
+                    یوزر با موفقیت غیرفعال گردید!
+                </div>
+              </div>
+                <script>
+                $(document).ready(function(){
+                    $('#successToast').toast('show');
+                    setTimeout(function(){
+                        $('#successToast').toast('hide');
+                        // Redirect after 3 seconds
+                        setTimeout(function(){
+                            window.location.href = 'new_user';
+                        }, 1000);
+                    }, 1000);
+                });
+                </script>";
     } else {
-        echo "<h3>خطایی در افزودن کاربر پیش آمده!</h3>" ;
-        echo "Error: " . $sql . "<br>" . $conn->error; 
+        // Use Bootstrap's toast component to show an error toast message
+        echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+                <div class='toast-header bg-danger text-white'>
+                    <strong class='mr-auto'>Error</strong>
+                    <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                        <span aria-hidden='true'>&times;</span>
+                    </button>
+                </div>
+                <div class='toast-body'>
+                    خطایی در بروزرسانی یوزر پیش آمده!
+                </div>
+              </div>
+              <script>
+                $(document).ready(function(){
+                    $('#errorToast').toast('show');
+                    setTimeout(function(){
+                        $('#errorToast').toast('hide');
+                    }, 1000);
+                });
+              </script>";
+
+        echo "Error: " . $sql . "<br>" . $conn->error;
+    }
+    
+}
+
+
+if(isset($_GET['active_user'])){
+
+    $id_user = $_GET['id_user'];
+
+    $sql = "UPDATE users set status = 1 WHERE id = $id_user";
+    $result = $conn->query($sql);
+    if ($result) {
+        // Use Bootstrap's toast component to show a success toast message
+        echo "<div id='successToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+                <div class='toast-header bg-success text-white'>
+                    <strong class='mr-auto'>Success</strong>
+                    <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                        <span aria-hidden='true'>&times;</span>
+                    </button>
+                </div>
+                <div class='toast-body'>
+                    یوزر با موفقیت فعال گردید!
+                </div>
+              </div>
+                <script>
+                $(document).ready(function(){
+                    $('#successToast').toast('show');
+                    setTimeout(function(){
+                        $('#successToast').toast('hide');
+                        // Redirect after 3 seconds
+                        setTimeout(function(){
+                            window.location.href = 'new_user';
+                        }, 1000);
+                    }, 1000);
+                });
+                </script>";
+    } else {
+        // Use Bootstrap's toast component to show an error toast message
+        echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+                <div class='toast-header bg-danger text-white'>
+                    <strong class='mr-auto'>Error</strong>
+                    <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                        <span aria-hidden='true'>&times;</span>
+                    </button>
+                </div>
+                <div class='toast-body'>
+                    خطایی در بروزرسانی یوزر پیش آمده!
+                </div>
+              </div>
+              <script>
+                $(document).ready(function(){
+                    $('#errorToast').toast('show');
+                    setTimeout(function(){
+                        $('#errorToast').toast('hide');
+                    }, 1000);
+                });
+              </script>";
+
+        echo "Error: " . $sql . "<br>" . $conn->error;
     }
     
 }

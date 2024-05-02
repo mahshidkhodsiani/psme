@@ -14,7 +14,9 @@ if (!isset($_SESSION["all_data"])) {
     <title>افزودن دستگاه جدید</title>
     <link rel="icon" href="img/logo.png" type="image/x-icon">
 
-    <?php include 'includes.php'; ?>
+    <?php include 'includes.php'; 
+        include 'config.php';
+    ?>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <style>
@@ -74,6 +76,97 @@ if (!isset($_SESSION["all_data"])) {
 
 
 
+                <div class="row mt-4">
+                    <div class="col-md-10">
+                        <div class="table-responsive">
+                          
+
+                            
+                            <?php
+
+                            // Pagination configuration
+                            $items_per_page = 10; // Number of items per page
+                            $current_page = isset($_GET['page']) ? $_GET['page'] : 1; // Current page, default is 1
+
+                            // Calculate the offset for the SQL query
+                            $offset = ($current_page - 1) * $items_per_page;
+
+                            // SQL query to retrieve a subset of rows based on pagination
+                            $sql = "SELECT * FROM devices ORDER BY id DESC LIMIT $items_per_page OFFSET $offset";
+                            $result = $conn->query($sql);
+
+                            
+                            if ($result->num_rows > 0) {
+                                $a = ($current_page - 1) * $items_per_page + 1; // Counter for row numbers
+                            ?>
+                            <table class="table border border-4">
+                                <h4>نگاه کلی :</h4>
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="text-center">ردیف</th>
+                                        <th scope="col" class="text-center">نام دستگاه</th>
+                                        <th scope="col" class="text-center">کد</th>
+                                        <th scope="col" class="text-center">عملیات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    while ($row = $result->fetch_assoc()) {
+                                        ?>
+                                        <tr>
+                                            <th scope="row" class="text-center"><?= $a ?></th>
+                                            <td class="text-center"><?= $row['name'] ?></td>
+                                            <td class="text-center"><?= $row['numbers'] ?></td>
+                                            <td class="text-center">
+                                                <form action="" method="GET">
+                                                    <input type="hidden" value="<?= $row['id'] ?>" name="id_dev">
+                                                    <a href="edit_dev.php?id_dev=<?= $row['id'] ?>" class="btn btn-outline-warning btn-sm"> ویرایش</a>
+                                                    <button type="submit" name="delete_dev" class="btn btn-outline-danger btn-sm">حذف</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        <?php
+                                        $a++;
+                                    }
+                                    ?>
+                                </tbody>
+                            </table>
+                                <?php
+                            
+                                // Pagination links
+                                $sql = "SELECT COUNT(*) AS total FROM devices";
+                                $result = $conn->query($sql);
+                                $row = $result->fetch_assoc();
+                                $total_items = $row['total'];
+                                $total_pages = ceil($total_items / $items_per_page);
+                            
+                                // Display pagination links
+                                ?>
+                                <nav aria-label="Page navigation">
+                                    <ul class="pagination justify-content-center">
+                                        <?php
+                                        for ($i = 1; $i <= $total_pages; $i++) {
+                                            ?>
+                                            <li class="page-item <?= $i == $current_page ? 'active' : '' ?>">
+                                                <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                                            </li>
+                                            <?php
+                                        }
+                                        ?>
+                                    </ul>
+                                </nav>
+                                <?php
+                                } else {
+                                    echo "<p>No records found.</p>";
+                                }
+                                ?>
+                        </div>
+                    </div>
+                
+                </div>
+
+
+
 
 
 
@@ -120,7 +213,7 @@ if (!isset($_SESSION["all_data"])) {
 
 
 if (isset($_POST['enter'])) {
-    include 'config.php';
+    // include 'config.php';
 
     $name = $conn->real_escape_string($_POST['name']);
     $size = $conn->real_escape_string($_POST['size']);
@@ -128,7 +221,7 @@ if (isset($_POST['enter'])) {
 
 
     // check for duplicates :
-    $sql1 = "SELECT * FROM devices WHERE name = '$name'";
+    $sql1 = "SELECT * FROM devices WHERE name = '$name' AND numbers = '$size'";
     $result1 = $conn->query($sql1);
     if ($result1-> num_rows > 0) {
         echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
@@ -173,12 +266,16 @@ if (isset($_POST['enter'])) {
                     </div>
                 </div>
                 <script>
-                    $(document).ready(function(){
-                        $('#successToast').toast('show');
+                $(document).ready(function(){
+                    $('#successToast').toast('show');
+                    setTimeout(function(){
+                        $('#successToast').toast('hide');
+                        // Redirect after 3 seconds
                         setTimeout(function(){
-                            $('#successToast').toast('hide');
-                        }, 3000);
-                    });
+                            window.location.href = 'new_device';
+                        }, 1000);
+                    }, 1000);
+                });
                 </script>";
         } else {
             // Use Bootstrap's toast component to show an error toast message
@@ -206,4 +303,63 @@ if (isset($_POST['enter'])) {
   
 
 }
-?>
+
+
+if(isset($_GET['delete_dev'])){
+
+    $id_dev = $_GET['id_dev'];
+
+    $sql = "DELETE FROM devices WHERE id = $id_dev";
+    $result = $conn->query($sql);
+    if ($result) {
+        // Use Bootstrap's toast component to show a success toast message
+        echo "<div id='successToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+                <div class='toast-header bg-success text-white'>
+                    <strong class='mr-auto'>Success</strong>
+                    <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                        <span aria-hidden='true'>&times;</span>
+                    </button>
+                </div>
+                <div class='toast-body'>
+                    دستگاه با موفقیت حذف شد!
+                </div>
+              </div>
+                <script>
+                $(document).ready(function(){
+                    $('#successToast').toast('show');
+                    setTimeout(function(){
+                        $('#successToast').toast('hide');
+                        // Redirect after 3 seconds
+                        setTimeout(function(){
+                            window.location.href = 'new_device';
+                        }, 1000);
+                    }, 1000);
+                });
+                </script>";
+    } else {
+        // Use Bootstrap's toast component to show an error toast message
+        echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+                <div class='toast-header bg-danger text-white'>
+                    <strong class='mr-auto'>Error</strong>
+                    <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                        <span aria-hidden='true'>&times;</span>
+                    </button>
+                </div>
+                <div class='toast-body'>
+                    خطایی در حذف دستگاه پیش آمده!
+                </div>
+              </div>
+              <script>
+                $(document).ready(function(){
+                    $('#errorToast').toast('show');
+                    setTimeout(function(){
+                        $('#errorToast').toast('hide');
+                    }, 1000);
+                });
+              </script>";
+
+        echo "Error: " . $sql . "<br>" . $conn->error;
+    }
+    
+}
+

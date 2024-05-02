@@ -6,6 +6,8 @@ if (!isset($_SESSION["all_data"])) {
 }
 
 
+// $totals = isset($_SESSION['totals']) ? $_SESSION['totals'] : [];
+
 ?>
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
@@ -163,7 +165,7 @@ if (!isset($_SESSION["all_data"])) {
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label for="dates" class="form-label">تاریخ:</label>
+                                    <label for="dates" class="form-label">از تاریخ:</label>
                                     <input id="pdpDark" type="text" name="dates" 
                                     class="form-control" autocomplete="off" 
                                         value="<?=  (isset($_GET['dates'])? htmlspecialchars($_GET['dates']) : ''); ?>">
@@ -237,11 +239,15 @@ if (!isset($_SESSION["all_data"])) {
                                 <th scope="col" class="text-center">ردیف</th>
                                 <th scope="col" class="text-center">نام شخص</th>
                                 <th scope="col" class="text-center">کد دستگاه</th>
-                                <th scope="col" class="text-center">نام قطعه</th>
+                                <th scope="col" class="text-center"> قطعه</th>
                                 <th scope="col" class="text-center">سایز قطعه</th>
                                 <th scope="col" class="text-center">شیفت</th>
                                 <th scope="col" class="text-center">تاریخ</th>
+                                <th scope="col" class="text-center">زمان خالص تولید</th>
+                                <th scope="col" class="text-center">زمان مجاز</th>
+
                                 <th scope="col" class="text-center">تعداد</th>
+                                <th scope="col" class="text-center">قیمت واحد</th>
                                 <th scope="col" class="text-center">قیمت(تومان)</th>
                                 
                             </tr>
@@ -285,7 +291,7 @@ if (!isset($_SESSION["all_data"])) {
                                     && $_GET['personel'] === '' && $_GET['device_code'] === '' 
                                     && $_GET['piece_name'] === '' && $_GET['piece_size'] === '') {
                                 $dates = $_GET['dates'];
-                                $sql .= " WHERE date = '$dates'";
+                                $sql .= " WHERE STR_TO_DATE(date, '%Y/%m/%d') >= STR_TO_DATE('$dates', '%Y/%m/%d')";
                             }
                             if(isset($_GET['device_code']) && $_GET['device_code'] !== '' 
                                     && $_GET['personel'] === ''  && $_GET['dates'] === '' 
@@ -314,7 +320,7 @@ if (!isset($_SESSION["all_data"])) {
                                     && $_GET['device_code'] === '' && $_GET['piece_name'] === '' && $_GET['piece_size'] === ''){
                                 $dates = $_GET['dates'];
                                 $personel = $_GET['personel'];
-                                $sql .= " WHERE user = $personel AND date = '$dates'";
+                                $sql .= " WHERE user = $personel AND STR_TO_DATE(date, '%Y/%m/%d') >= STR_TO_DATE('$dates', '%Y/%m/%d')";
                             }
                             if(isset($_GET['personel'], $_GET['device_code']) 
                                     && $_GET['personel'] !== '' && $_GET['device_code'] !== '' 
@@ -342,14 +348,14 @@ if (!isset($_SESSION["all_data"])) {
                                     && $_GET['personel'] === '' && $_GET['piece_name'] ==='' && $_GET['piece_size'] === ''){
                                 $device_code = $_GET['device_code'];
                                 $dates = $_GET['dates'];
-                                $sql .= " WHERE date = '$dates' AND device_number = '$device_code'";
+                                $sql .= " WHERE STR_TO_DATE(date, '%Y/%m/%d') >= STR_TO_DATE('$dates', '%Y/%m/%d') AND device_number = '$device_code'";
                             }
                             if(isset($_GET['dates'], $_GET['piece_name']) 
                                     && $_GET['piece_name'] !== '' && $_GET['dates'] !== '' 
                                 && $_GET['personel'] === '' && $_GET['device_code'] === '' && $_GET['piece_size'] === ''){
                                 $piece_name = $_GET['piece_name'];
                                 $dates = $_GET['dates'];
-                                $sql .= " WHERE date = '$dates' AND piece_name = '$piece_name'";
+                                $sql .= " WHERE STR_TO_DATE(date, '%Y/%m/%d') >= STR_TO_DATE('$dates', '%Y/%m/%d') AND piece_name = '$piece_name'";
                             }
                             if(isset($_GET['piece_size'], $_GET['piece_name']) 
                                     && $_GET['piece_name'] !== '' && $_GET['piece_size'] !== '' 
@@ -379,7 +385,7 @@ if (!isset($_SESSION["all_data"])) {
                                 $device_code = $_GET['device_code'];
                                 $dates = $_GET['dates'];
                                 $personel = $_GET['personel'];
-                                $sql .= " WHERE date = '$dates' AND device_number = '$device_code' AND user = $personel ";
+                                $sql .= " WHERE STR_TO_DATE(date, '%Y/%m/%d') >= STR_TO_DATE('$dates', '%Y/%m/%d') AND device_number = '$device_code' AND user = $personel ";
                             }
                             if(isset($_GET['dates'], $_GET['piece_name'], $_GET['personel']) 
                                     && $_GET['piece_name'] !== '' && $_GET['dates'] !== '' 
@@ -387,7 +393,7 @@ if (!isset($_SESSION["all_data"])) {
                                 $piece_name = $_GET['piece_name'];
                                 $dates = $_GET['dates'];
                                 $personel = $_GET['personel'];
-                                $sql .= " WHERE date = '$dates' AND piece_name = '$piece_name' AND user = $personel ";
+                                $sql .= " WHERE STR_TO_DATE(date, '%Y/%m/%d') >= STR_TO_DATE('$dates', '%Y/%m/%d') AND piece_name = '$piece_name' AND user = $personel ";
                             }
                            
                             if(isset($_GET['dates'], $_GET['device_code'], $_GET['piece_name']) 
@@ -396,7 +402,7 @@ if (!isset($_SESSION["all_data"])) {
                                 $device_code = $_GET['device_code'];
                                 $dates = $_GET['dates'];
                                 $piece_name = $_GET['piece_name'];
-                                $sql .= " WHERE date = '$dates' AND device_number = '$device_code' AND piece_name = '$piece_name' ";
+                                $sql .= " WHERE STR_TO_DATE(date, '%Y/%m/%d') >= STR_TO_DATE('$dates', '%Y/%m/%d') AND device_number = '$device_code' AND piece_name = '$piece_name' ";
                             }
                             if(isset($_GET['personel'], $_GET['piece_size'], $_GET['piece_name']) 
                                     && $_GET['piece_size'] !== '' && $_GET['personel'] !== '' 
@@ -420,7 +426,7 @@ if (!isset($_SESSION["all_data"])) {
                                 $piece_size = $_GET['piece_size'];
                                 $dates = $_GET['dates'];
                                 $piece_name = $_GET['piece_name'];
-                                $sql .= " WHERE date = '$dates' AND size = '$piece_size' AND piece_name = '$piece_name' ";
+                                $sql .= " WHERE STR_TO_DATE(date, '%Y/%m/%d') >= STR_TO_DATE('$dates', '%Y/%m/%d') AND size = '$piece_size' AND piece_name = '$piece_name' ";
                             }
 
 
@@ -444,7 +450,7 @@ if (!isset($_SESSION["all_data"])) {
                                 $dates = $_GET['dates'];
                                 $piece_name = $_GET['piece_name'];
                                 $personel = $_GET['personel'];
-                                $sql .= " WHERE date = '$dates' AND size = '$piece_size' AND piece_name = '$piece_name' AND user = $personel ";
+                                $sql .= " WHERE STR_TO_DATE(date, '%Y/%m/%d') >= STR_TO_DATE('$dates', '%Y/%m/%d') AND size = '$piece_size' AND piece_name = '$piece_name' AND user = $personel ";
                             }
                             if(isset($_GET['device_code'], $_GET['piece_size'], $_GET['piece_name'], $_GET['dates']) 
                                     && $_GET['piece_size'] !== '' && $_GET['device_code'] !== '' 
@@ -453,7 +459,7 @@ if (!isset($_SESSION["all_data"])) {
                                 $device_code = $_GET['device_code'];
                                 $piece_name = $_GET['piece_name'];
                                 $dates = $_GET['dates'];
-                                $sql .= " WHERE device_number = '$device_code' AND size = '$piece_size' AND piece_name = '$piece_name' AND date = '$dates' ";
+                                $sql .= " WHERE device_number = '$device_code' AND size = '$piece_size' AND piece_name = '$piece_name' AND STR_TO_DATE(date, '%Y/%m/%d') >= STR_TO_DATE('$dates', '%Y/%m/%d') ";
                             }
                             if(isset($_GET['dates'], $_GET['device_code'], $_GET['piece_name'] , $_GET['personel']) 
                                     && $_GET['device_code'] !== '' && $_GET['dates'] !== '' 
@@ -462,7 +468,7 @@ if (!isset($_SESSION["all_data"])) {
                                 $dates = $_GET['dates'];
                                 $personel = $_GET['personel'];
                                 $piece_name = $_GET['piece_name'];
-                                $sql .= " WHERE date = '$dates' AND device_number = '$device_code' AND piece_name = '$piece_name' AND user = $personel ";
+                                $sql .= " WHERE STR_TO_DATE(date, '%Y/%m/%d') >= STR_TO_DATE('$dates', '%Y/%m/%d') AND device_number = '$device_code' AND piece_name = '$piece_name' AND user = $personel ";
                             }
 
 
@@ -478,13 +484,13 @@ if (!isset($_SESSION["all_data"])) {
                                 $personel = $_GET['personel'];
                                 $piece_name = $_GET['piece_name'];
                                 $piece_size = $_GET['piece_size'];
-                                $sql .= " WHERE date = '$dates' AND device_number = '$device_code' AND piece_name = '$piece_name' AND user = $personel AND size = '$piece_size'";
+                                $sql .= " WHERE STR_TO_DATE(date, '%Y/%m/%d') >= STR_TO_DATE('$dates', '%Y/%m/%d') AND device_number = '$device_code' AND piece_name = '$piece_name' AND user = $personel AND size = '$piece_size'";
                             }
 
 
 
                             
-                            $sql .= " ORDER BY id LIMIT $start_from, $results_per_page";
+                            $sql .= " ORDER BY id DESC LIMIT $start_from, $results_per_page";
 
 
                             $_SESSION['query'] = $sql;
@@ -492,13 +498,15 @@ if (!isset($_SESSION["all_data"])) {
 
 
 
-                            // echo $sql;
+                            echo $sql;
                             
                             $result = $conn->query($sql);
 
                             if ($result->num_rows > 0) {
                                 $a = $start_from + 1;
                                 while ($row = $result->fetch_assoc()) {
+
+
                                     ?>
                                     <!-- Table rows -->
                                     <tr>
@@ -533,18 +541,101 @@ if (!isset($_SESSION["all_data"])) {
                                         </td>
                                    
                                         <td class="text-center"><?= $row['date'] ?></td>
+
+
+                                        <?php
+                                        $start_time = strtotime($row['start']);
+                                        $finish_time = strtotime($row['stop']);
+
+                                        // Calculate the difference in seconds
+                                        $time_difference = $finish_time - $start_time;
+
+                                        // Convert seconds to hours and minutes
+                                        $hours = floor($time_difference / 3600); // 3600 seconds in an hour
+                                        $minutes = floor(($time_difference % 3600) / 60); // Get the remaining minutes
+
+                                        // Format hours and minutes as "hh:mm"
+                                        $net_hours = sprintf("%02d:%02d", $hours, $minutes);
+
+                                        ?>
+
+                                        <td class="text-center"><?= $net_hours ?></td>
+
+
+
+
+                                        <?php
+                                            $nameData = giveName($row['size']);
+                                            if (!empty($nameData) && is_array($nameData)) {
+                                                // Check if the time value is in the correct format (hh:mm)
+                                                if (preg_match('/^([0-9]{2}):([0-9]{2})$/', $nameData['time_one'], $matches)) {
+                                                    $hours = intval($matches[1]);
+                                                    $minutes = intval($matches[2]);
+
+                                                    // Convert time to minutes and calculate total minutes
+                                                    $total_minutes = ($hours * 60) + $minutes;
+
+                                                    // Multiply by the number of items to get the total time
+                                                    $total_time_minutes = $total_minutes * $row['numbers'];
+
+                                                    // Convert total time back to hours and minutes
+                                                    $total_hours = floor($total_time_minutes / 60);
+                                                    $total_minutes = $total_time_minutes % 60;
+
+                                                    // Format the total time as "hh:mm"
+                                                    $total_time = sprintf("%02d:%02d", $total_hours, $total_minutes);
+
+                                                    echo '<td class="text-center">' . $total_time . '</td>';
+                                                } else {
+                                                    // Handle incorrect time format
+                                                    echo '<td class="text-center">زمان به درستی وارد نشده است</td>';
+                                                }
+                                            } else {
+                                                // Handle the case where giveName returns an empty array or non-array
+                                                echo '<td class="text-center">کاربر خالی وارد کرده</td>';
+                                            }
+                                        ?>
+
+
+
+
                                         <td class="text-center"><?= $row['numbers'] ?></td>
-                                        
+
                                         <?php
                                         $nameData = giveName($row['size']);
                                         if (!empty($nameData) && is_array($nameData)) {
                                             $price = isset($nameData['price']) ? $nameData['price'] : 0; // Providing default value if 'price' key is not defined
-                                            $totalPrice = $price * $row['numbers'];
+                                            $totalPrice = $price ;
                                             echo '<td class="text-center">' . number_format($totalPrice) . '</td>';
                                         } else {
                                             // Handle the case where giveName returns an empty array or non-array
                                             echo '<td class="text-center">کاربر خالی وارد کرده</td>';
                                         }
+                                        ?>
+                                        
+                                        <?php
+                                       $nameData = giveName($row['size']);
+                                       if (!empty($nameData) && is_array($nameData)) {
+                                           $price = isset($nameData['price']) ? $nameData['price'] : 0;
+                                           
+                                           // Remove commas and convert to integer
+                                           $rowNumbers = str_replace(',', '', $row['numbers']);
+                                           $totalPrice = $price * intval($rowNumbers);
+                                           
+                                           echo '<td class="text-center">' . number_format($totalPrice) . '</td>';
+                                           
+                                           // Add totalPrice to the totals array
+                                           $totals[] = $totalPrice;
+                                        //    $_SESSION['totals'] = $totals;
+                                       } else {
+                                           // Handle the case where giveName returns an empty array or non-array
+                                           echo '<td class="text-center">کاربر خالی وارد کرده</td>';
+                                       }
+
+
+
+                                     
+                                      
                                         ?>
 
 
@@ -553,11 +644,30 @@ if (!isset($_SESSION["all_data"])) {
 
                                     </tr>
                                     <?php
+                                    
+                                 
                                     $a++;
                                 }
+
+                                // $_SESSION['totals'] = $totals;
+
                             }
+
+                            $totalSum = array_sum($totals);
+                            
+                            // var_dump($totals);
+
+                            // Output the total sum
+                            // echo "Total Sum: " . number_format($totalSum);
                             ?>
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="9" class="text-right">جمع کل این صفحه:</th>
+                                <th class="text-center"><?= number_format($totalSum) ?></th>
+                            </tr>
+                        </tfoot>
+
                     </table>
 
 
@@ -721,6 +831,230 @@ if (!isset($_SESSION["all_data"])) {
 
                         // Page numbers
                         $sql = "SELECT COUNT(*) AS total FROM products";
+                        
+                        
+
+
+
+
+                        
+                        if(isset($_GET['personel']) && $_GET['personel'] !== '' 
+                            && $_GET['dates'] === '' && $_GET['device_code'] === '' 
+                            && $_GET['piece_name'] === '' && $_GET['piece_size'] === '') {
+                            $personel = $_GET['personel'];
+                            $sql .= " WHERE user = $personel";
+                        }
+                        if(isset($_GET['dates']) && $_GET['dates'] !== '' 
+                                && $_GET['personel'] === '' && $_GET['device_code'] === '' 
+                                && $_GET['piece_name'] === '' && $_GET['piece_size'] === '') {
+                            $dates = $_GET['dates'];
+                            $sql .= " WHERE STR_TO_DATE(date, '%Y/%m/%d') >= STR_TO_DATE('$dates', '%Y/%m/%d')";
+                        }
+                        if(isset($_GET['device_code']) && $_GET['device_code'] !== '' 
+                                && $_GET['personel'] === ''  && $_GET['dates'] === '' 
+                                && $_GET['piece_name'] === '' && $_GET['piece_size'] === '') {
+                            $device_code = $_GET['device_code'];
+                            $sql .= " WHERE device_number = $device_code";
+                        }
+                        if(isset($_GET['piece_name']) && $_GET['piece_name'] !== '' 
+                                && $_GET['personel'] === ''  && $_GET['dates'] === '' 
+                                && $_GET['device_code'] === '' && $_GET['piece_size'] === '' ) {
+                            $piece_name = $_GET['piece_name'];
+                            $sql .= " WHERE piece_name = '$piece_name'";
+                        }
+                        if(isset($_GET['piece_size']) && $_GET['piece_size'] !== '' 
+                                && $_GET['personel'] === ''  && $_GET['dates'] === '' 
+                                && $_GET['device_code'] === '' && $_GET['piece_name'] === '') {
+                            $piece_size = $_GET['piece_size'];
+                            $sql .= " WHERE size = '$piece_size'";
+                        }
+
+
+                    
+
+                        if(isset($_GET['personel'], $_GET['dates']) 
+                                && $_GET['personel'] !== '' && $_GET['dates'] !== '' 
+                                && $_GET['device_code'] === '' && $_GET['piece_name'] === '' && $_GET['piece_size'] === ''){
+                            $dates = $_GET['dates'];
+                            $personel = $_GET['personel'];
+                            $sql .= " WHERE user = $personel AND STR_TO_DATE(date, '%Y/%m/%d') >= STR_TO_DATE('$dates', '%Y/%m/%d')";
+                        }
+                        if(isset($_GET['personel'], $_GET['device_code']) 
+                                && $_GET['personel'] !== '' && $_GET['device_code'] !== '' 
+                                && $_GET['dates'] === '' && $_GET['piece_name'] ==='' && $_GET['piece_size']===''){
+                            $device_code = $_GET['device_code'];
+                            $personel = $_GET['personel'];
+                            $sql .= " WHERE user = $personel AND device_number = '$device_code'";
+                        }
+                        if(isset($_GET['personel'], $_GET['piece_name']) 
+                                && $_GET['personel'] !== '' && $_GET['piece_name'] !== '' 
+                                && $_GET['dates'] === '' &&  $_GET['device_code']=== '' && $_GET['piece_size'] === ''){
+                            $piece_name = $_GET['piece_name'];
+                            $personel = $_GET['personel'];
+                            $sql .= " WHERE user = $personel AND piece_name = '$piece_name'";
+                        }
+                        if(isset($_GET['device_code'], $_GET['piece_name']) 
+                                && $_GET['device_code'] !== '' && $_GET['piece_name'] !== '' 
+                                && $_GET['dates'] === '' &&  $_GET['personel']=== '' && $_GET['piece_size'] === ''){
+                            $piece_name = $_GET['piece_name'];
+                            $device_code = $_GET['device_code'];
+                            $sql .= " WHERE device_number = '$device_code' AND piece_name = '$piece_name'";
+                        }
+                        if(isset($_GET['dates'], $_GET['device_code']) 
+                                && $_GET['device_code'] !== '' && $_GET['dates'] !== '' 
+                                && $_GET['personel'] === '' && $_GET['piece_name'] ==='' && $_GET['piece_size'] === ''){
+                            $device_code = $_GET['device_code'];
+                            $dates = $_GET['dates'];
+                            $sql .= " WHERE STR_TO_DATE(date, '%Y/%m/%d') >= STR_TO_DATE('$dates', '%Y/%m/%d') AND device_number = '$device_code'";
+                        }
+                        if(isset($_GET['dates'], $_GET['piece_name']) 
+                                && $_GET['piece_name'] !== '' && $_GET['dates'] !== '' 
+                            && $_GET['personel'] === '' && $_GET['device_code'] === '' && $_GET['piece_size'] === ''){
+                            $piece_name = $_GET['piece_name'];
+                            $dates = $_GET['dates'];
+                            $sql .= " WHERE STR_TO_DATE(date, '%Y/%m/%d') >= STR_TO_DATE('$dates', '%Y/%m/%d') AND piece_name = '$piece_name'";
+                        }
+                        if(isset($_GET['piece_size'], $_GET['piece_name']) 
+                                && $_GET['piece_name'] !== '' && $_GET['piece_size'] !== '' 
+                            && $_GET['personel'] === '' && $_GET['device_code'] === '' && $_GET['dates'] === '' ){
+                            $piece_name = $_GET['piece_name'];
+                            $piece_size = $_GET['piece_size'];
+                            $sql .= " WHERE size = '$piece_size' AND piece_name = '$piece_name'";
+                        }
+
+
+
+
+
+
+
+                        if(isset($_GET['piece_name'], $_GET['device_code'], $_GET['personel']) 
+                                && $_GET['device_code'] !== '' && $_GET['piece_name'] !== '' 
+                                && $_GET['personel'] !== '' && $_GET['dates'] === '' && $_GET['piece_size'] === ''){
+                            $device_code = $_GET['device_code'];
+                            $piece_name = $_GET['piece_name'];
+                            $personel = $_GET['personel'];
+                            $sql .= " WHERE piece_name = '$piece_name' AND device_number = '$device_code' AND user = $personel ";
+                        }
+                        if(isset($_GET['dates'], $_GET['device_code'], $_GET['personel']) 
+                                && $_GET['device_code'] !== '' && $_GET['dates'] !== '' 
+                                && $_GET['personel'] !== '' && $_GET['piece_name'] === '' && $_GET['piece_size'] === ''){
+                            $device_code = $_GET['device_code'];
+                            $dates = $_GET['dates'];
+                            $personel = $_GET['personel'];
+                            $sql .= " WHERE STR_TO_DATE(date, '%Y/%m/%d') >= STR_TO_DATE('$dates', '%Y/%m/%d') AND device_number = '$device_code' AND user = $personel ";
+                        }
+                        if(isset($_GET['dates'], $_GET['piece_name'], $_GET['personel']) 
+                                && $_GET['piece_name'] !== '' && $_GET['dates'] !== '' 
+                                && $_GET['personel'] !== '' && $_GET['device_code'] === '' && $_GET['piece_size'] === ''){
+                            $piece_name = $_GET['piece_name'];
+                            $dates = $_GET['dates'];
+                            $personel = $_GET['personel'];
+                            $sql .= " WHERE STR_TO_DATE(date, '%Y/%m/%d') >= STR_TO_DATE('$dates', '%Y/%m/%d') AND piece_name = '$piece_name' AND user = $personel ";
+                        }
+                    
+                        if(isset($_GET['dates'], $_GET['device_code'], $_GET['piece_name']) 
+                                && $_GET['device_code'] !== '' && $_GET['dates'] !== '' 
+                                && $_GET['piece_name'] !== '' && $_GET['personel'] === '' && $_GET['piece_size'] === ''){
+                            $device_code = $_GET['device_code'];
+                            $dates = $_GET['dates'];
+                            $piece_name = $_GET['piece_name'];
+                            $sql .= " WHERE STR_TO_DATE(date, '%Y/%m/%d') >= STR_TO_DATE('$dates', '%Y/%m/%d') AND device_number = '$device_code' AND piece_name = '$piece_name' ";
+                        }
+                        if(isset($_GET['personel'], $_GET['piece_size'], $_GET['piece_name']) 
+                                && $_GET['piece_size'] !== '' && $_GET['personel'] !== '' 
+                                && $_GET['piece_name'] !== '' && $_GET['dates'] === '' && $_GET['device_code'] === ''){
+                            $piece_size = $_GET['piece_size'];
+                            $personel = $_GET['personel'];
+                            $piece_name = $_GET['piece_name'];
+                            $sql .= " WHERE user = $personel AND size = '$piece_size' AND piece_name = '$piece_name' ";
+                        }
+                        if(isset($_GET['device_code'], $_GET['piece_size'], $_GET['piece_name']) 
+                                && $_GET['piece_size'] !== '' && $_GET['device_code'] !== '' 
+                                && $_GET['piece_name'] !== '' && $_GET['dates'] === '' && $_GET['personel'] === ''){
+                            $piece_size = $_GET['piece_size'];
+                            $device_code = $_GET['device_code'];
+                            $piece_name = $_GET['piece_name'];
+                            $sql .= " WHERE device_number = '$device_code' AND size = '$piece_size' AND piece_name = '$piece_name' ";
+                        }
+                        if(isset($_GET['dates'], $_GET['piece_size'], $_GET['piece_name']) 
+                                && $_GET['piece_size'] !== '' && $_GET['dates'] !== '' 
+                                && $_GET['piece_name'] !== '' && $_GET['device_code'] === '' && $_GET['personel'] === ''){
+                            $piece_size = $_GET['piece_size'];
+                            $dates = $_GET['dates'];
+                            $piece_name = $_GET['piece_name'];
+                            $sql .= " WHERE STR_TO_DATE(date, '%Y/%m/%d') >= STR_TO_DATE('$dates', '%Y/%m/%d') AND size = '$piece_size' AND piece_name = '$piece_name' ";
+                        }
+
+
+
+
+
+
+                        if(isset($_GET['device_code'], $_GET['piece_size'], $_GET['piece_name'], $_GET['personel']) 
+                                && $_GET['piece_size'] !== '' && $_GET['device_code'] !== '' 
+                                && $_GET['piece_name'] !== '' && $_GET['personel'] !== '' && $_GET['dates'] === '') {
+                            $piece_size = $_GET['piece_size'];
+                            $device_code = $_GET['device_code'];
+                            $piece_name = $_GET['piece_name'];
+                            $personel = $_GET['personel'];
+                            $sql .= " WHERE device_number = '$device_code' AND size = '$piece_size' AND piece_name = '$piece_name' AND user = $personel ";
+                        }
+                        if(isset($_GET['dates'], $_GET['piece_size'], $_GET['piece_name'], $_GET['personel']) 
+                                && $_GET['piece_size'] !== '' && $_GET['dates'] !== '' 
+                                && $_GET['piece_name'] !== '' && $_GET['personel'] !== '' && $_GET['device_code'] === '') {
+                            $piece_size = $_GET['piece_size'];
+                            $dates = $_GET['dates'];
+                            $piece_name = $_GET['piece_name'];
+                            $personel = $_GET['personel'];
+                            $sql .= " WHERE STR_TO_DATE(date, '%Y/%m/%d') >= STR_TO_DATE('$dates', '%Y/%m/%d') AND size = '$piece_size' AND piece_name = '$piece_name' AND user = $personel ";
+                        }
+                        if(isset($_GET['device_code'], $_GET['piece_size'], $_GET['piece_name'], $_GET['dates']) 
+                                && $_GET['piece_size'] !== '' && $_GET['device_code'] !== '' 
+                                && $_GET['piece_name'] !== '' && $_GET['dates'] !== '' && $_GET['personel'] === '') {
+                            $piece_size = $_GET['piece_size'];
+                            $device_code = $_GET['device_code'];
+                            $piece_name = $_GET['piece_name'];
+                            $dates = $_GET['dates'];
+                            $sql .= " WHERE device_number = '$device_code' AND size = '$piece_size' AND piece_name = '$piece_name' AND STR_TO_DATE(date, '%Y/%m/%d') >= STR_TO_DATE('$dates', '%Y/%m/%d') ";
+                        }
+                        if(isset($_GET['dates'], $_GET['device_code'], $_GET['piece_name'] , $_GET['personel']) 
+                                && $_GET['device_code'] !== '' && $_GET['dates'] !== '' 
+                                && $_GET['piece_name'] !== '' && $_GET['personel'] !== ''){
+                            $device_code = $_GET['device_code'];
+                            $dates = $_GET['dates'];
+                            $personel = $_GET['personel'];
+                            $piece_name = $_GET['piece_name'];
+                            $sql .= " WHERE STR_TO_DATE(date, '%Y/%m/%d') >= STR_TO_DATE('$dates', '%Y/%m/%d') AND device_number = '$device_code' AND piece_name = '$piece_name' AND user = $personel ";
+                        }
+
+
+
+
+
+
+                        if(isset($_GET['dates'], $_GET['device_code'], $_GET['piece_name'] , $_GET['personel'], $_GET['piece_size']) 
+                                && $_GET['device_code'] !== '' && $_GET['dates'] !== '' 
+                                && $_GET['piece_name'] !== '' && $_GET['personel'] !== '' && $_GET['piece_size'] !== ''){
+                            $device_code = $_GET['device_code'];
+                            $dates = $_GET['dates'];
+                            $personel = $_GET['personel'];
+                            $piece_name = $_GET['piece_name'];
+                            $piece_size = $_GET['piece_size'];
+                            $sql .= " WHERE STR_TO_DATE(date, '%Y/%m/%d') >= STR_TO_DATE('$dates', '%Y/%m/%d') AND device_number = '$device_code' AND piece_name = '$piece_name' AND user = $personel AND size = '$piece_size'";
+                        }
+
+
+
+
+
+
+
+
+
+
+
+
                         $result = $conn->query($sql);
                         $row = $result->fetch_assoc();
                         $total_pages = ceil($row["total"] / $results_per_page);

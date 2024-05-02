@@ -14,23 +14,32 @@ if(isset($_POST['enter'])){
 
    if($result->num_rows > 0){
       $row = $result->fetch_assoc();
-      $_SESSION['all_data'] = $row;
+
+      if($row['status'] == 0){
+        echo 'حساب کاربری شما غیر فعال است. لطفا با مدیر سایت تماس بگیرید.';
+         // header("Location: login.php"); // Redirect back to the login page
+         // exit();
+      }else{
+         $_SESSION['all_data'] = $row;
 
 
-      // Log the successful login attempt
-      $user_id = $row['id'];
-      $login_time = mds_date("Y/m/d");
-      $ip_address = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
+         // Log the successful login attempt
+         $user_id = $row['id'];
+         $login_time = mds_date("Y/m/d");
+         $ip_address = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
+   
+   
+   
+         $sql_log = "INSERT INTO logs (timestamp, user_id, ip_address, events) 
+                     VALUES ('$login_time', '$user_id', '$ip_address', 'login')";
+         $conn->query($sql_log);
+   
+   
+         header("Location: index.php");
+         exit();
+      }
 
-
-
-      $sql_log = "INSERT INTO logs (timestamp, user_id, ip_address, events) 
-                  VALUES ('$login_time', '$user_id', '$ip_address', 'login')";
-      $conn->query($sql_log);
-
-
-      header("Location: index.php");
-      exit();
+      
    }else {
       echo 'نام کاربری یا رمز عبور درست نیست';
       $_SESSION['login_error'] = 'نام کاربری یا رمز عبور اشتباه است. دوباره امتحان کنید.';

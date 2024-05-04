@@ -55,7 +55,7 @@ $id = $_SESSION["all_data"]['id'];
             -moz-appearance: textfield;
         }
 
-        
+
         input[type="time"] {
             position: relative;
         }
@@ -351,7 +351,7 @@ $id = $_SESSION["all_data"]['id'];
 
 
 
-                    
+
 
 
 
@@ -380,7 +380,7 @@ $id = $_SESSION["all_data"]['id'];
                         function checkTimeValidity() {
                             var startTime = startTimeInput.valueAsNumber;
                             var stopTime = stopTimeInput.valueAsNumber;
-                            
+
                             if (stopTime <= startTime) {
                                 errorDiv.textContent = "* ساعت پایان باید بیشتر از ساعت شروع باشد";
                             } else {
@@ -447,7 +447,7 @@ $id = $_SESSION["all_data"]['id'];
                         function checkTimeValidity2() {
                             var startTime = startTimeInput2.valueAsNumber;
                             var stopTime = stopTimeInput2.valueAsNumber;
-                            
+
                             if (stopTime <= startTime) {
                                 errorDiv2.textContent = " * ساعت دوم باید بیشتر از ساعت اول باشد";
                             } else {
@@ -527,18 +527,19 @@ $id = $_SESSION["all_data"]['id'];
 
                 <?php
 
-                if($show_table_for_user = 1 ){?>
+                if ($show_table_for_user = 1) { ?>
                     <div class="row mt-5">
-                        
+
                         <div class="col-md-12">
                             <div class="table-responsive">
-                                
+
                                 <table class="table border border-4">
                                     <h4>نگاه کلی :</h4>
                                     <thead>
                                         <tr>
                                             <th scope="col" class="text-center">ردیف</th>
-                                            <th scope="col" class="text-center">کد دستگاه</th>
+                                            <th scope="col" class="text-center">نام دستگاه</th>
+                                            <th scope="col" class="text-center">کد </th>
                                             <th scope="col" class="text-center">نام قطعه</th>
                                             <th scope="col" class="text-center">سایز </th>
                                             <th scope="col" class="text-center">شیفت</th>
@@ -567,10 +568,11 @@ $id = $_SESSION["all_data"]['id'];
                                                 <!-- Table rows -->
                                                 <tr>
                                                     <th scope="row" class="text-center"><?= $a ?></th>
+                                                    <td class="text-center"><?= $row['device_name'] ?></td>
                                                     <td class="text-center"><?= giveDeviceCode($row['device_number']) ?></td>
 
                                                     <td class="text-center"><?= $row['piece_name'] ?></td>
-                                                
+
                                                     <?php
                                                     $nameData = giveName($row['size']);
                                                     if (!empty($nameData) && is_array($nameData)) {
@@ -608,14 +610,14 @@ $id = $_SESSION["all_data"]['id'];
                                                             <button name="accept_user" class="btn btn-outline-success btn-sm">تایید میکنم</button>
                                                             <!-- Change the type of the button to "button" -->
                                                             <!-- <button name="edit_user" id="reject_button" class="btn btn-outline-warning btn-sm">نیاز به ویرایش</button> -->
-                                                            <a href="edit_pro.php?id_pro=<?= $row['id'] ?>" name="" id="reject_button" class="btn btn-outline-warning btn-sm">نیاز به ویرایش</a>
+                                                            <!-- <a href="edit_pro.php?id_pro=<?= $row['id'] ?>" name="" id="reject_button" class="btn btn-outline-warning btn-sm">نیاز به ویرایش</a> -->
                                                             <button name="delete_user" class="btn btn-outline-danger btn-sm">حذف</button>
 
                                                         </form>
 
                                                     </td>
-                                                    
-                                                    
+
+
 
 
 
@@ -635,10 +637,10 @@ $id = $_SESSION["all_data"]['id'];
                             </div>
                         </div>
                     </div>
-                <?php                
+                <?php
                 }
                 ?>
-                
+
             </div>
         </div>
     </div>
@@ -852,7 +854,7 @@ $id = $_SESSION["all_data"]['id'];
         });
     </script>
 
-   
+
 
 </body>
 
@@ -904,8 +906,8 @@ if (isset($_POST['submit_go'])) {
     $result1 = $stmt->get_result();
 
 
-    
-    if($result1->num_rows >0){
+
+    if ($result1->num_rows > 0) {
         echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
         <div class='toast-header bg-danger text-white'>
             <strong class='mr-auto'>Error</strong>
@@ -925,7 +927,7 @@ if (isset($_POST['submit_go'])) {
             }, 3000);
         });
       </script>";
-      exit;
+        exit;
     }
 
 
@@ -942,7 +944,7 @@ if (isset($_POST['submit_go'])) {
     $result = $conn->query($sql);
 
     if ($result) {
-        $show_table_for_user = 1 ;
+        $show_table_for_user = 1;
         // Use Bootstrap's toast component to show a success toast message
         echo "<div id='successToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
                 <div class='toast-header bg-success text-white'>
@@ -991,8 +993,6 @@ if (isset($_POST['submit_go'])) {
 
         echo "Error: " . $sql . "<br>" . $conn->error;
     }
-
-   
 }
 
 if (isset($_POST['final_submit'])) {
@@ -1035,8 +1035,8 @@ if (isset($_POST['final_submit'])) {
     $stmt->bind_param("sss", $sub_date, $device_name, $start);
     $stmt->execute();
     $result1 = $stmt->get_result();
-    
-    if($result1->num_rows >0){
+
+    if ($result1->num_rows > 0) {
         echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
         <div class='toast-header bg-danger text-white'>
             <strong class='mr-auto'>Error</strong>
@@ -1056,7 +1056,7 @@ if (isset($_POST['final_submit'])) {
             }, 3000);
         });
       </script>";
-      exit;
+        exit;
     }
 
 
@@ -1073,7 +1073,7 @@ if (isset($_POST['final_submit'])) {
     $result = $conn->query($sql);
 
     if ($result) {
-        $show_table_for_user = 0 ;
+        $show_table_for_user = 0;
         // Use Bootstrap's toast component to show a success toast message
         echo "<div id='successToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
                 <div class='toast-header bg-success text-white'>
@@ -1118,9 +1118,6 @@ if (isset($_POST['final_submit'])) {
 
         echo "Error: " . $sql . "<br>" . $conn->error;
     }
-
-
-    
 }
 
 
@@ -1128,10 +1125,10 @@ if (isset($_POST['final_submit'])) {
 
 
 
-if(isset($_GET['accept_user'])){
+if (isset($_GET['accept_user'])) {
 
     $id_pro = $_GET['id_pro'];
-    
+
 
     $sql = "UPDATE products SET user_confirm = 1 WHERE id = $id_pro";
     $result = $conn->query($sql);
@@ -1187,7 +1184,7 @@ if(isset($_GET['accept_user'])){
 }
 
 
-if(isset($_GET['delete_user']) ){
+if (isset($_GET['delete_user'])) {
     $id_pro = $_GET['id_pro'];
 
     $sql = "DELETE FROM products WHERE id = $id_pro";

@@ -1,8 +1,8 @@
 <?php
 include 'config.php';
 
-if (isset($_GET['name'])) {
-    $selectedDeviceName = $_GET['name'];
+if (isset($_GET['device_name'])) {
+    $selectedDeviceName = $_GET['device_name'];
 
     // Perform a database query to fetch device numbers associated with the selected device name
     $sql = "SELECT id, numbers FROM devices WHERE name = '$selectedDeviceName' ORDER BY numbers";

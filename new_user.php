@@ -138,9 +138,9 @@ if (!isset($_SESSION["all_data"])) {
                                                         <input type="hidden" value="<?= $row['id'] ?>" name="id_user">
                                                         <a href="edit_user.php?id_user=<?= $row['id'] ?>" class="btn btn-outline-warning btn-sm"> ویرایش</a>
                                                         <?php if ($row['status'] == 1) { ?>
-                                                            <button name="deactivate_user" class="btn btn-outline-secondary btn-sm">غیرفعال کردن</button>
+                                                            <button name="deactive_user" class="btn btn-outline-secondary btn-sm">غیرفعال کردن</button>
                                                         <?php } else { ?>
-                                                            <button name="activate_user" class="btn btn-outline-secondary btn-sm">فعال کردن</button>
+                                                            <button name="active_user" class="btn btn-outline-secondary btn-sm">فعال کردن</button>
                                                         <?php } ?>
                                                         <button name="delete_user" class="btn btn-outline-danger btn-sm">حذف</button>
                                                     </form>

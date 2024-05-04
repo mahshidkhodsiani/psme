@@ -109,7 +109,7 @@ if (!isset($_SESSION["all_data"])) {
                         <div class="row">
                             <div class="col-md-6">
                                 <label for="device_name" class="form-label fw-semibold">نام دستگاه *</label>
-                                <select name="device_name" id="device_name" class="form-select" aria-label="Default select example" required>
+                                <select name="device_name" id="device_name" class="form-select"  onchange="getNumbers()" required>
                                     <option value="" selected>یکی از دستگاه های زیر را انتخاب کنید</option>
                                     <?php
                                     $sql = "SELECT name, MIN(id) AS id FROM devices GROUP BY name ORDER BY name";
@@ -117,7 +117,6 @@ if (!isset($_SESSION["all_data"])) {
                                     $result = $conn->query($sql);
                                     if ($result->num_rows > 0) {
                                         while ($device_row = $result->fetch_assoc()) {
-                                            // Check if the device name matches the value from the products table
                                             $selected = ($device_row['name'] == $row['device_name']) ? 'selected' : '';
                                     ?>
                                             <option id="<?= $device_row['id'] ?>" value="<?= $device_row['name'] ?>" <?= $selected ?>><?= $device_row['name'] ?></option>
@@ -130,24 +129,17 @@ if (!isset($_SESSION["all_data"])) {
 
 
 
+
+
                             <div class="col-md-6">
-                                <label for="device_number" class="form-label fw-semibold">
-                                    شماره دستگاه *</label>
-                                    <select name="device_number" id="device_number" class="form-select" aria-label="Default select example" required>
-                                    <option value="" disabled>ابتدا اسم دستگاه را وارد کنید</option>
+                                <label for="device_number" class="form-label">کد دستگاه:</label>
+                                <select class="form-select" name="device_number" id="device_number">
                                     <?php
-                                    $sql = "SELECT * FROM devices";
-                                    $result = $conn->query($sql);
-                                    if ($result->num_rows > 0) {
-                                        while ($row1 = $result->fetch_assoc()) { 
-                                            // Check if the device number matches the value from the database
-                                            $selected = ($row1['numbers'] == $row['device_number']) ? 'selected' : '';
-                                            ?>
-                                            <option id="<?= $row1['id'] ?>" value="<?= $row1['numbers'] ?>" <?= $selected ?>><?= $row1['numbers'] ?></option>
-                                        <?php
-                                        }
-                                    }
+                                    // Pre-select a size option if needed
+                                    $selected_size = ($row['device_number']) ? $row['device_number'] : '';
                                     ?>
+                                    <option value="<?= $selected_size ?>" selected><?= $selected_size ?></option>
+                                    <option value="" disabled>ابتدا اسم دستگاه را وارد کنید</option>
                                 </select>
                             </div>
                         </div>
@@ -155,61 +147,29 @@ if (!isset($_SESSION["all_data"])) {
 
 
 
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                                var deviceNameSelect = document.getElementById('device_name');
-                                var deviceNumberSelect = document.getElementById('device_number');
-
-                                // Remove the line that disables the device number select initially
-                                // deviceNumberSelect.disabled = true;
-
-                                deviceNameSelect.addEventListener('change', function() {
-                                    var selectedDeviceName = this.value;
-
-                                    // Clear previous options
-                                    deviceNumberSelect.innerHTML = '<option value="" selected>در حال بارگذاری...</option>';
-
-                                    // Make AJAX request
-                                    var xhr = new XMLHttpRequest();
-                                    xhr.onreadystatechange = function() {
-                                        if (xhr.readyState === XMLHttpRequest.DONE) {
-                                            if (xhr.status === 200) {
-                                                var deviceNumbers = JSON.parse(xhr.responseText);
-                                                // Update device number select options
-                                                deviceNumberSelect.innerHTML = '<option value="" selected>یکی از شماره های زیر را انتخاب کنید</option>';
-                                                deviceNumbers.forEach(function(device) {
-                                                    var option = document.createElement('option');
-                                                    option.value = device.id; // Assuming 'id' is the device id
-                                                    option.textContent = device.numbers; // Assuming 'numbers' is the device number
-                                                    deviceNumberSelect.appendChild(option);
-                                                });
-                                                // Enable device number select
-                                                deviceNumberSelect.disabled = false;
-                                            } else {
-                                                console.error('Request failed: ' + xhr.status);
-                                            }
-                                        }
-                                    };
-                                    xhr.open('GET', 'search_smilar_device.php?name=' + encodeURIComponent(selectedDeviceName), true);
-                                    xhr.send();
-                                });
-                            });
-                        </script>
 
 
 
 
 
 
-                        <div class="row mt-3">
 
+
+
+
+
+
+
+
+
+
+                        <div class="row mt-2">
                             <div class="col-md-6">
-                                <label for="piece_name" class="form-label fw-semibold">نام قطعه *</label>
-                                <select name="piece_name" id="piece_name" class="form-select" aria-label="Default select example" required>
-                                    <option value="" selected>یکی از قطعه های زیر را انتخاب کنید</option>
+                                <label for="piece_name" class="form-label">نام قطعه:</label>
+                                <select class="form-select" id="piece_name" name="piece_name" onchange="getSizes()">
+                                    <option value="">همه</option>
                                     <?php
-
-
+                                    // $sql = "SELECT DISTINCT name FROM pieces";
                                     $sql = "SELECT name, MIN(id) AS id FROM pieces GROUP BY name";
                                     $result = $conn->query($sql);
                                     if ($result->num_rows > 0) {
@@ -221,36 +181,21 @@ if (!isset($_SESSION["all_data"])) {
                                         }
                                     }
                                     ?>
+
                                 </select>
                             </div>
 
                             <div class="col-md-6">
-                                <label for="size" class="form-label fw-semibold">سایز قطعه *</label>
-                                <select name="size" id="size" class="form-select" aria-label="Default select example" required>
-                                    <option value="" disabled>ابتدا اسم قطعه را وارد کنید</option>
+                                <label for="piece_size" class="form-label">سایز قطعه:</label>
+                                <select class="form-select" name="piece_size" id="piece_size">
                                     <?php
-                                    $sql = "SELECT * FROM pieces";
-                                    $result = $conn->query($sql);
-                                    if ($result->num_rows > 0) {
-                                        while ($row2 = $result->fetch_assoc()) {
-                                            // Check if the current size matches the saved size
-                                            $selected = ($row2['size'] == $row['size']) ? 'selected' : '';
-                                            ?>
-                                            <option value="<?= $row2['size'] ?>" <?= $selected ?>><?= $row2['size'] ?></option>
-                                        <?php
-                                        }
-                                    }
+                                    // Pre-select a size option if needed
+                                    $selected_size = ($row['piece_size']) ? $row['piece_size'] : '';
                                     ?>
+                                    <option value="<?= $selected_size ?>" selected><?= $selected_size ?></option>
+                                    <option value="" disabled>ابتدا نام قطعه را وارد کنید</option>
                                 </select>
                             </div>
-
-
-
-
-
-
-
-
                         </div>
 
 
@@ -260,57 +205,6 @@ if (!isset($_SESSION["all_data"])) {
 
 
 
-                        <!-- <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                                var pieceNameSelect = document.getElementById('piece_name');
-                                var sizeSelect = document.getElementById('size');
-
-                                // Remove the line that disables the size select initially
-                                // sizeSelect.disabled = true;
-
-                                pieceNameSelect.addEventListener('change', function() {
-                                    var selectedPieceName = this.value;
-
-                                    // Clear previous options
-                                    sizeSelect.innerHTML = '<option value="" selected>در حال بارگذاری...</option>';
-
-                                    // Make AJAX request
-                                    var xhr = new XMLHttpRequest();
-                                    xhr.onreadystatechange = function() {
-                                        if (xhr.readyState === XMLHttpRequest.DONE) {
-                                            if (xhr.status === 200) {
-                                                var sizes = JSON.parse(xhr.responseText);
-
-                                                // Ensure sizes is not empty
-                                                if (sizes.length > 0) {
-                                                    // Update size select options
-                                                    sizeSelect.innerHTML = '<option value="" selected>یکی از سایزهای زیر را انتخاب کنید</option>';
-                                                    sizes.forEach(function(size) {
-                                                        var option = document.createElement('option');
-                                                        option.value = size.id; // Assuming 'id' is the ID from the database
-                                                        option.textContent = size.size; // Assuming 'size' is the size name from the database
-                                                        sizeSelect.appendChild(option);
-                                                    });
-
-                                                    // Enable size select
-                                                    sizeSelect.disabled = false;
-                                                } else {
-                                                    // If sizes array is empty, display a message
-                                                    sizeSelect.innerHTML = '<option value="" selected>هیچ سایزی یافت نشد</option>';
-                                                    sizeSelect.disabled = true;
-                                                }
-                                            } else {
-                                                console.error('Request failed: ' + xhr.status);
-                                            }
-                                        }
-                                    };
-
-                                    // Adjust the URL according to your server endpoint
-                                    xhr.open('GET', 'get_sizes.php?piece_name=' + encodeURIComponent(selectedPieceName), true);
-                                    xhr.send();
-                                });
-                            });
-                        </script> -->
 
 
 
@@ -426,7 +320,7 @@ if (!isset($_SESSION["all_data"])) {
                                 <label for="extra_explanation" class="form-label fw-semibold">
                                     توضیحات اضافی</label>
                                 <textarea name="extra_explanation" class="form-control"><?php echo isset($row['explanation']) ? $row['explanation'] : ''; ?></textarea>
-                                <input type="hidden" name="id_pro" value="<?= $id_pro?>">
+                                <input type="hidden" name="id_pro" value="<?= $id_pro ?>">
                             </div>
 
 
@@ -455,7 +349,7 @@ if (!isset($_SESSION["all_data"])) {
 
                 <?php
 
-                } 
+                }
 
                 ?>
 
@@ -629,6 +523,112 @@ if (!isset($_SESSION["all_data"])) {
         });
     </script>
 
+
+
+
+    <script>
+        $(document).ready(function() {
+            // Call the function to get sizes with the initially selected piece name
+            getNumbers();
+
+            // Attach change event listener to the piece name select element
+            $('#device_name').change(function() {
+                // Call the function to get sizes whenever the piece name changes
+                getNumbers();
+            });
+        });
+
+        function getNumbers() {
+            // Get the piece name entered by the user
+            var pieceName = document.getElementById("device_name").value;
+
+            // Check if a piece name is provided
+            if (pieceName.trim() !== '') {
+                $.ajax({
+                    type: 'GET',
+                    url: 'get_numbers.php',
+                    data: {
+                        device_name: pieceName
+                    },
+                    dataType: 'json', // Specify JSON data type
+                    success: function(data) {
+                        console.log("Received data:", data); // Log received data
+                        var sizesHtml = '<option value="">Select a size</option>'; // Add a placeholder option
+
+                        // Construct HTML for sizes
+                        data.forEach(function(item) {
+                            sizesHtml += '<option value="' + item.id + '">' + item.numbers + '</option>';
+                        });
+
+                        console.log("Generated HTML:", sizesHtml); // Log generated HTML
+
+                        // Replace the default option with the sizes
+                        $('#device_number').html(sizesHtml);
+                    },
+                    error: function() {
+                        // Handle errors
+                        alert("Error fetching sizes");
+                    }
+                });
+            } else {
+                // If no piece name is provided, show a placeholder in the size select element
+                $('#device_number').html('<option value="">Select a piece first</option>');
+            }
+        }
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            // Call the function to get sizes with the initially selected piece name
+            getSizes();
+
+            // Attach change event listener to the piece name select element
+            $('#piece_name').change(function() {
+                // Call the function to get sizes whenever the piece name changes
+                getSizes();
+            });
+        });
+
+        function getSizes() {
+            // Get the piece name entered by the user
+            var pieceName = document.getElementById("piece_name").value;
+
+            // Check if a piece name is provided
+            if (pieceName.trim() !== '') {
+                $.ajax({
+                    type: 'GET',
+                    url: 'get_sizes.php',
+                    data: {
+                        piece_name: pieceName
+                    },
+                    dataType: 'json', // Specify JSON data type
+                    success: function(data) {
+                        console.log("Received data:", data); // Log received data
+                        var sizesHtml = '<option value="">Select a size</option>'; // Add a placeholder option
+
+                        // Construct HTML for sizes
+                        data.forEach(function(item) {
+                            sizesHtml += '<option value="' + item.id + '">' + item.size + '</option>';
+                        });
+
+                        console.log("Generated HTML:", sizesHtml); // Log generated HTML
+
+                        // Replace the default option with the sizes
+                        $('#piece_size').html(sizesHtml);
+                    },
+                    error: function() {
+                        // Handle errors
+                        alert("Error fetching sizes");
+                    }
+                });
+            } else {
+                // If no piece name is provided, show a placeholder in the size select element
+                $('#piece_size').html('<option value="">Select a piece first</option>');
+            }
+        }
+    </script>
+
+
 </body>
 
 </html>
@@ -641,6 +641,33 @@ if (isset($_POST['submit_go'])) {
 
     $id_pro = $_POST['id_pro'];
 
+    if(empty($_POST['device_number'])){
+        echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+                <div class='toast-header bg-danger text-white'>
+                    <strong class='mr-auto'>Error</strong>
+                    <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                        <span aria-hidden='true'>&times;</span>
+                    </button>
+                </div>
+                <div class='toast-body'>
+                    کد دستگاه خالی وارد شده لطفا دوباره تلاش کنید!
+                </div>
+              </div>
+              <script>
+                $(document).ready(function(){
+                    $('#successToast').toast('show');
+                    setTimeout(function(){
+                        $('#successToast').toast('hide');
+                        // Redirect after 3 seconds
+                        setTimeout(function(){
+                            window.location.href = 'submit_pro';
+                        }, 1000);
+                    }, 1000);
+                });
+            </script>";
+
+    }
+
     // var_dump($_POST);
 
     // Escape and retrieve form data
@@ -648,7 +675,7 @@ if (isset($_POST['submit_go'])) {
     $device_name = $conn->real_escape_string($_POST['device_name']);
     $device_number = $conn->real_escape_string($_POST['device_number']);
     $piece_name = $conn->real_escape_string($_POST['piece_name']);
-    $size = $conn->real_escape_string($_POST['size']);
+    $piece_size = $conn->real_escape_string($_POST['piece_size']);
     $level = $conn->real_escape_string($_POST['level']);
     $numbers = $conn->real_escape_string($_POST['numbers']);
     $had_stop = $conn->real_escape_string($_POST['had_stop']);
@@ -666,7 +693,7 @@ if (isset($_POST['submit_go'])) {
                 device_number = '$device_number',
                 piece_name = '$piece_name',
                 shift = '$shift',
-                size = '$size',
+                size = '$piece_size',
                 level = '$level',
                 numbers = '$numbers',
                 had_stop = '$had_stop',
@@ -707,8 +734,6 @@ if (isset($_POST['submit_go'])) {
                     }, 1000);
                 });
             </script>";
-
-      
     } else {
         // Show error message
         echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>

@@ -1,26 +1,34 @@
 <?php
+
 include 'config.php';
 
-if (isset($_GET['device_name'])) {
-    $selectedDeviceName = $_GET['device_name'];
+if (isset($_POST['device_name_id'])) {
+    $device_name_id = '%' . $_POST['device_name_id'] . '%'; // Adjust how you sanitize user input as needed
 
-    // Perform a database query to fetch device numbers associated with the selected device name
-    $sql = "SELECT id, numbers FROM devices WHERE name = '$selectedDeviceName' ORDER BY numbers";
+    // Perform database query
+    $sql = "SELECT id, numbers FROM devices WHERE name LIKE ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $device_name_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    $result = $conn->query($sql);
-
-    // Output the results as JSON
-    $deviceNumbers = array();
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            $deviceNumbers[] = array(
-                'id' => $row['id'],
-                'numbers' => $row['numbers']
-            );
-        }
+    // Prepare array to hold results
+    $device_numbers = array();
+    while ($row = $result->fetch_assoc()) {
+        $device_numbers[] = array(
+            'id' => $row['id'],
+            'number' => $row['numbers'] // Ensure this matches the column name in your database
+        );
     }
-    echo json_encode($deviceNumbers);
+
+    // Return JSON response
+    header('Content-Type: application/json');
+    echo json_encode($device_numbers);
+    exit;
 } else {
-    echo json_encode(array('error' => 'No device name provided'));
+    // Handle invalid request
+    http_response_code(400);
+    echo json_encode(array('error' => 'Invalid request'));
+    exit;
 }
 ?>

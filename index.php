@@ -186,7 +186,18 @@ $admin = $_SESSION["all_data"]['admin'];
                                         ?>
                                                 <tr>
                                                     <th scope="row"><?= $a ?></th>
+                                                    <?php
+                                                    if($admin == 1){?>
+                                                    <td><a href="messages" style="text-decoration: none; color: black;"> <?= truncateText($row['text']) ?></a></td>
+                                                
+                                                    <?php
+                                                    }else{?>
+                                                    
                                                     <td><a href="new_message" style="text-decoration: none; color: black;"> <?= truncateText($row['text']) ?></a></td>
+                                                    <?php
+                                                    }
+                                                    ?>
+
                                                     <td><?= givePerson($row['from_user']) ?></td>
                                                     <td><?= $row['date'] ?></td>
                                                 </tr> 

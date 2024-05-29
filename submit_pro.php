@@ -106,92 +106,72 @@ $id = $_SESSION["all_data"]['id'];
 
 
 
+
+
                     <div class="row">
                         <div class="col-md-6">
-                            <label for="device_name" class="form-label fw-semibold">
-                                نام دستگاه</label>
+                            <label for="device_name" class="form-label fw-semibold">نام دستگاه</label>
                             <select name="device_name" id="device_name" class="form-select" aria-label="Default select example" required>
                                 <option value="" selected>یکی از دستگاه های زیر را انتخاب کنید</option>
                                 <?php
                                 $sql = "SELECT name, MIN(id) AS id FROM devices GROUP BY name ORDER BY name";
-
-
                                 $result = $conn->query($sql);
                                 if ($result->num_rows > 0) {
                                     while ($row = $result->fetch_assoc()) { ?>
-                                        <option id="<?= $row['id'] ?>" value="<?= $row['name'] ?>"><?= $row['name'] ?></option>
-                                <?php
-                                    }
-                                }
-
-                                ?>
+                                        <option value="<?= $row['name'] ?>"><?= $row['name'] ?></option>
+                                    <?php }
+                                } ?>
                             </select>
                         </div>
-
-
                         <div class="col-md-6">
-                            <label for="device_number" class="form-label fw-semibold">
-                                شماره دستگاه</label>
+                            <label for="device_number" class="form-label fw-semibold">شماره دستگاه</label>
                             <select name="device_number" id="device_number" class="form-select" aria-label="Default select example" required>
                                 <option value="" selected disabled>ابتدا اسم دستگاه را وارد کنید</option>
                                 <?php
-                                $sql = "SELECT * FROM devices";
-                                $result = $conn->query($sql);
-                                if ($result->num_rows > 0) {
-                                    while ($row = $result->fetch_assoc()) { ?>
-                                        <option id="<?= $row['id'] ?>" value="<?= $row['numbers'] ?>"><?= $row['numbers'] ?></option>
-                                <?php
-                                    }
-                                }
-
+                                // Initially, PHP renders empty options; these will be populated dynamically by JavaScript/jQuery.
                                 ?>
                             </select>
                         </div>
                     </div>
 
-
-
-
+                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                     <script>
-                        document.addEventListener('DOMContentLoaded', function() {
-                            var deviceNameSelect = document.getElementById('device_name');
-                            var deviceNumberSelect = document.getElementById('device_number');
+                        $(document).ready(function() {
+                            $('#device_name').change(function() {
+                                var deviceNameId = $(this).val();
 
-                            // Disable device number select initially
-                            deviceNumberSelect.disabled = true;
-
-                            deviceNameSelect.addEventListener('change', function() {
-                                var selectedDeviceName = this.value;
-
-                                // Clear previous options
-                                deviceNumberSelect.innerHTML = '<option value="" selected>در حال بارگذاری...</option>';
-
-                                // Make AJAX request
-                                var xhr = new XMLHttpRequest();
-                                xhr.onreadystatechange = function() {
-                                    if (xhr.readyState === XMLHttpRequest.DONE) {
-                                        if (xhr.status === 200) {
-                                            var deviceNumbers = JSON.parse(xhr.responseText);
-                                            // Update device number select options
-                                            deviceNumberSelect.innerHTML = '<option value="" selected>یکی از شماره های زیر را انتخاب کنید</option>';
-                                            deviceNumbers.forEach(function(device) {
-                                                var option = document.createElement('option');
-                                                option.value = device.id; // Assuming 'id' is the device id
-                                                option.textContent = device.numbers; // Assuming 'numbers' is the device number
-                                                deviceNumberSelect.appendChild(option);
-                                            });
-                                            // Enable device number select
-                                            deviceNumberSelect.disabled = false;
-                                        } else {
-                                            console.error('Request failed: ' + xhr.status);
-                                        }
+                                $.ajax({
+                                    url: 'search_smilar_device.php',
+                                    method: 'POST',
+                                    data: { device_name_id: deviceNameId },
+                                    dataType: 'json', // Ensure expected data type is JSON
+                                    success: function(data) {
+                                        console.log(data);
+                                        $('#device_number').empty();
+                                        $.each(data, function(index, device) {
+                                            $('#device_number').append('<option value="' + device.id + '">' + device.number + '</option>');
+                                        });
+                                    },
+                                    error: function(xhr, status, error) {
+                                        console.error('Error fetching device numbers:', error);
                                     }
-                                };
-                                xhr.open('GET', 'search_smilar_device.php?name=' + encodeURIComponent(selectedDeviceName), true);
-                                xhr.send();
+                                });
                             });
                         });
+
+
+
                     </script>
+
+
+
+                  
+
+
+
+
+
+
 
 
 

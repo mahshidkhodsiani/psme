@@ -94,6 +94,10 @@ if ($_SESSION["all_data"]['admin'] == 1) {
         <img src="img/new_u.png" height="20px" width="20px">
         ثبت یوزر جدید
     </a>
+    <a href="messages" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'messages') echo 'active'; ?>">
+        <img src="img/message.png" height="20px" width="20px">
+        پیامها
+    </a>
   
 </div>
 

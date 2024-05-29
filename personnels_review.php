@@ -57,7 +57,7 @@ if (!isset($_SESSION["all_data"])) {
             </div>
 
             <div class="col-md-8 col-sm-12">
-                <h3 style="background-color: #dbd50c;" class="d-flex justify-content-center mt-2 p-3">گزارش گیری : </h3>
+                <h3 style="background-color: #fcb321;" class="d-flex justify-content-center mt-2 p-3">گزارش گیری : </h3>
 
 
 

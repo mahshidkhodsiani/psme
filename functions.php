@@ -70,3 +70,13 @@ function giveName($id)
     }
 }
 
+
+function truncateText($text, $limit = 5) {
+    $words = explode(' ', $text);
+    if (count($words) > $limit) {
+        $words = array_slice($words, 0, $limit);
+        return implode(' ', $words) . '...';
+    }
+    return $text;
+}
+

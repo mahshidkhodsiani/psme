@@ -5,6 +5,7 @@ if (!isset($_SESSION["all_data"])) {
     exit();
 }
 
+$id_from = $_SESSION["all_data"]['id'];
 
 ?>
 <!DOCTYPE html>
@@ -44,7 +45,7 @@ if (!isset($_SESSION["all_data"])) {
             </div>
 
             <div class="col-md-8 col-sm-12">
-                <h3 style="background-color: #dbd50c;" class="d-flex justify-content-center mt-2 p-3">مدیریت پرسنل : </h3>
+                <h3 style="background-color: #fcb321;" class="d-flex justify-content-center mt-2 p-3">مدیریت پرسنل : </h3>
                 
           
                     
@@ -380,10 +381,12 @@ if(isset($_POST['text_reason'], $_POST['send_message'])){
     $sql = "UPDATE products SET status = 2 WHERE id = $id";
     $result = $conn->query($sql);
 
+    $date = mds_date("Y/m/d", "now", 1);
+
     if($result){
 
-        $sql2 = "INSERT INTO messages (text, to_user)
-                VALUES ('$message', '$person')" ;
+        $sql2 = "INSERT INTO messages (text, to_user, from_user, date)
+                VALUES ('$message', '$person', '$id_from', '$date')"; ;
                  $result2 = $conn->query($sql2);
                  if($result){
 

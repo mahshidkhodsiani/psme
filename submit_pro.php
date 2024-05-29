@@ -88,7 +88,7 @@ $id = $_SESSION["all_data"]['id'];
             </div>
 
             <div class="col-md-8">
-                <h3 style="background-color: #dbd50c;" class="d-flex justify-content-center mt-2 p-3">فرم ثبت روزانه محصولات : </h3>
+                <h3 style="background-color: #fcb321;" class="d-flex justify-content-center mt-2 p-3">فرم ثبت روزانه محصولات : </h3>
                 <form action="submit_pro.php" method="POST" enctype="multipart/form-data" class="p-3 border mt-4">
                     <div class="row">
                         <div class="col-md-6">

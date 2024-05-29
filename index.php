@@ -24,6 +24,7 @@ $admin = $_SESSION["all_data"]['admin'];
     include 'includes.php';
     include 'config.php';
     include 'functions.php';
+    // include 'PersianCalendar.php';
     ?>
     <!-- <link rel="stylesheet" href="styles.css"> -->
 
@@ -48,7 +49,7 @@ $admin = $_SESSION["all_data"]['admin'];
             </div>
 
             <div class="col-md-8">
-                <h3 style="background-color: #dbd50c;" class="d-flex justify-content-center mt-2 p-3">صفحه اول : </h3>
+                <h3 style="background-color: #fcb321;" class="d-flex justify-content-center mt-2 p-3">صفحه اول : </h3>
 
                 <div class="row">
                     <div class="col-md-12">
@@ -149,7 +150,7 @@ $admin = $_SESSION["all_data"]['admin'];
                 <div class="row mt-4">
                    
 
-                    <div class="col-md-6">
+                    <div class="col-md-8">
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">آخرین پیام ها </h5>
@@ -158,6 +159,8 @@ $admin = $_SESSION["all_data"]['admin'];
                                         <tr>
                                             <th scope="col">ردیف</th>
                                             <th scope="col">پیام</th>
+                                            <th scope="col">فرستنده</th>
+                                            <th scope="col">تاریخ</th>
 
                                         </tr>
                                     </thead>
@@ -170,7 +173,7 @@ $admin = $_SESSION["all_data"]['admin'];
                                            $sql = "SELECT * FROM messages 
                                                 ORDER BY id DESC LIMIT 10"; 
                                         }else{
-                                             $sql = "SELECT * FROM messages WHERE to_user = '$id'
+                                             $sql = "SELECT * FROM messages WHERE to_user = '$id' OR from_user = '$id' 
                                                 ORDER BY id DESC LIMIT 10";
                                         }
                                        
@@ -183,8 +186,10 @@ $admin = $_SESSION["all_data"]['admin'];
                                         ?>
                                                 <tr>
                                                     <th scope="row"><?= $a ?></th>
-                                                    <td><?= $row['text'] ?></td>
-                                                </tr>
+                                                    <td><a href="new_message" style="text-decoration: none; color: black;"> <?= truncateText($row['text']) ?></a></td>
+                                                    <td><?= givePerson($row['from_user']) ?></td>
+                                                    <td><?= $row['date'] ?></td>
+                                                </tr> 
                                         <?php
                                                 $a++;
                                             }
@@ -202,7 +207,7 @@ $admin = $_SESSION["all_data"]['admin'];
                     ?>
 
 
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="card">
                             <div class="card-body">
                              

@@ -2,6 +2,7 @@
     body {
         margin: 0;
         font-family: "Lato", sans-serif;
+        /* font-family: 'thahoma' ; */
     }
 
     .sidebar {
@@ -68,7 +69,7 @@ if ($_SESSION["all_data"]['admin'] == 1) {
 ?>
 
 <div class="sidebar">
-<h5 class="p-3"><?= $_SESSION['all_data']['name']. " ".$_SESSION['all_data']['family']?></h5>
+<h5 class="p-4 shadow"><?= $_SESSION['all_data']['name']. " ".$_SESSION['all_data']['family']?></h5>
     <a href="index" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'index') echo 'active'; ?>">
         <img src="img/home.png" height="20px" width="20px">
         صفحه اول
@@ -105,7 +106,7 @@ if ($_SESSION["all_data"]['admin'] == 1) {
 ?>
 
 <div class="sidebar">
-    <h4><?= $_SESSION['all_data']['name']. " ".$_SESSION['all_data']['family']?></h4>
+    <h5 class="p-4 shadow"><?= $_SESSION['all_data']['name']. " ".$_SESSION['all_data']['family']?></h5>
     <a href="index" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'index') echo 'active'; ?>">
         <img src="img/home.png" height="20px" width="20px">
         صفحه اول

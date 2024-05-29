@@ -74,7 +74,7 @@ if (!isset($_SESSION["all_data"])) {
             </div>
 
             <div class="col-md-8">
-                <h3 style="background-color: #dbd50c;" class="d-flex justify-content-center mt-2 p-3">فرم ثبت روزانه محصولات (ویرایش) : </h3>
+                <h3 style="background-color: #fcb321;" class="d-flex justify-content-center mt-2 p-3">فرم ثبت روزانه محصولات (ویرایش) : </h3>
 
                 <?php
                 if (isset($_GET['id_pro'])) {

@@ -86,9 +86,9 @@ $id_from = $_SESSION["all_data"]['id'];
                                         
                                     </div>
                                     <div class="col-md-4 d-flex">
-                                        <button name="send_message" class="btn btn-outline-warning">ارسال برای پرسنل</button>
+                                        <button name="send_message" class="btn btn-outline-warning" onclick="return confirmDelete()">ارسال برای پرسنل</button>
                                         <br>
-                                        <button name="inform_message" class="btn btn-outline-info">به پرسنل اطلاع می دهم</button>
+                                        <button name="inform_message" class="btn btn-outline-info" onclick="return confirmDelete()">به پرسنل اطلاع می دهم</button>
                                     </div>
 
                                 </div>
@@ -146,7 +146,7 @@ $id_from = $_SESSION["all_data"]['id'];
                             
 
                             // Add LIMIT clause for pagination
-                            $sql .= " ORDER BY date DESC LIMIT $start_from, $results_per_page";
+                            $sql .= " ORDER BY id DESC LIMIT $start_from, $results_per_page";
 
 
                             // echo $sql;
@@ -215,7 +215,7 @@ $id_from = $_SESSION["all_data"]['id'];
                                                 <form action="" method="POST">
                                                     <input type="hidden" value="<?=$row['id'] ?>" name="id_pro">
                                                     <input type="hidden" value="<?=$row['user'] ?>" name="to_user">
-                                                    <button name="accept_product" class="btn btn-outline-success btn-sm">تایید</button>
+                                                    <button name="accept_product" class="btn btn-outline-success btn-sm" onclick="return confirmAccept()">تایید</button>
                                                     <!-- Change the type of the button to "button" -->
                                                     <button name="reject_product"  id="reject_button"
                                                         class="btn btn-outline-danger btn-sm">رد</button>
@@ -226,6 +226,15 @@ $id_from = $_SESSION["all_data"]['id'];
                                                 echo "رد شده";
                                             } ?>
                                         </td>
+
+                                        <script>
+                                            function confirmDelete() {
+                                                return confirm("آیا مطمئن هستید که می‌خواهید این مورد را رد کنید؟");
+                                            }
+                                            function confirmAccept() {
+                                                return confirm("آیا مطمئن هستید که می‌خواهید این مورد را تایید کنید؟");
+                                            }
+                                        </script>
 
 
 

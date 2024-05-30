@@ -89,7 +89,8 @@ $id = $_SESSION["all_data"]['id'];
 
             <div class="col-md-8">
                 <h3 style="background-color: #fcb321;" class="d-flex justify-content-center mt-2 p-3">فرم ثبت روزانه محصولات : </h3>
-                <form action="submit_pro.php" method="POST" enctype="multipart/form-data" class="p-3 border mt-4">
+                <form action="submit_pro.php" method="POST" id="myForm" 
+                    enctype="multipart/form-data" class="p-3 border mt-4">
                     <div class="row">
                         <div class="col-md-6">
                             <label for="shift" class="form-label fw-semibold">
@@ -224,7 +225,7 @@ $id = $_SESSION["all_data"]['id'];
                                 $result = $conn->query($sql);
                                 if ($result->num_rows > 0) {
                                     while ($row = $result->fetch_assoc()) { ?>
-                                        <option id="<?= $row['id'] ?>" value="<?= $row['size'] ?>"><?= $row['size'] ?></option>
+                                        <option id="<?= $row['id'] ?>" value="<?= $row['id'] ?>"><?= $row['size'] ?></option>
                                 <?php
                                     }
                                 }
@@ -239,12 +240,16 @@ $id = $_SESSION["all_data"]['id'];
                     </div>
 
 
+           
+                 
 
 
 
 
 
-                    <script>
+
+
+                    <!-- <script>
                         document.addEventListener('DOMContentLoaded', function() {
                             var pieceNameSelect = document.getElementById('piece_name');
                             var sizeSelect = document.getElementById('size');
@@ -294,7 +299,7 @@ $id = $_SESSION["all_data"]['id'];
                                 xhr.send();
                             });
                         });
-                    </script>
+                    </script> -->
 
 
 
@@ -351,26 +356,40 @@ $id = $_SESSION["all_data"]['id'];
                         </div>
                     </div>
 
+                    
+
+
                     <script>
-                        var startTimeInput = document.getElementById("startTime");
-                        var stopTimeInput = document.getElementById("stopTime");
-                        var errorDiv = document.getElementById("error");
+                        $(document).ready(function() {
+                            var startTimeInput = document.getElementById("startTime");
+                            var stopTimeInput = document.getElementById("stopTime");
+                            var errorDiv = document.getElementById("error");
 
-                        // Function to check if stop time is less than start time
-                        function checkTimeValidity() {
-                            var startTime = startTimeInput.valueAsNumber;
-                            var stopTime = stopTimeInput.valueAsNumber;
+                            // Function to check if stop time is less than start time
+                            function checkTimeValidity() {
+                                var startTime = startTimeInput.value;
+                                var stopTime = stopTimeInput.value;
 
-                            if (stopTime <= startTime) {
-                                errorDiv.textContent = "* ساعت پایان باید بیشتر از ساعت شروع باشد";
-                            } else {
-                                errorDiv.textContent = "";
+                                if (stopTime <= startTime) {
+                                    errorDiv.textContent = "* ساعت پایان باید بیشتر از ساعت شروع باشد";
+                                    return false;
+                                } else {
+                                    errorDiv.textContent = "";
+                                    return true;
+                                }
                             }
-                        }
 
-                        // Add event listeners to both input fields
-                        startTimeInput.addEventListener("change", checkTimeValidity);
-                        stopTimeInput.addEventListener("change", checkTimeValidity);
+                            // Add event listeners to both input fields
+                            startTimeInput.addEventListener("change", checkTimeValidity);
+                            stopTimeInput.addEventListener("change", checkTimeValidity);
+
+                            $('#myForm').on('submit', function(event) {
+                                if (!checkTimeValidity()) {
+                                    event.preventDefault(); // Prevent form submission
+                                    alert('زمان پایان نباید کمتر از زمان شروع باشد!');
+                                }
+                            });
+                        });
                     </script>
 
 
@@ -397,20 +416,6 @@ $id = $_SESSION["all_data"]['id'];
 
                     <div class="row mt-3" id="times_stop" style="display: none;">
                         <div class="col-md-6">
-                            <label for="start_stop" class="form-label fw-semibold">
-                                از ساعت</label>
-                            <input type="time" class="form-control input-md" name="start_stop" id="start_stop">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="finish_stop" class="form-label fw-semibold">
-                                تا ساعت</label>
-                            <input type="time" class="form-control input-md" name="finish_stop" id="finish_stop">
-                            <div id="error2" style="color: red;"></div>
-
-
-                        </div>
-
-                        <div class="col-md-6">
                             <label for="couse_stop" class="form-label fw-semibold">
                                 علت توقف</label>
                             <textarea type="text" name="couse_stop" class="form-control"></textarea>
@@ -418,27 +423,7 @@ $id = $_SESSION["all_data"]['id'];
                     </div>
 
 
-                    <script>
-                        var startTimeInput2 = document.getElementById("start_stop");
-                        var stopTimeInput2 = document.getElementById("finish_stop");
-                        var errorDiv2 = document.getElementById("error2");
-
-                        // Function to check if stop time is less than start time
-                        function checkTimeValidity2() {
-                            var startTime = startTimeInput2.valueAsNumber;
-                            var stopTime = stopTimeInput2.valueAsNumber;
-
-                            if (stopTime <= startTime) {
-                                errorDiv2.textContent = " * ساعت دوم باید بیشتر از ساعت اول باشد";
-                            } else {
-                                errorDiv2.textContent = "";
-                            }
-                        }
-
-                        // Add event listeners to both input fields
-                        startTimeInput2.addEventListener("change", checkTimeValidity2);
-                        stopTimeInput2.addEventListener("change", checkTimeValidity2);
-                    </script>
+                  
 
 
 
@@ -469,7 +454,7 @@ $id = $_SESSION["all_data"]['id'];
                         <div class="col-md-6">
                             <label for="sub_date" class="form-label fw-semibold">
                                 تاریخ</label>
-                            <input id="pdpDark" type="text" name="sub_date" class="form-control" autocomplete="off">
+                            <input id="pdpDark" type="text" name="sub_date" class="form-control" autocomplete="off" required>
                         </div>
 
                         <div class="col-md-6">
@@ -536,7 +521,7 @@ $id = $_SESSION["all_data"]['id'];
                                         <?php
 
                                         $sql = "SELECT * FROM products WHERE user= $id AND status =0 AND user_confirm =0 
-                                                ORDER BY id DESC LIMIT 10";
+                                                ORDER BY id DESC LIMIT 20";
                                         // echo $sql;
 
                                         $result = $conn->query($sql);
@@ -556,11 +541,12 @@ $id = $_SESSION["all_data"]['id'];
                                                     <?php
                                                     $nameData = giveName($row['size']);
                                                     if (!empty($nameData) && is_array($nameData)) {
-                                                        echo '<td class="text-center">' . $nameData['size'] . '</td>';
+                                                        echo '<td class="text-center">' . htmlspecialchars($nameData['size']) . '</td>';
                                                     } else {
                                                         // Handle the case where giveName returns an empty array or non-array
                                                         echo '<td class="text-center">کاربر خالی وارد کرده</td>';
                                                     }
+                                                    
                                                     ?>
 
 
@@ -583,17 +569,26 @@ $id = $_SESSION["all_data"]['id'];
                                                     <td class="text-center"><?= $row['start'] ?></td>
                                                     <td class="text-center"><?= $row['stop'] ?></td>
                                                     <td class="text-center">
+                                                    <form action="" method="GET" id="userForm">
+                                                        <input type="hidden" value="<?= htmlspecialchars($row['id']) ?>" name="id_pro">
+                                                        <input type="hidden" value="<?= htmlspecialchars($row['user']) ?>" name="to_user">
+                                                        <button name="accept_user" class="btn btn-outline-success btn-sm" onclick="return confirmAccept()">تایید میکنم</button>
+                                                        <button name="delete_user" class="btn btn-outline-danger btn-sm" onclick="return confirmDelete()">حذف</button>
+                                                    </form>
 
-                                                        <form action="" method="GET">
-                                                            <input type="hidden" value="<?= $row['id'] ?>" name="id_pro">
-                                                            <input type="hidden" value="<?= $row['user'] ?>" name="to_user">
-                                                            <button name="accept_user" class="btn btn-outline-success btn-sm">تایید میکنم</button>
-                                                            <!-- Change the type of the button to "button" -->
-                                                            <!-- <button name="edit_user" id="reject_button" class="btn btn-outline-warning btn-sm">نیاز به ویرایش</button> -->
-                                                            <!-- <a href="edit_pro.php?id_pro=<?= $row['id'] ?>" name="" id="reject_button" class="btn btn-outline-warning btn-sm">نیاز به ویرایش</a> -->
-                                                            <button name="delete_user" class="btn btn-outline-danger btn-sm">حذف</button>
+                                                    <script>
+                                                        function confirmDelete() {
+                                                            return confirm("آیا مطمئن هستید که می‌خواهید این مورد را حذف کنید؟");
+                                                        }
+                                                        function confirmAccept() {
+                                                            return confirm("آیا مطمئن هستید که می‌خواهید این مورد را تایید کنید؟");
+                                                        }
+                                                    </script>
 
-                                                        </form>
+
+
+
+
 
                                                     </td>
 
@@ -845,6 +840,9 @@ $id = $_SESSION["all_data"]['id'];
 
 if (isset($_POST['submit_go'])) {
 
+    // var_dump($_POST);
+    // die();
+
     $user = $_SESSION['all_data']['id'];
 
     $shift = $conn->real_escape_string($_POST['shift']);
@@ -857,12 +855,8 @@ if (isset($_POST['submit_go'])) {
     $numbers = $conn->real_escape_string($_POST['numbers']);
     $had_stop = $conn->real_escape_string($_POST['had_stop']);
     if ($had_stop == 1) {
-        $start_stop = $conn->real_escape_string($_POST['start_stop']);
-        $finish_stop = $conn->real_escape_string($_POST['finish_stop']);
         $couse_stop = $conn->real_escape_string($_POST['couse_stop']);
     } else {
-        $start_stop = NULL;
-        $finish_stop = NULL;
         $couse_stop = NULL;
     }
 
@@ -872,6 +866,31 @@ if (isset($_POST['submit_go'])) {
 
     $start = $conn->real_escape_string($_POST['start']);
     $stop = $conn->real_escape_string($_POST['stop']);
+
+    if($stop <= $start){
+        echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+        <div class='toast-header bg-danger text-white'>
+            <strong class='mr-auto'>Error</strong>
+            <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                <span aria-hidden='true'>&times;</span>
+            </button>
+        </div>
+        <div class='toast-body'>
+            زمان شروع نباید بیشتر از زمان پایان باشد!
+        </div>
+      </div>
+      <script>
+        $(document).ready(function(){
+            $('#errorToast').toast('show');
+            setTimeout(function(){
+                $('#errorToast').toast('hide');
+            }, 3000);
+        });
+      </script>";
+        exit;
+    }
+
+
 
 
 
@@ -910,13 +929,15 @@ if (isset($_POST['submit_go'])) {
         exit;
     }
 
+   
+
 
     $sql = "INSERT INTO products (device_name, device_number, piece_name, shift, 
-                    size, level, numbers, had_stop, start_stop, finish_stop,
+                    size, level, numbers, had_stop, 
                     date,start,stop,
                     couse_stop, explanation, user, created_at)
             VALUES ('$device_name', '$device_number', '$piece_name', '$shift', 
-                    '$size', '$level', '$numbers', '$had_stop', '$start_stop', '$finish_stop', 
+                    '$size', '$level', '$numbers', '$had_stop',
                      '$sub_date', '$start', '$stop',
                     '$couse_stop', '$explanation', '$user', NOW())";
 
@@ -989,12 +1010,8 @@ if (isset($_POST['final_submit'])) {
     $numbers = $conn->real_escape_string($_POST['numbers']);
     $had_stop = $conn->real_escape_string($_POST['had_stop']);
     if ($had_stop == 1) {
-        $start_stop = $conn->real_escape_string($_POST['start_stop']);
-        $finish_stop = $conn->real_escape_string($_POST['finish_stop']);
         $couse_stop = $conn->real_escape_string($_POST['couse_stop']);
     } else {
-        $start_stop = NULL;
-        $finish_stop = NULL;
         $couse_stop = NULL;
     }
 
@@ -1041,11 +1058,11 @@ if (isset($_POST['final_submit'])) {
 
 
     $sql = "INSERT INTO products (device_name, device_number, piece_name, shift, 
-                    size, level, numbers, had_stop, start_stop, finish_stop,
+                    size, level, numbers, had_stop,
                     date,start,stop,
                     couse_stop, explanation, user , user_confirm, created_at)
             VALUES ('$device_name', '$device_number', '$piece_name', '$shift', 
-                    '$size', '$level', '$numbers', '$had_stop', '$start_stop', '$finish_stop', 
+                    '$size', '$level', '$numbers', '$had_stop', 
                      '$sub_date', '$start', '$stop',
                     '$couse_stop', '$explanation', '$user', 1, NOW())";
 
@@ -1164,59 +1181,69 @@ if (isset($_GET['accept_user'])) {
 }
 
 
+
+
+
+
 if (isset($_GET['delete_user'])) {
     $id_pro = $_GET['id_pro'];
 
-    $sql = "DELETE FROM products WHERE id = $id_pro";
-
-    $result = $conn->query($sql);
-    if ($result) {
-        // Use Bootstrap's toast component to show a success toast message
-        echo "<div id='successToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
-                <div class='toast-header bg-success text-white'>
-                    <strong class='mr-auto'>Success</strong>
-                    <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
-                        <span aria-hidden='true'>&times;</span>
-                    </button>
-                </div>
-                <div class='toast-body'>
-                    محصول با موفقیت حذف شد!
-                </div>
-              </div>
-                <script>
-                $(document).ready(function(){
-                    $('#successToast').toast('show');
-                    setTimeout(function(){
-                        $('#successToast').toast('hide');
-                        // Redirect after 3 seconds
-                        setTimeout(function(){
-                            window.location.href = 'submit_pro';
-                        }, 1000);
-                    }, 1000);
-                });
-                </script>";
+    if (empty($id_pro)) {
+        echo "Error: ID is missing.";
     } else {
-        // Use Bootstrap's toast component to show an error toast message
-        echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
-                <div class='toast-header bg-danger text-white'>
-                    <strong class='mr-auto'>Error</strong>
-                    <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
-                        <span aria-hidden='true'>&times;</span>
-                    </button>
-                </div>
-                <div class='toast-body'>
-                    خطایی در حذف محصول پیش آمده!
-                </div>
-              </div>
-              <script>
-                $(document).ready(function(){
-                    $('#errorToast').toast('show');
-                    setTimeout(function(){
-                        $('#errorToast').toast('hide');
-                    }, 1000);
-                });
-              </script>";
+        // Use prepared statements to avoid SQL injection
+        $stmt = $conn->prepare("DELETE FROM products WHERE id = ?");
+        $stmt->bind_param("i", $id_pro);
 
-        echo "Error: " . $sql . "<br>" . $conn->error;
+        if ($stmt->execute()) {
+            echo "<div id='successToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+                    <div class='toast-header bg-success text-white'>
+                        <strong class='mr-auto'>Success</strong>
+                        <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                            <span aria-hidden='true'>&times;</span>
+                        </button>
+                    </div>
+                    <div class='toast-body'>
+                        محصول با موفقیت حذف شد!
+                    </div>
+                  </div>
+                  <script>
+                  $(document).ready(function(){
+                      $('#successToast').toast('show');
+                      setTimeout(function(){
+                          $('#successToast').toast('hide');
+                          // Redirect after 3 seconds
+                          setTimeout(function(){
+                              window.location.href = 'submit_pro';
+                          }, 1000);
+                      }, 1000);
+                  });
+                  </script>";
+        } else {
+            echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+                    <div class='toast-header bg-danger text-white'>
+                        <strong class='mr-auto'>Error</strong>
+                        <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                            <span aria-hidden='true'>&times;</span>
+                        </button>
+                    </div>
+                    <div class='toast-body'>
+                        خطایی در حذف محصول پیش آمده!
+                    </div>
+                  </div>
+                  <script>
+                  $(document).ready(function(){
+                      $('#errorToast').toast('show');
+                      setTimeout(function(){
+                          $('#errorToast').toast('hide');
+                      }, 1000);
+                  });
+                  </script>";
+
+            echo "Error: " . $stmt->error;
+        }
+        $stmt->close();
     }
 }
+?>
+

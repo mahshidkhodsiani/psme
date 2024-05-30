@@ -157,7 +157,7 @@ $id_user = $_SESSION["all_data"]['id'];
                             
 
                             // Fetch records with filters
-                            $sql = "SELECT * FROM products WHERE user = $id_user ";
+                            $sql = "SELECT * FROM products WHERE user = $id_user";
 
 
 
@@ -168,7 +168,7 @@ $id_user = $_SESSION["all_data"]['id'];
                             }
                             
                             
-                            $sql .= " ORDER BY id LIMIT $start_from, $results_per_page";
+                            $sql .= " ORDER BY id DESC LIMIT $start_from, $results_per_page";
 
 
                             $_SESSION['query'] = $sql;

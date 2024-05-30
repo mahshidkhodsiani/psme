@@ -1,13 +1,14 @@
 <?php
 
 
-include 'PersianCalendar.php';
+include 'config.php';
 
-echo mds_date("Y/m/d", "now", 1);
+$sql = 'SELECT * from products WHERE id = 82 ';
 
+$result = $conn->query($sql);
 
-if(mds_date("Y/m/d", "now", 1) > '1403/2/8'){
-    echo "true";
-}else{
-    echo "false";
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    echo "<pre>";
+    var_dump($row);
 }

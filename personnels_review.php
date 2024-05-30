@@ -124,7 +124,8 @@ if (!isset($_SESSION["all_data"])) {
 
                                 <div class="col-md-6">
                                     <label for="piece_name" class="form-label">نام قطعه:</label>
-                                    <select class="form-select" id="piece_name" name="piece_name" onchange="getSizes()">
+                                    <!-- <select class="form-select" id="piece_name" name="piece_name" onchange="getSizes()"> -->
+                                    <select class="form-select" id="piece_name" name="piece_name" >
                                         <option value="">همه</option>
                                         <?php
                                         $sql = "SELECT DISTINCT name FROM pieces";
@@ -143,10 +144,40 @@ if (!isset($_SESSION["all_data"])) {
                                     </select>
                                 </div>
 
-                                <div class="col-md-6">
+
+
+                                <!-- این برای وقتی که قطعه و سایز بهم مربوط بودند -->
+                                <!-- <div class="col-md-6">
                                     <label for="piece_size" class="form-label">سایز قطعه:</label>
                                     <select class="form-select" name="piece_size" id="piece_size">
                                         <option value="" selected>ابتدا نام قطعه را وارد کنید</option>
+                                    </select>
+                                </div> -->
+
+
+
+
+
+                                <div class="col-md-6">
+                                    <label for="size" class="form-label fw-semibold">سایز قطعه</label>
+                                    <!-- <select name="size" id="size_piece" class="form-select" aria-label="Default select example">
+                                        <option value="" selected>یکی از سایزهای زیر را انتخاب کنید</option>
+                                
+                                    </select> -->
+                                    <!-- <select name="size" id="size" class="form-select" aria-label="Default select example"> -->
+                                    <select class="form-select" name="piece_size" id="piece_size">
+                                        <option value="" >همه</option>
+                                        <?php
+                                        $sql = "SELECT * FROM pieces";
+                                        $result = $conn->query($sql);
+                                        if ($result->num_rows > 0) {
+                                            while ($row = $result->fetch_assoc()) { ?>
+                                                <option value="<?= $row['id'] ?>"><?= $row['size'] ?></option>
+                                        <?php
+                                            }
+                                        }
+
+                                        ?>
                                     </select>
                                 </div>
 

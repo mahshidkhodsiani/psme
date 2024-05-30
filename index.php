@@ -239,7 +239,7 @@ $admin = $_SESSION["all_data"]['admin'];
                                         $a = 0;
 
                                        
-                                        $sql = "SELECT * FROM users ";
+                                        $sql = "SELECT * FROM users ORDER BY id DESC LIMIT 10";
                                          
 
                                         

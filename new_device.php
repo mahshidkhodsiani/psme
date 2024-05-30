@@ -121,9 +121,15 @@ if (!isset($_SESSION["all_data"])) {
                                                 <form action="" method="GET">
                                                     <input type="hidden" value="<?= $row['id'] ?>" name="id_dev">
                                                     <a href="edit_dev.php?id_dev=<?= $row['id'] ?>" class="btn btn-outline-warning btn-sm"> ویرایش</a>
-                                                    <button type="submit" name="delete_dev" class="btn btn-outline-danger btn-sm">حذف</button>
+                                                    <button type="submit" name="delete_dev" 
+                                                        class="btn btn-outline-danger btn-sm" onclick="return confirmDelete()">حذف</button>
                                                 </form>
                                             </td>
+                                            <script>
+                                                function confirmDelete() {
+                                                    return confirm("آیا مطمئن هستید که می‌خواهید این مورد را رد کنید؟");
+                                                }
+                                            </script>
                                         </tr>
                                         <?php
                                         $a++;

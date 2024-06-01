@@ -38,6 +38,26 @@ $admin = $_SESSION["all_data"]['admin'];
             <div class="col-md-3 col-sm-12 d-flex">
                 <?php
                 include 'sidebar.php';
+
+                if(isset($_GET['msg_id'])){
+                    $id_msg = $_GET['msg_id'];
+                    $sql1 = "SELECT * FROM messages WHERE id=$id_msg";
+                    $result1 = $conn->query($sql1);
+                    if($result1->num_rows > 0){
+                        $row1 = $result1->fetch_assoc();
+                    }
+
+                    $sql2 = "SELECT * FROM messages_comments WHERE msg_id = $id_msg order by id";
+                    $result2 = $conn->query($sql2);
+                    if($result2->num_rows > 0){
+                        while($row2 = $result2->fetch_assoc()) {
+                            $comments[] = $row2['msg']; 
+                        }
+                    }
+                    
+                }else{
+                    echo "آیدی پیام به درستی پیدا نشد!";
+                }
                 ?>
               
             </div>
@@ -50,105 +70,39 @@ $admin = $_SESSION["all_data"]['admin'];
                     
 
                     <div class="row">
-                        <div class="col-md-12">
-                        <label>لطفا پیام را داخل کادر بنویسید :</label>
+                        <div class="col-md-6"></div>
+                        <div class="col-md-6">
+                        <label>پیام اولیه  :</label>
                         <br>
                         <br>
-                        <textarea class="form-control" name="new_text" rows="3" required></textarea>
+                        <textarea class="form-control" name="new_text" rows="3" readonly><?=$row1['text'] ?></textarea>
                 
                         </div>
-                    </div>
+                        <br>
 
-                    <div class="row mt-4">
-                        <div class="col-md-5">
-                            <label>برای چه کسی ارسال شود</label>
-                            <select class="form-control" name="to_user" required>
+                        <div class="col-md-6">
+                            <label for="">ارسال پاسخ : </label>
+                            <textarea class="form-control" name="comment1" rows="3" required></textarea>
 
-                                <option value="" selected>انتخاب کنید</option>
-                                <?php
-                                $sql = "SELECT * FROM users";
-                                $result = $conn->query($sql);
-                                while ($row = $result->fetch_assoc()) {
-                                    echo "<option value='". $row['id']. "'>". $row['name']." ". $row['family']. "</option>";
-                                }
-                               ?>
-                            </select>
                         </div>
-                        
                     </div>
+
                     <div class="row mt-4">
                         <div class="col-md-6">
                             <button class="btn btn-outline-primary" name="enter">ثبت</button>
                         </div>
                     </div>
+
+                  
                    
                 </form>
 
 
+               
 
 
 
-
-
-                <div class="row mt-4">
-                   
-
-                   <div class="col-md-12">
-                       <div class="card">
-                           <div class="card-body">
-                               <h5 class="card-title">آخرین پیام ها </h5>
-                               <table class="table border">
-                                   <thead>
-                                       <tr>
-                                           <th scope="col">ردیف</th>
-                                           <th scope="col">پیام</th>
-                                           <th scope="col">فرستنده</th>
-                                           <th scope="col">تاریخ</th>
-
-                                       </tr>
-                                   </thead>
-                                   <tbody>
-                                       <?php
-
-                                       $a = 0;
-
-                                       if($admin == 1){
-                                          $sql = "SELECT * FROM messages 
-                                               ORDER BY id DESC LIMIT 10"; 
-                                       }else{
-                                            $sql = "SELECT * FROM messages WHERE to_user = '$id_from' OR from_user = '$id_from' 
-                                               ORDER BY id DESC LIMIT 10";
-                                       }
-                                      
-                                       
-                                       $result = $conn->query($sql);
-
-                                       if ($result->num_rows > 0) {
-                                           $a++;
-                                           while ($row = $result->fetch_assoc()) {
-                                       ?>
-                                               <tr>
-                                                   <th scope="row"><?= $a ?></th>
-                                                   <td> <?= $row['text']?></td>
-                                                   <td><?= givePerson($row['from_user']) ?></td>
-                                                   <td><?= $row['date'] ?></td>
-                                               </tr> 
-                                       <?php
-                                               $a++;
-                                           }
-                                       }
-                                       ?>
-                                   </tbody>
-                               </table>
-                           </div>
-                       </div>
-                   </div>
-
-
-
-                
-
-               </div>
+             
             </div>
             
         </div> 

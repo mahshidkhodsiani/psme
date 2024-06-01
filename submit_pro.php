@@ -446,6 +446,11 @@ $id = $_SESSION["all_data"]['id'];
 
 
 
+                    <?php
+
+                    $now_date = mds_date("Y/m/d", "now", 1);
+                    ?>
+
 
 
                     <div class="row mt-3" style="margin-bottom: 200px;">
@@ -469,6 +474,12 @@ $id = $_SESSION["all_data"]['id'];
 
 
 
+
+                    
+
+
+
+
                     <div class="row mt-4">
                         <div class="col-md-6">
                             <button name="submit_go" class="btn btn-primary">ثبت و ادامه</button>
@@ -476,9 +487,9 @@ $id = $_SESSION["all_data"]['id'];
 
                         <div class="col-md-4"></div>
 
-                        <div class="col-md-2 mt-3">
+                        <!-- <div class="col-md-2 mt-3">
                             <button name="final_submit" class="btn btn-primary ">ثبت نهایی</button>
-                        </div>
+                        </div> -->
 
                     </div>
 
@@ -539,14 +550,13 @@ $id = $_SESSION["all_data"]['id'];
                                                     <td class="text-center"><?= $row['piece_name'] ?></td>
 
                                                     <?php
-                                                    $nameData = giveName($row['size']);
-                                                    if (!empty($nameData) && is_array($nameData)) {
-                                                        echo '<td class="text-center">' . htmlspecialchars($nameData['size']) . '</td>';
-                                                    } else {
-                                                        // Handle the case where giveName returns an empty array or non-array
-                                                        echo '<td class="text-center">کاربر خالی وارد کرده</td>';
-                                                    }
-                                                    
+                                                        $nameData = giveName($row['size']);
+                                                        if (!empty($nameData) && is_array($nameData)) {
+                                                            echo '<td class="text-center" class="text-center">' . $nameData['size'] . '</td>';
+                                                        } else {
+                                                            // Handle the case where giveName returns an empty array or non-array
+                                                            echo '<td class="text-center" class="text-center">کاربر خالی وارد کرده</td>';
+                                                        }
                                                     ?>
 
 
@@ -867,28 +877,7 @@ if (isset($_POST['submit_go'])) {
     $start = $conn->real_escape_string($_POST['start']);
     $stop = $conn->real_escape_string($_POST['stop']);
 
-    if($stop <= $start){
-        echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
-        <div class='toast-header bg-danger text-white'>
-            <strong class='mr-auto'>Error</strong>
-            <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
-                <span aria-hidden='true'>&times;</span>
-            </button>
-        </div>
-        <div class='toast-body'>
-            زمان شروع نباید بیشتر از زمان پایان باشد!
-        </div>
-      </div>
-      <script>
-        $(document).ready(function(){
-            $('#errorToast').toast('show');
-            setTimeout(function(){
-                $('#errorToast').toast('hide');
-            }, 3000);
-        });
-      </script>";
-        exit;
-    }
+   
 
 
 

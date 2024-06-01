@@ -108,15 +108,17 @@ $admin = $_SESSION["all_data"]['admin'];
                                                         <?php
                                                         if ($admin == 1) {
                                                         ?>
-                                                            <td class="text-center" ><a href="confirmations" style="text-decoration: none; color: black"><?= givePerson($row['user']) ?></a></td>
+                                                            <td class="text-center" ><a href="product.php?id_pro=<?= $row['id'] ?>" style="text-decoration: none; color: black"><?= givePerson($row['user']) ?></a></td>
                                                         <?php
                                                         }else{?>
-                                                            <td class="text-center" ><?= givePerson($row['user']) ?></td>
+                                                            <td class="text-center">
+                                                                <a href="product.php?id_pro=<?= $row['id'] ?>" style="text-decoration: none; color: black"><?= givePerson($row['user']) ?></a>
+                                                            </td>
                                                         <?php
                                                         }
                                                         ?>
                                                         <td class="text-center"><?= $row['device_name'] ?></td>
-                                                        <td class="text-center"><?= $row['device_number'] ?></td>
+                                                        <td class="text-center"><?= giveDeviceCode($row['device_number']) ?></td>
                                                         <td class="text-center"><?= $row['piece_name'] ?></td>
                                                         <?php
                                                             $nameData = giveName($row['size']);

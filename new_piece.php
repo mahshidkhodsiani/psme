@@ -11,7 +11,7 @@ if (!isset($_SESSION["all_data"])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>افزودن دستگاه جدید</title>
+    <title>افزودن قطعه جدید</title>
     <link rel="icon" href="img/logo.png" type="image/x-icon">
 
     <?php include 'includes.php'; 
@@ -64,7 +64,7 @@ if (!isset($_SESSION["all_data"])) {
             </div>
 
             <div class="col-md-8 col-sm-12">
-                <h3 style="background-color: #fcb321;" class="d-flex justify-content-center mt-2 p-3">فرم ثبت دستگاه جدید : </h3>
+                <h3 style="background-color: #fcb321;" class="d-flex justify-content-center mt-2 p-3">فرم ثبت قطعه جدید : </h3>
 
 
 

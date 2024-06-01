@@ -14,7 +14,7 @@ $id_user = $_SESSION["all_data"]['id'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>گزارش گیری </title>
+    <title>مرور محصولات </title>
     <link rel="icon" href="img/logo.png" type="image/x-icon">
 
     <?php
@@ -56,7 +56,7 @@ $id_user = $_SESSION["all_data"]['id'];
             </div>
 
             <div class="col-md-8 col-sm-12">
-                <h3 style="background-color: #fcb321;" class="d-flex justify-content-center mt-2 p-3">گزارش گیری : </h3>
+                <h3 style="background-color: #fcb321;" class="d-flex justify-content-center mt-2 p-3">فرم مرور محصولات : </h3>
                 
           
                     
@@ -129,6 +129,7 @@ $id_user = $_SESSION["all_data"]['id'];
                                 <th scope="col" class="text-center">شیفت</th>
                                 <th scope="col" class="text-center">تاریخ</th>
                                 <th scope="col" class="text-center">تعداد</th>
+                                <th scope="col" class="text-center">وضعیت محصول</th>
                                 
                             </tr>
                         </thead>
@@ -187,7 +188,12 @@ $id_user = $_SESSION["all_data"]['id'];
                                     <!-- Table rows -->
                                     <tr>
                                         <th scope="row" class="text-center"><?= $a ?></th>
-                                        <td class="text-center"><?= givePerson($row['user']) ?></td>
+
+                                        <td class="text-center">
+                                            <a href="product.php?id_pro=<?= $row['id'] ?>" style="text-decoration: none; color: black">
+                                                <?= givePerson($row['user']) ?>
+                                            </a>
+                                        </td>
                                         <td class="text-center"><?= giveDeviceCode($row['device_number']) ?></td>
 
                                         <td class="text-center"><?= $row['piece_name'] ?></td>
@@ -218,6 +224,19 @@ $id_user = $_SESSION["all_data"]['id'];
                                    
                                         <td class="text-center"><?= $row['date'] ?></td>
                                         <td class="text-center"><?= $row['numbers'] ?></td>
+                                        <td class="text-center" <?php if($row['status']==2){?> onclick="showReason($row['id'])" <?php } ?>>
+                                            <?php
+                                            if($row['status']==0){
+                                                echo 'در انتظار تایید' ;
+                                            }
+                                            if($row['status']==1){
+                                                echo 'تایید شده' ;
+                                            }
+                                            if($row['status']==2){
+                                                echo 'رد شده' ;
+                                            }
+                                            ?>
+                                        </td>
                                  
 
 
@@ -348,6 +367,13 @@ $id_user = $_SESSION["all_data"]['id'];
 
 
         });
+    </script>
+
+
+    <script>
+        function showReason(){
+
+        }
     </script>
 
     <script src="persianDate/js/persianDatepicker.js"></script>

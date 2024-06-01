@@ -80,3 +80,15 @@ function truncateText($text, $limit = 5) {
     return $text;
 }
 
+
+
+function giveReasonReject($id){
+    include 'config.php';
+
+    $sql = "SELECT * FROM messages WHERE product = '$id'";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        return $row['text'];
+    }
+}

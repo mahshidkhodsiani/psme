@@ -14,7 +14,7 @@ $id_from = $_SESSION["all_data"]['id'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مدیریت محصولات تولید شده</title>
+    <title>تایید محصولات</title>
     <link rel="icon" href="img/logo.png" type="image/x-icon">
 
     <?php
@@ -45,7 +45,7 @@ $id_from = $_SESSION["all_data"]['id'];
             </div>
 
             <div class="col-md-8 col-sm-12">
-                <h3 style="background-color: #fcb321;" class="d-flex justify-content-center mt-2 p-3">مدیریت پرسنل : </h3>
+                <h3 style="background-color: #fcb321;" class="d-flex justify-content-center mt-2 p-3">فرم تایید محصولات :</h3>
                 
           
                     
@@ -122,8 +122,8 @@ $id_from = $_SESSION["all_data"]['id'];
                                 <th scope="col">دستگاه</th>
                                 <th scope="col">کد دستگاه</th>
                                 <th scope="col">محصول</th>
+                                <th scope="col">سایز محصول</th>
                                 <th scope="col">توقف</th>
-                                <th scope="col">میزان توقف</th>
                                 <th scope="col">تاریخ</th>
                                 <th scope="col">تایید یا رد</th>
                             </tr>
@@ -177,6 +177,15 @@ $id_from = $_SESSION["all_data"]['id'];
                                         <td><?= $row['device_name'] ?></td>
                                         <td><?= $row['device_number'] ?></td>
                                         <td><?= $row['piece_name'] ?></td>
+                                        <?php
+                                            $nameData = giveName($row['size']);
+                                            if (!empty($nameData) && is_array($nameData)) {
+                                                echo '<td class="text-center" class="text-center">' . $nameData['size'] . '</td>';
+                                            } else {
+                                                // Handle the case where giveName returns an empty array or non-array
+                                                echo '<td class="text-center" class="text-center">کاربر خالی وارد کرده</td>';
+                                            }
+                                        ?>
                                         <td>
                                         <?php
                                             if($row['had_stop'] == 1){
@@ -188,23 +197,7 @@ $id_from = $_SESSION["all_data"]['id'];
                                         </td>
                                         
                                         
-                                        <?php
-                                        $start_time = strtotime($row['start_stop']);
-                                        $finish_time = strtotime($row['finish_stop']);
-
-                                        // Calculate the difference in seconds
-                                        $time_difference = $finish_time - $start_time;
-
-                                        // Convert seconds to hours and minutes
-                                        $hours = floor($time_difference / 3600); // 3600 seconds in an hour
-                                        $minutes = floor(($time_difference % 3600) / 60); // Get the remaining minutes
-
-                                        // Format hours and minutes as "hh:mm"
-                                        $net_hours = sprintf("%02d:%02d", $hours, $minutes);
-
-                                        ?>
-
-                                        <td><?= $net_hours ?></td>
+                                      
 
 
                                         <td><?= $row['date'] ?></td>

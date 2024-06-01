@@ -10,7 +10,7 @@ if (!isset($_SESSION["all_data"])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>افزودن کاربر جدید</title>
+    <title>ویرایش قطعه</title>
     <link rel="icon" href="img/logo.png" type="image/x-icon">
 
     <?php include 'includes.php'; 
@@ -38,7 +38,7 @@ if (!isset($_SESSION["all_data"])) {
             </div>
 
             <div class="col-md-8 col-sm-12">
-                <h3 style="background-color: #fcb321;" class="d-flex justify-content-center mt-2 p-3">فرم ثبت کارکنان جدید : </h3>
+                <h3 style="background-color: #fcb321;" class="d-flex justify-content-center mt-2 p-3">فرم ویرایش قطعه : </h3>
                 <?php
                 if (isset($_GET['id_piece'])) {
                     $id_piece = $_GET['id_piece'];

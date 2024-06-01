@@ -1,14 +1,9 @@
 <?php
 
 
-include 'config.php';
+include 'PersianCalendar.php';
 
-$sql = 'SELECT * from products WHERE id = 82 ';
+$now_date = mds_date("Y/m/d", "now", 1);
 
-$result = $conn->query($sql);
 
-if ($result->num_rows > 0) {
-    $row = $result->fetch_assoc();
-    echo "<pre>";
-    var_dump($row);
-}
+echo $now_date;

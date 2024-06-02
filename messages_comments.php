@@ -75,7 +75,7 @@ $admin = $_SESSION["all_data"]['admin'];
 
 
             <div class="col-md-8 col-sm-12">
-                <h3 style="background-color: #fcb321;" class="d-flex justify-content-center mt-2 p-3">فرم ثبت پیام جدید :</h3>
+                <h3 style="background-color: #fcb321;" class="d-flex justify-content-center mt-2 p-3">فرم ثبت پیام  :</h3>
 
                 <form action="messages_comments" method="POST" enctype="multipart/form-data" class="p-3 border mt-4">
                     

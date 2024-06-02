@@ -164,8 +164,7 @@ $id_from = $_SESSION["all_data"]['id'];
                                     <!-- Table rows -->
                                     <tr>
                                         <th scope="row"><?= $a ?></th>
-                                        <td ><a href="product.php?id_pro=<?= $row['id'] ?>" style="text-decoration: none; color: black"><?= givePerson($row['user']) ?></a></td>
-
+                                        <td><a href="product.php?id_pro=<?= $row['id'] ?>" style="text-decoration: none; color: black"><?= givePerson($row['user']) ?></a></td>
                                         <td>
                                             <?php
                                             if ($row['shift'] == 1) {
@@ -233,34 +232,20 @@ $id_from = $_SESSION["all_data"]['id'];
                             return confirm("آیا مطمئن هستید که می‌خواهید این مورد را تایید کنید؟");
                         }
                     </script>
-
                 </div>
-
-
-
-
-
-
-
 
                 <nav aria-label="Page navigation example">
                     <ul class="pagination">
                         <?php
                         // Previous page link
                         if ($page > 1) {
-                            echo '<li class="page-item"><a class="page-link" href="?page=' . ($page - 1);
-
-
-                            
-
-                          
-                            echo '">قبلی</a></li>';
+                            echo '<li class="page-item"><a class="page-link" href="?page=' . ($page - 1) . '">قبلی</a></li>';
                         } else {
                             echo '<li class="page-item disabled"><a class="page-link" href="#">قبلی</a></li>';
                         }
 
                         // Page numbers
-                        $sql = "SELECT COUNT(*) AS total FROM products";
+                        $sql = "SELECT COUNT(*) AS total FROM products WHERE status = 0";
                         $result = $conn->query($sql);
                         $row = $result->fetch_assoc();
                         $total_pages = ceil($row["total"] / $results_per_page);
@@ -272,38 +257,22 @@ $id_from = $_SESSION["all_data"]['id'];
 
                         for ($i = $start_page; $i <= $end_page; $i++) {
                             if ($i == $page) {
-                                echo '<li class="page-item active"><a class="page-link" href="?page=' . $i;
-                                
-                                
-                               
-
-
-                                echo '">' . $i . '</a></li>';
+                                echo '<li class="page-item active"><a class="page-link" href="?page=' . $i . '">' . $i . '</a></li>';
                             } else {
-                                echo '<li class="page-item"><a class="page-link" href="?page=' . $i;
-
-
-
-                                echo '">' . $i . '</a></li>';
+                                echo '<li class="page-item"><a class="page-link" href="?page=' . $i . '">' . $i . '</a></li>';
                             }
                         }
 
                         // Next page link
                         if ($page < $total_pages) {
-                            echo '<li class="page-item"><a class="page-link" href="?page=' . ($page + 1);
-
-
-
-                               
-
-
-                            echo '">بعدی</a></li>';
+                            echo '<li class="page-item"><a class="page-link" href="?page=' . ($page + 1) . '">بعدی</a></li>';
                         } else {
                             echo '<li class="page-item disabled"><a class="page-link" href="#">بعدی</a></li>';
                         }
                         ?>
                     </ul>
                 </nav>
+
 
 
 

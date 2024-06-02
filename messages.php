@@ -86,74 +86,115 @@ $admin = $_SESSION["all_data"]['admin'];
 
 
 
+                <?php
+                $limit = 10; // Number of records per page
+                $page = isset($_GET['page']) ? (int)$_GET['page'] : 1; // Current page number
+                $offset = ($page - 1) * $limit; // Calculate offset
 
+                $sql = $admin == 1 ? 
+                    "SELECT * FROM messages ORDER BY id DESC LIMIT $limit OFFSET $offset" : 
+                    "SELECT * FROM messages WHERE to_user = '$id_from' OR from_user = '$id_from' ORDER BY id DESC LIMIT $limit OFFSET $offset";
 
+                // Total number of records
+                $countSql = $admin == 1 ? 
+                "SELECT COUNT(*) as total FROM messages" : 
+                "SELECT COUNT(*) as total FROM messages WHERE to_user = '$id_from' OR from_user = '$id_from'";
+                $countResult = $conn->query($countSql);
+                $totalRecords = $countResult->fetch_assoc()['total'];
+                $totalPages = ceil($totalRecords / $limit);
 
+                function pagination($currentPage, $totalPages) {
+                    $output = '<nav aria-label="Page navigation">';
+                    $output .= '<ul class="pagination">';
+
+                    // Previous button
+                    if ($currentPage > 1) {
+                        $output .= '<li class="page-item"><a class="page-link" href="?page=' . ($currentPage - 1) . '">قبلی</a></li>';
+                    }
+
+                    // Show first page and '...' if current page is greater than 3
+                    if ($currentPage > 3) {
+                        $output .= '<li class="page-item"><a class="page-link" href="?page=1">1</a></li>';
+                        $output .= '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
+                    }
+
+                    // Calculate start and end pages
+                    $start = max(1, $currentPage - 1);
+                    $end = min($totalPages, $currentPage + 1);
+
+                    // Display pagination numbers
+                    for ($i = $start; $i <= $end; $i++) {
+                        $activeClass = $i == $currentPage ? ' active' : '';
+                        $output .= '<li class="page-item' . $activeClass . '"><a class="page-link" href="?page=' . $i . '">' . $i . '</a></li>';
+                    }
+
+                    // Show last page and '...' if current page is less than totalPages - 2
+                    if ($currentPage < $totalPages - 2) {
+                        $output .= '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
+                        $output .= '<li class="page-item"><a class="page-link" href="?page=' . $totalPages . '">' . $totalPages . '</a></li>';
+                    }
+
+                    // Next button
+                    if ($currentPage < $totalPages) {
+                        $output .= '<li class="page-item"><a class="page-link" href="?page=' . ($currentPage + 1) . '">بعدی</a></li>';
+                    }
+
+                    $output .= '</ul>';
+                    $output .= '</nav>';
+
+                    return $output;
+                }
+                ?>
 
                 <div class="row mt-4">
-                   
-
-                   <div class="col-md-12">
-                       <div class="card">
-                           <div class="card-body">
-                               <h5 class="card-title">آخرین پیام ها </h5>
-                               <table class="table border">
-                                   <thead>
-                                       <tr>
-                                           <th scope="col">ردیف</th>
-                                           <th scope="col">پیام</th>
-                                           <th scope="col">فرستنده</th>
-                                           <th scope="col">تاریخ</th>
-                                           <th scope="col">دیدن پیام</th>
-
-
-                                       </tr>
-                                   </thead>
-                                   <tbody>
-                                       <?php
-
-                                       $a = 0;
-
-                                       if($admin == 1){
-                                          $sql = "SELECT * FROM messages 
-                                               ORDER BY id DESC LIMIT 10"; 
-                                       }else{
-                                            $sql = "SELECT * FROM messages WHERE to_user = '$id_from' OR from_user = '$id_from' 
-                                               ORDER BY id DESC LIMIT 10";
-                                       }
-                                      
-                                       
-                                       $result = $conn->query($sql);
-
-                                       if ($result->num_rows > 0) {
-                                           $a++;
-                                           while ($row = $result->fetch_assoc()) {
-                                       ?>
-                                               <tr>
-                                                   <th scope="row"><?= $a ?></th>
-                                                   <td> <?= $row['text']?></td>
-                                                   <td><?= givePerson($row['from_user']) ?></td>
-                                                   <td><?= $row['date'] ?></td>
-                                                   <td>
-                                                        <a href="messages_comments.php?msg_id=<?=$row['id']?>" class="btn btn-outline-dark">مشاهده</a>
-                                                   </td>
-                                               </tr> 
-                                       <?php
-                                               $a++;
-                                           }
-                                       }
-                                       ?>
-                                   </tbody>
-                               </table>
-                           </div>
-                       </div>
-                   </div>
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">آخرین پیام ها</h5>
+                                <table class="table border">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">ردیف</th>
+                                            <th scope="col">پیام</th>
+                                            <th scope="col">گیرنده</th>
+                                            <th scope="col">فرستنده</th>
+                                            <th scope="col">تاریخ</th>
+                                            <th scope="col">دیدن پیام</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        $result = $conn->query($sql);
+                                        if ($result->num_rows > 0) {
+                                            $a = $offset + 1;
+                                            while ($row = $result->fetch_assoc()) {
+                                        ?>
+                                                <tr>
+                                                    <th scope="row"><?= $a ?></th>
+                                                    <td><?= $row['text'] ?></td>
+                                                    <td><?= givePerson($row['from_user']) ?></td>
+                                                    <td><?= givePerson($row['to_user']) ?></td>
+                                                    <td><?= $row['date'] ?></td>
+                                                    <td>
+                                                        <a href="messages_comments.php?msg_id=<?= $row['id'] ?>" class="btn btn-outline-dark">مشاهده</a>
+                                                    </td>
+                                                </tr>
+                                        <?php
+                                                $a++;
+                                            }
+                                        }
+                                        ?>
+                                    </tbody>
+                                </table>
+                                <?php echo pagination($page, $totalPages); ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
 
 
-                
 
-               </div>
             </div>
             
         </div> 

@@ -6,7 +6,12 @@ if (!isset($_SESSION["all_data"])) {
 }
 
 
-// $totals = isset($_SESSION['totals']) ? $_SESSION['totals'] : [];
+
+// error_reporting(E_ALL);
+// ini_set('display_errors', 1);
+
+// trigger_error("Test error", E_USER_NOTICE);
+
 
 ?>
 <!DOCTYPE html>
@@ -880,7 +885,7 @@ if (!isset($_SESSION["all_data"])) {
 
 
 
-                            // echo $sql;
+                            echo $sql;
 
                             $result = $conn->query($sql);
 
@@ -1078,12 +1083,15 @@ if (!isset($_SESSION["all_data"])) {
 
 
                             if (
-                                isset($_GET['personel']) && $_GET['personel'] !== '' && $_GET['until_date'] === ''
-                                && $_GET['dates'] === '' && $_GET['device_code'] === '' && $_GET['piece_name'] === '' 
-                                && $_GET['piece_size'] === ''
+                                isset($_GET['personel']) && $_GET['personel'] !== '' && 
+                                (!isset($_GET['until_date']) || $_GET['until_date'] === '') && 
+                                (!isset($_GET['dates']) || $_GET['dates'] === '') && 
+                                (!isset($_GET['device_code']) || $_GET['device_code'] === '') && 
+                                (!isset($_GET['piece_name']) || $_GET['piece_name'] === '') && 
+                                (!isset($_GET['piece_size']) || $_GET['piece_size'] === '')
                             ) {
                                 // Ensure piece_name and piece_size are present, even if empty
-                                echo '&personel=' . $_GET['personel'] . '&dates=' . '&device_code=' . '&piece_name=' . '&piece_size='.'$until_date=';
+                                echo '&personel=' . urlencode($_GET['personel']) . '&dates=' . urlencode($_GET['dates'] ?? '') . '&device_code=' . urlencode($_GET['device_code'] ?? '') . '&piece_name=' . urlencode($_GET['piece_name'] ?? '') . '&piece_size=' . urlencode($_GET['piece_size'] ?? '') . '&until_date=' . urlencode($_GET['until_date'] ?? '');
                             }
 
                             if (

@@ -30,6 +30,22 @@ if (!isset($_SESSION["all_data"])) {
         input[type=number] {
             -moz-appearance: textfield;
         }
+        .suggestions {
+            border: 1px solid #ccc;
+            max-height: 150px;
+            overflow-y: auto;
+            background: #fff;
+        }
+
+        .suggestion {
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .suggestion:hover {
+            background: #f0f0f0;
+        }
+
     </style>
 </head>
 
@@ -54,25 +70,29 @@ if (!isset($_SESSION["all_data"])) {
                 <!-- Include jQuery library -->
                 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-                <!-- Your HTML form -->
                 <form id="newPieceForm" action="new_device.php" method="POST" enctype="multipart/form-data" class="p-3 border mt-4">
                     <div class="row">
                         <div class="col-md-6">
                             <label for="name" class="form-label fw-semibold">نام دستگاه</label>
-                            <input type="text" name="name" id="name" class="form-control" required>
+                            <input type="text" name="name" id="name" class="form-control" required autocomplete="off">
+                            <div id="nameSuggestions" class="suggestions"></div> <!-- Suggestions dropdown for name -->
                         </div>
                         <div class="col-md-6">
                             <label for="size" class="form-label fw-semibold">کد دستگاه</label>
-                            <input type="text" name="size" id="size" class="form-control" required>
+                            <input type="text" name="size" id="size" class="form-control" required autocomplete="off">
+                            <div id="sizeSuggestions" class="suggestions"></div> <!-- Suggestions dropdown for size -->
                         </div>
                     </div>
-                 
+                    
                     <div class="row mt-4">
                         <div class="col-md-6">
                             <button name="enter" class="btn btn-outline-primary">ثبت</button>
                         </div>
                     </div>
                 </form>
+
+
+
 
 
 
@@ -163,7 +183,7 @@ if (!isset($_SESSION["all_data"])) {
                                 </nav>
                                 <?php
                                 } else {
-                                    echo "<p>No records found.</p>";
+                                    echo "<p>هیچ مشابهی پیدا نشد.</p>";
                                 }
                                 ?>
                         </div>
@@ -207,8 +227,134 @@ if (!isset($_SESSION["all_data"])) {
         });
     </script>
 
+    <script>
+        $(document).ready(function() {
+            // Handle input for name suggestions
+            $('#name').on('input', function() {
+                var input = $(this).val();
+                if (input.length >= 2) {
+                    $.ajax({
+                        url: 'suggestions_device.php', // Replace with your backend endpoint
+                        method: 'POST',
+                        data: { input: input, type: 'name' }, // Send input and type to backend
+                        success: function(response) {
+                            $('#nameSuggestions').html(response); // Update suggestions dropdown
+                        }
+                    });
+                } else {
+                    $('#nameSuggestions').empty(); // Clear suggestions if input length is less than 2
+                }
+            });
+
+            // Handle input for size suggestions
+            $('#size').on('input', function() {
+                var input = $(this).val();
+                if (input.length >= 2) {
+                    $.ajax({
+                        url: 'suggestions_device.php', // Replace with your backend endpoint
+                        method: 'POST',
+                        data: { input: input, type: 'numbers' }, // Send input and type to backend
+                        success: function(response) {
+                            $('#sizeSuggestions').html(response); // Update suggestions dropdown
+                        }
+                    });
+                } else {
+                    $('#sizeSuggestions').empty(); // Clear suggestions if input length is less than 2
+                }
+            });
+
+            // Click handler for name suggestions
+            $(document).on('click', '#nameSuggestions .suggestion', function() {
+                var name = $(this).text().trim(); // Extract name from suggestion text
+                $('#name').val(name); // Populate name input
+                $('#nameSuggestions').html(''); // Clear suggestions dropdown after selection
+            });
+
+            // Click handler for size suggestions
+            $(document).on('click', '#sizeSuggestions .suggestion', function() {
+                var numbers = $(this).text().trim(); // Extract numbers from suggestion text
+                $('#size').val(numbers); // Populate size input
+                $('#sizeSuggestions').html(''); // Clear suggestions dropdown after selection
+            });
+        });
+
+
+    </script>
+
+    <script>
+       $(document).ready(function() {
+            // Simulated list of previous entries (you should replace this with your actual data)
+            var previousEntries = [
+                { name: "Device1", size: "Size1" },
+                { name: "Device2", size: "Size2" },
+                { name: "Device3", size: "Size3" }
+            ];
+
+            // Function to populate suggestions based on previous entries
+            function populateSuggestions(entries, type) {
+                var suggestionsHtml = '';
+                entries.forEach(function(entry) {
+                    var value = type === 'name' ? entry.name : entry.size;
+                    suggestionsHtml += `<div class="suggestion">${value}</div>`;
+                });
+                return suggestionsHtml;
+            }
+
+            // Function to handle suggestion click
+            function handleSuggestionClick(value, type) {
+                if (type === 'name') {
+                    $('#name').val(value);
+                    $('#nameSuggestions').html(''); // Clear suggestions after selection
+                } else if (type === 'size') {
+                    $('#size').val(value);
+                    $('#sizeSuggestions').html(''); // Clear suggestions after selection
+                }
+            }
+
+            // Handle input for name suggestions
+            $('#name').on('input', function() {
+                var input = $(this).val();
+                var suggestionsHtml = '';
+
+                if (input.length >= 2) {
+                    var filteredEntries = previousEntries.filter(function(entry) {
+                        return entry.name.toLowerCase().includes(input.toLowerCase());
+                    });
+                    suggestionsHtml = populateSuggestions(filteredEntries, 'name');
+                }
+                $('#nameSuggestions').html(suggestionsHtml);
+            });
+
+            // Handle input for size suggestions
+            $('#size').on('input', function() {
+                var input = $(this).val();
+                var suggestionsHtml = '';
+
+                if (input.length >= 2) {
+                    var filteredEntries = previousEntries.filter(function(entry) {
+                        return entry.size.toLowerCase().includes(input.toLowerCase());
+                    });
+                    suggestionsHtml = populateSuggestions(filteredEntries, 'size');
+                }
+                $('#sizeSuggestions').html(suggestionsHtml);
+            });
+
+            // Click handler for suggestions
+            $(document).on('click', '.suggestion', function() {
+                var value = $(this).text();
+                var inputId = $(this).closest('.col-md-6').find('input').attr('id'); // Get input field ID
+                var type = inputId === 'name' ? 'name' : 'size';
+                handleSuggestionClick(value, type);
+            });
+        });
+
+    </script>
+
 
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+
+    
 
 </body>
 

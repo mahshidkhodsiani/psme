@@ -74,13 +74,13 @@ if ($_SESSION["all_data"]['admin'] == 1) {
         <img src="img/home.png" height="20px" width="20px">
         صفحه اول
     </a>
-    <a href="personnels_review" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'personnels_review') echo 'active'; ?>">
-        <img src="img/review.png" height="20px" width="20px">
-        گزارش گیری
-    </a>
     <a href="confirmations" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'confirmations') echo 'active'; ?>">
         <img src="img/confirm.png" height="20px" width="20px">
         تایید محصولات
+    </a>
+    <a href="personnels_review" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'personnels_review') echo 'active'; ?>">
+        <img src="img/review.png" height="20px" width="20px">
+        گزارش گیری
     </a>
     <a href="new_device" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'new_device') echo 'active'; ?>">
         <img src="img/new_d.png" height="20px" width="20px">
@@ -122,7 +122,7 @@ if ($_SESSION["all_data"]['admin'] == 1) {
 
     <a href="new_message" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'new_message') echo 'active'; ?>">
         <img src="img/message.png" height="20px" width="20px">
-        پیام برای ادمین
+        پیام ها
     </a>
     <a href="user_pro" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'user_pro') echo 'active'; ?>">
         <img src="img/products.png" height="20px" width="20px">

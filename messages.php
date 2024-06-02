@@ -104,6 +104,8 @@ $admin = $_SESSION["all_data"]['admin'];
                                            <th scope="col">پیام</th>
                                            <th scope="col">فرستنده</th>
                                            <th scope="col">تاریخ</th>
+                                           <th scope="col">دیدن پیام</th>
+
 
                                        </tr>
                                    </thead>
@@ -132,6 +134,9 @@ $admin = $_SESSION["all_data"]['admin'];
                                                    <td> <?= $row['text']?></td>
                                                    <td><?= givePerson($row['from_user']) ?></td>
                                                    <td><?= $row['date'] ?></td>
+                                                   <td>
+                                                        <a href="messages_comments.php?msg_id=<?=$row['id']?>" class="btn btn-outline-dark">مشاهده</a>
+                                                   </td>
                                                </tr> 
                                        <?php
                                                $a++;

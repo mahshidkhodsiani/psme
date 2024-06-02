@@ -7,7 +7,14 @@ if (!isset($_SESSION["all_data"])) {
 
 $id_from = $_SESSION["all_data"]['id'];
 
+
+
+
 ?>
+
+
+
+
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 
@@ -121,8 +128,9 @@ $id_from = $_SESSION["all_data"]['id'];
                                 <th scope="col">شیفت</th>
                                 <th scope="col">دستگاه</th>
                                 <th scope="col">کد دستگاه</th>
-                                <th scope="col">محصول</th>
-                                <th scope="col">سایز محصول</th>
+                                <th scope="col">قطعه</th>
+                                <th scope="col">سایز قطعه</th>
+                                <th scope="col">تعداد</th>
                                 <th scope="col">توقف</th>
                                 <th scope="col">تاریخ</th>
                                 <th scope="col">تایید یا رد</th>
@@ -142,15 +150,11 @@ $id_from = $_SESSION["all_data"]['id'];
                             // Fetch records with filters
                             $sql = "SELECT * FROM products WHERE status = 0";
 
-
-                            
-
                             // Add LIMIT clause for pagination
                             $sql .= " ORDER BY id DESC LIMIT $start_from, $results_per_page";
 
-
                             // echo $sql;
-                            
+
                             $result = $conn->query($sql);
 
                             if ($result->num_rows > 0) {
@@ -160,78 +164,58 @@ $id_from = $_SESSION["all_data"]['id'];
                                     <!-- Table rows -->
                                     <tr>
                                         <th scope="row"><?= $a ?></th>
-                                        <td><?= givePerson($row['user']) ?></td>
+                                        <td ><a href="product.php?id_pro=<?= $row['id'] ?>" style="text-decoration: none; color: black"><?= givePerson($row['user']) ?></a></td>
+
                                         <td>
                                             <?php
-                                            if($row['shift']==1){
-                                                echo 'روز' ;
+                                            if ($row['shift'] == 1) {
+                                                echo 'روز';
                                             }
-                                            if($row['shift']==2){
-                                                echo 'عصر' ;
+                                            if ($row['shift'] == 2) {
+                                                echo 'عصر';
                                             }
-                                            if($row['shift']==3){
-                                                echo 'شب' ;
+                                            if ($row['shift'] == 3) {
+                                                echo 'شب';
                                             }
                                             ?>
                                         </td>
-                                        <td><?= $row['device_name'] ?></td>
-                                        <td><?= $row['device_number'] ?></td>
-                                        <td><?= $row['piece_name'] ?></td>
+                                        <td><?= htmlspecialchars($row['device_name']) ?></td>
+                                        <td><?= htmlspecialchars($row['device_number']) ?></td>
+                                        <td><?= htmlspecialchars($row['piece_name']) ?></td>
                                         <?php
-                                            $nameData = giveName($row['size']);
-                                            if (!empty($nameData) && is_array($nameData)) {
-                                                echo '<td class="text-center" class="text-center">' . $nameData['size'] . '</td>';
-                                            } else {
-                                                // Handle the case where giveName returns an empty array or non-array
-                                                echo '<td class="text-center" class="text-center">کاربر خالی وارد کرده</td>';
-                                            }
+                                        $nameData = giveName($row['size']);
+                                        if (!empty($nameData) && is_array($nameData)) {
+                                            echo '<td class="text-center">' . htmlspecialchars($nameData['size']) . '</td>';
+                                        } else {
+                                            // Handle the case where giveName returns an empty array or non-array
+                                            echo '<td class="text-center">کاربر خالی وارد کرده</td>';
+                                        }
                                         ?>
+                                        <td><?= htmlspecialchars($row['numbers']) ?></td>
                                         <td>
-                                        <?php
-                                            if($row['had_stop'] == 1){
-                                                echo 'داشته' ;
-                                            }else{
+                                            <?php
+                                            if ($row['had_stop'] == 1) {
+                                                echo 'داشته';
+                                            } else {
                                                 echo 'نداشته';
                                             }
-                                        ?>
+                                            ?>
                                         </td>
-                                        
-                                        
-                                      
-
-
-                                        <td><?= $row['date'] ?></td>
-
-
+                                        <td><?= htmlspecialchars($row['date']) ?></td>
                                         <td>
-                                            <?php if($row['status'] == 0) { ?>
+                                            <?php if ($row['status'] == 0) { ?>
                                                 <form action="" method="POST">
-                                                    <input type="hidden" value="<?=$row['id'] ?>" name="id_pro">
-                                                    <input type="hidden" value="<?=$row['user'] ?>" name="to_user">
+                                                    <input type="hidden" value="<?= htmlspecialchars($row['id']) ?>" name="id_pro">
+                                                    <input type="hidden" value="<?= htmlspecialchars($row['user']) ?>" name="to_user">
                                                     <button name="accept_product" class="btn btn-outline-success btn-sm" onclick="return confirmAccept()">تایید</button>
-                                                    <!-- Change the type of the button to "button" -->
-                                                    <button name="reject_product"  id="reject_button"
-                                                        class="btn btn-outline-danger btn-sm">رد</button>
+                                                    <button type="button" name="reject_product" class="btn btn-outline-danger btn-sm" onclick="return confirmDelete()">رد</button>
                                                 </form>
-                                            <?php } elseif($row['status'] == 1) {
+                                            <?php } elseif ($row['status'] == 1) {
                                                 echo "تایید شده";
-                                            } elseif($row['status'] == 2) {
+                                            } elseif ($row['status'] == 2) {
                                                 echo "رد شده";
                                             } ?>
                                         </td>
-
-                                        <script>
-                                            function confirmDelete() {
-                                                return confirm("آیا مطمئن هستید که می‌خواهید این مورد را رد کنید؟");
-                                            }
-                                            function confirmAccept() {
-                                                return confirm("آیا مطمئن هستید که می‌خواهید این مورد را تایید کنید؟");
-                                            }
-                                        </script>
-
-
-
-
                                     </tr>
                                     <?php
                                     $a++;
@@ -240,6 +224,16 @@ $id_from = $_SESSION["all_data"]['id'];
                             ?>
                         </tbody>
                     </table>
+
+                    <script>
+                        function confirmDelete() {
+                            return confirm("آیا مطمئن هستید که می‌خواهید این مورد را رد کنید؟");
+                        }
+                        function confirmAccept() {
+                            return confirm("آیا مطمئن هستید که می‌خواهید این مورد را تایید کنید؟");
+                        }
+                    </script>
+
                 </div>
 
 
@@ -310,6 +304,84 @@ $id_from = $_SESSION["all_data"]['id'];
                         ?>
                     </ul>
                 </nav>
+
+
+
+
+
+
+                <br>
+
+                
+                <div class="row mt-4">
+                   
+
+                    <div class="col-md-9">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">آخرین فعالیت ها  </h5>
+                                <table class="table border">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">ردیف</th>
+                                            <th scope="col">اسم قطعه</th>
+                                            <th scope="col">اسم شخص</th>
+                                            <th scope="col">وضعیت</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        $sql = "SELECT * FROM products ORDER BY id DESC LIMIT 10";
+                                        $result = $conn->query($sql);
+                                        $a = 1; // Initialize $a
+
+                                        if ($result->num_rows > 0) {
+                                            while ($row = $result->fetch_assoc()) {
+                                        ?>
+                                                <tr>
+                                                    <th scope="row"><?= $a ?></th>
+                                                    <td><?= htmlspecialchars($row['piece_name']) ?></td>
+                                                    <td>
+                                                        <a href="product.php?id_pro=<?= $row['id'] ?>" style="text-decoration: none; color: black"><?= htmlspecialchars(givePerson($row['user'])) ?></a>
+                                                    </td>
+                                                    <td style="
+                                                    <?php
+                                                        if ($row['status'] == 0) {
+                                                            echo 'background-color: yellow;';
+                                                        } elseif ($row['status'] == 1) {
+                                                            echo 'background-color: green; color: white;';
+                                                        } else {
+                                                            echo 'background-color: red; color: white;';
+                                                        }
+                                                    ?>
+                                                    ">
+                                                        <?php
+                                                        if ($row['status'] == 0) {
+                                                            echo "هنوز تایید نشده";
+                                                        } elseif ($row['status'] == 1) {
+                                                            echo "تایید کردید";
+                                                        } else {
+                                                            echo "ردکردید";
+                                                        }
+                                                        ?>
+                                                    </td>
+                                                </tr>
+                                        <?php
+                                                $a++;
+                                            }
+                                        }
+                                        ?>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+          
+
+                </div>
 
             </div>
 

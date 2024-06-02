@@ -76,21 +76,25 @@ if (!isset($_SESSION["all_data"])) {
                     <div class="row">
                         <div class="col-md-6">
                             <label for="name" class="form-label fw-semibold">نام قطعه</label>
-                            <input type="text" name="name" id="name" class="form-control" required>
+                            <input type="text" name="name" id="name" class="form-control" required autocomplete="off">
+                            <div id="nameSuggestions" class="suggestions"></div> <!-- Suggestions dropdown for name -->
+
                         </div>
                         <div class="col-md-6">
                             <label for="size" class="form-label fw-semibold">سایز قطعه</label>
-                            <input type="text" name="size" id="size" class="form-control" required>
+                            <input type="text" name="size" id="size" class="form-control" required autocomplete="off">
+                            <div id="sizeSuggestions" class="suggestions"></div> <!-- Suggestions dropdown for size -->
+
                         </div>
                     </div>
                     <div class="row mt-4">
                         <div class="col-md-6">
                             <label for="price" class="form-label fw-semibold">قیمت قطعه(تومان)</label>
-                            <input type="number" name="price" id="price" placeholder="به انگلیسی وارد کنید" class="form-control" required>
+                            <input type="number" name="price" id="price" placeholder="به انگلیسی وارد کنید" class="form-control" required autocomplete="off">
                         </div>
                         <div class="col-md-6">
-                            <label for="time" class="form-label fw-semibold">زمان لازم برای تولید</label>
-                            <input type="text" name="time" id="time" placeholder="00:00" class="form-control" required>
+                            <label for="time" class="form-label fw-semibold">زمان لازم برای تولید به ثانیه</label>
+                            <input type="number" name="time" id="time"  class="form-control" required autocomplete="off">
                         </div>
                     </div>
                  
@@ -238,6 +242,128 @@ if (!isset($_SESSION["all_data"])) {
         document.querySelectorAll('input').forEach(function(input) {
             input.addEventListener('keypress', preventPersianNumbers);
         });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            // Handle input for name suggestions
+            $('#name').on('input', function() {
+                var input = $(this).val();
+                if (input.length >= 2) {
+                    $.ajax({
+                        url: 'suggestions_piece.php', // Replace with your backend endpoint
+                        method: 'POST',
+                        data: { input: input, type: 'name' }, // Send input and type to backend
+                        success: function(response) {
+                            $('#nameSuggestions').html(response); // Update suggestions dropdown
+                        }
+                    });
+                } else {
+                    $('#nameSuggestions').empty(); // Clear suggestions if input length is less than 2
+                }
+            });
+
+            // Handle input for size suggestions
+            $('#size').on('input', function() {
+                var input = $(this).val();
+                if (input.length >= 2) {
+                    $.ajax({
+                        url: 'suggestions_piece.php', // Replace with your backend endpoint
+                        method: 'POST',
+                        data: { input: input, type: 'size' }, // Send input and type to backend
+                        success: function(response) {
+                            $('#sizeSuggestions').html(response); // Update suggestions dropdown
+                        }
+                    });
+                } else {
+                    $('#sizeSuggestions').empty(); // Clear suggestions if input length is less than 2
+                }
+            });
+
+            // Click handler for name suggestions
+            $(document).on('click', '#nameSuggestions .suggestion', function() {
+                var name = $(this).text().trim(); // Extract name from suggestion text
+                $('#name').val(name); // Populate name input
+                $('#nameSuggestions').html(''); // Clear suggestions dropdown after selection
+            });
+
+            // Click handler for size suggestions
+            $(document).on('click', '#sizeSuggestions .suggestion', function() {
+                var size = $(this).text().trim(); // Extract size from suggestion text
+                $('#size').val(size); // Populate size input
+                $('#sizeSuggestions').html(''); // Clear suggestions dropdown after selection
+            });
+        });
+    </script>
+
+
+    <script>
+       $(document).ready(function() {
+            // Simulated list of previous entries (you should replace this with your actual data)
+            var previousEntries = [
+                { name: "Device1", size: "Size1" },
+                { name: "Device2", size: "Size2" },
+                { name: "Device3", size: "Size3" }
+            ];
+
+            // Function to populate suggestions based on previous entries
+            function populateSuggestions(entries, type) {
+                var suggestionsHtml = '';
+                entries.forEach(function(entry) {
+                    var value = type === 'name' ? entry.name : entry.size;
+                    suggestionsHtml += `<div class="suggestion">${value}</div>`;
+                });
+                return suggestionsHtml;
+            }
+
+            // Function to handle suggestion click
+            function handleSuggestionClick(value, type) {
+                if (type === 'name') {
+                    $('#name').val(value);
+                    $('#nameSuggestions').html(''); // Clear suggestions after selection
+                } else if (type === 'size') {
+                    $('#size').val(value);
+                    $('#sizeSuggestions').html(''); // Clear suggestions after selection
+                }
+            }
+
+            // Handle input for name suggestions
+            $('#name').on('input', function() {
+                var input = $(this).val();
+                var suggestionsHtml = '';
+
+                if (input.length >= 2) {
+                    var filteredEntries = previousEntries.filter(function(entry) {
+                        return entry.name.toLowerCase().includes(input.toLowerCase());
+                    });
+                    suggestionsHtml = populateSuggestions(filteredEntries, 'name');
+                }
+                $('#nameSuggestions').html(suggestionsHtml);
+            });
+
+            // Handle input for size suggestions
+            $('#size').on('input', function() {
+                var input = $(this).val();
+                var suggestionsHtml = '';
+
+                if (input.length >= 2) {
+                    var filteredEntries = previousEntries.filter(function(entry) {
+                        return entry.size.toLowerCase().includes(input.toLowerCase());
+                    });
+                    suggestionsHtml = populateSuggestions(filteredEntries, 'size');
+                }
+                $('#sizeSuggestions').html(suggestionsHtml);
+            });
+
+            // Click handler for suggestions
+            $(document).on('click', '.suggestion', function() {
+                var value = $(this).text();
+                var inputId = $(this).closest('.col-md-6').find('input').attr('id'); // Get input field ID
+                var type = inputId === 'name' ? 'name' : 'size';
+                handleSuggestionClick(value, type);
+            });
+        });
+
     </script>
 
 

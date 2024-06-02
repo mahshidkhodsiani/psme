@@ -92,3 +92,15 @@ function giveReasonReject($id){
         return $row['text'];
     }
 }
+
+
+function giveTimePiece($id){
+    include 'config.php';
+
+    $sql = "SELECT * FROM pieces WHERE id = $id";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        return $row['time_one'];
+    }
+}

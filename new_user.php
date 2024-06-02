@@ -45,13 +45,13 @@ if (!isset($_SESSION["all_data"])) {
                             <label for="name" class="form-label fw-semibold">
                                 نام
                             </label>
-                            <input type="text" name="name" class="form-control">
+                            <input type="text" name="name" class="form-control" required autocomplete="off">
                         </div>
                         <div class="col-md-6">
                             <label for="family" class="form-label fw-semibold">
                                 نام خانوادگی
                             </label>
-                            <input type="text" name="family" class="form-control">
+                            <input type="text" name="family" class="form-control" required autocomplete="off">
                         </div>
                     </div>
                     <div class="row mt-1">
@@ -59,13 +59,13 @@ if (!isset($_SESSION["all_data"])) {
                             <label for="username" class="form-label fw-semibold">
                                 یوزرنیم
                             </label>
-                            <input type="text" name="username" class="form-control" autocomplete="off">
+                            <input type="text" name="username" class="form-control" required autocomplete="off">
                         </div>
                         <div class="col-md-6">
                             <label for="password" class="form-label fw-semibold">
                                 پسورد
                             </label>
-                            <input type="password" name="password" class="form-control" autocomplete="off">
+                            <input type="password" name="password" class="form-control" required autocomplete="off">
                         </div>
                     </div>
 
@@ -89,6 +89,19 @@ if (!isset($_SESSION["all_data"])) {
                         </div>
                     </div>
                 </form>
+
+
+                <script>
+                    document.getElementById('userForm').addEventListener('submit', function(event) {
+                        // Prevent the form from actually submitting for demonstration purposes
+                        event.preventDefault();
+                        
+                        // Perform the actual form submission here (e.g., using AJAX)
+
+                        // Clear the form fields
+                        document.getElementById('userForm').reset();
+                    });
+                </script>
 
                 <div class="row mt-4">
                     <div class="col-md-10">

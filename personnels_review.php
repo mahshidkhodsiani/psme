@@ -281,8 +281,9 @@ if (!isset($_SESSION["all_data"])) {
                                 <th scope="col" class="text-center">سایز قطعه</th>
                                 <th scope="col" class="text-center">شیفت</th>
                                 <th scope="col" class="text-center">تاریخ</th>
-                                <th scope="col" class="text-center">زمان خالص تولید</th>
+                                <th scope="col" class="text-center">زمان تولید</th>
                                 <th scope="col" class="text-center">زمان مجاز</th>
+                                <th scope="col" class="text-center">میزان تاخیر</th>
 
                                 <th scope="col" class="text-center">تعداد</th>
                                 <th scope="col" class="text-center">قیمت واحد</th>
@@ -937,50 +938,61 @@ if (!isset($_SESSION["all_data"])) {
                                         // Calculate the difference in seconds
                                         $time_difference = $finish_time - $start_time;
 
-                                        // Convert seconds to hours and minutes
-                                        $hours = floor($time_difference / 3600); // 3600 seconds in an hour
-                                        $minutes = floor(($time_difference % 3600) / 60); // Get the remaining minutes
+                                        // Format the time difference in seconds
+                                        $net_seconds = $time_difference;
 
-                                        // Format hours and minutes as "hh:mm"
-                                        $net_hours = sprintf("%02d:%02d", $hours, $minutes);
+                                        // Ensure that giveTimePiece returns a numeric value
+                                        $size_time_piece = (int)giveTimePiece($row['size']); // or (float) if needed
 
+                                        // Calculate the remaining time or delay
+                                        $remaining_time = $size_time_piece - $net_seconds;
+
+                                        // Determine the display message based on the remaining time
+                                        if ($remaining_time >= 0) {
+                                            $delay_message = "تاخیر نداشته";
+                                        } else {
+                                            $delay_message = $remaining_time . " ثانیه";
+                                        }
                                         ?>
 
-                                        <td class="text-center"><?= $net_hours ?></td>
+                                        <td class="text-center"><?= $net_seconds ?> ثانیه </td>
 
+                                        <td class="text-center"><?= $size_time_piece ?> ثانیه </td>
+
+                                        <td class="text-center"><?= $delay_message ?></td>
 
 
 
                                         <?php
-                                        $nameData = giveName($row['size']);
-                                        if (!empty($nameData) && is_array($nameData)) {
-                                            // Check if the time value is in the correct format (hh:mm)
-                                            if (preg_match('/^([0-9]{2}):([0-9]{2})$/', $nameData['time_one'], $matches)) {
-                                                $hours = intval($matches[1]);
-                                                $minutes = intval($matches[2]);
+                                        // $nameData = giveName($row['size']);
+                                        // if (!empty($nameData) && is_array($nameData)) {
+                                        //     // Check if the time value is in the correct format (hh:mm)
+                                        //     if (preg_match('/^([0-9]{2}):([0-9]{2})$/', $nameData['time_one'], $matches)) {
+                                        //         $hours = intval($matches[1]);
+                                        //         $minutes = intval($matches[2]);
 
-                                                // Convert time to minutes and calculate total minutes
-                                                $total_minutes = ($hours * 60) + $minutes;
+                                        //         // Convert time to minutes and calculate total minutes
+                                        //         $total_minutes = ($hours * 60) + $minutes;
 
-                                                // Multiply by the number of items to get the total time
-                                                $total_time_minutes = $total_minutes * $row['numbers'];
+                                        //         // Multiply by the number of items to get the total time
+                                        //         $total_time_minutes = $total_minutes * $row['numbers'];
 
-                                                // Convert total time back to hours and minutes
-                                                $total_hours = floor($total_time_minutes / 60);
-                                                $total_minutes = $total_time_minutes % 60;
+                                        //         // Convert total time back to hours and minutes
+                                        //         $total_hours = floor($total_time_minutes / 60);
+                                        //         $total_minutes = $total_time_minutes % 60;
 
-                                                // Format the total time as "hh:mm"
-                                                $total_time = sprintf("%02d:%02d", $total_hours, $total_minutes);
+                                        //         // Format the total time as "hh:mm"
+                                        //         $total_time = sprintf("%02d:%02d", $total_hours, $total_minutes);
 
-                                                echo '<td class="text-center">' . $total_time . '</td>';
-                                            } else {
-                                                // Handle incorrect time format
-                                                echo '<td class="text-center">زمان به درستی وارد نشده است</td>';
-                                            }
-                                        } else {
-                                            // Handle the case where giveName returns an empty array or non-array
-                                            echo '<td class="text-center">کاربر خالی وارد کرده</td>';
-                                        }
+                                        //         echo '<td class="text-center">' . $total_time . '</td>';
+                                        //     } else {
+                                        //         // Handle incorrect time format
+                                        //         echo '<td class="text-center">زمان به درستی وارد نشده است</td>';
+                                        //     }
+                                        // } else {
+                                        //     // Handle the case where giveName returns an empty array or non-array
+                                        //     echo '<td class="text-center">کاربر خالی وارد کرده</td>';
+                                        // }
                                         ?>
 
 

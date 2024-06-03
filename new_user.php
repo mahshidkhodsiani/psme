@@ -313,7 +313,7 @@ if(isset($_POST['enter'])){
                 });
                 </script>";
     }else{
-       $sql = "INSERT INTO users (name, family, username, password, isAdmin, date) 
+       $sql = "INSERT INTO users (name, family, username, password, admin, date) 
             VALUES ('$name', '$family', '$username', '$password', '$isAdmin', NOW())";
         $result = $conn->query($sql); 
 

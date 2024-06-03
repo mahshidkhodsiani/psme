@@ -88,7 +88,7 @@ $id_from = $_SESSION["all_data"]['id'];
 
 
 
-                                    <textarea name="text_reason" class="form-control"></textarea>
+                                    <textarea name="text_reason" class="form-control" ></textarea>
                                         
                                         
                                     </div>
@@ -207,7 +207,7 @@ $id_from = $_SESSION["all_data"]['id'];
                                                     <input type="hidden" value="<?= htmlspecialchars($row['id']) ?>" name="id_pro">
                                                     <input type="hidden" value="<?= htmlspecialchars($row['user']) ?>" name="to_user">
                                                     <button name="accept_product" class="btn btn-outline-success btn-sm" onclick="return confirmAccept()">تایید</button>
-                                                    <button type="button" name="reject_product" class="btn btn-outline-danger btn-sm" onclick="return confirmDelete()">رد</button>
+                                                    <button  name="reject_product" class="btn btn-outline-danger btn-sm" >رد</button>
                                                 </form>
                                             <?php } elseif ($row['status'] == 1) {
                                                 echo "تایید شده";

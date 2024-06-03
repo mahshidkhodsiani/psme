@@ -105,7 +105,7 @@ $admin = $_SESSION["all_data"]['admin'];
                         <label>پیام اولیه  :</label>
                         <br>
                         <br>
-                        <textarea class="form-control" name="new_text" rows="3" readonly><?= isset($row1) ? htmlspecialchars($row1['text']) : '' ?></textarea>
+                        <textarea class="form-control" name="new_text" rows="5" readonly><?= isset($row1) ? htmlspecialchars($row1['text']) : '' ?></textarea>
                 
                         </div>
                         <br>
@@ -113,7 +113,7 @@ $admin = $_SESSION["all_data"]['admin'];
                         <div class="col-md-6">
                             <label for="">ارسال پاسخ : </label>
                             <!-- <textarea class="form-control" name="comment2" rows="3" readonly><?= $row2['msg']?></textarea> -->
-                            <textarea class="form-control" name="comment2" rows="3" readonly><?= isset($row2) ? htmlspecialchars($row2['msg']) : '' ?></textarea>
+                            <textarea class="form-control" name="comment2" rows="5" readonly><?= isset($row2) ? htmlspecialchars($row2['msg']) : '' ?></textarea>
 
                         </div>
                     </div>

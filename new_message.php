@@ -51,7 +51,7 @@ $admin = $_SESSION["all_data"]['admin'];
                         <label>لطفا پیام را داخل کادر بنویسید :</label>
                         <br>
                         <br>
-                        <textarea class="form-control" name="new_text" rows="3" required></textarea>
+                        <textarea class="form-control" name="new_text" rows="4" required></textarea>
                 
                         </div>
                     </div>
@@ -156,6 +156,7 @@ $admin = $_SESSION["all_data"]['admin'];
                                         <tr>
                                             <th scope="col">ردیف</th>
                                             <th scope="col">پیام</th>
+                                            <th scope="col">گیرنده</th>
                                             <th scope="col">فرستنده</th>
                                             <th scope="col">تاریخ</th>
                                             <th scope="col">دیدن پیام</th>
@@ -171,6 +172,7 @@ $admin = $_SESSION["all_data"]['admin'];
                                                 <tr>
                                                     <th scope="row"><?= $a ?></th>
                                                     <td><?= $row['text'] ?></td>
+                                                    <td><?= givePerson($row['to_user']) ?></td>
                                                     <td><?= givePerson($row['from_user']) ?></td>
                                                     <td><?= $row['date'] ?></td>
                                                     <td>

@@ -37,9 +37,6 @@ $id_user = $_SESSION["all_data"]['id'];
 
 
 
-    
-
-    </style>
 </head>
 
 <body>

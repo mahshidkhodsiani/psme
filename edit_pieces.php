@@ -21,7 +21,7 @@ if (!isset($_SESSION["all_data"])) {
     ?>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-</style>
+
 
 </head>
 <body>
@@ -77,6 +77,8 @@ if (!isset($_SESSION["all_data"])) {
                     <div class="row mt-4">
                         <div class="col-md-6">
                             <button name="update" class="btn btn-outline-primary">ثبت</button>
+                            <a href="new_piece" class="btn btn-outline-danger">انصراف</a>
+
                         </div>
                     </div>
                 </form>

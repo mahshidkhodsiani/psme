@@ -21,7 +21,33 @@ if (!isset($_SESSION["all_data"])) {
     ?>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-</style>
+    <style>
+        /* Hide the up and down arrows */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        
+        input[type="time"] {
+            position: relative;
+        }
+
+        input[type="time"]::-webkit-calendar-picker-indicator {
+            display: block;
+            top: 0;
+            right: 0;
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            background: transparent;
+        }
+    </style>
 
 </head>
 <body>
@@ -77,7 +103,7 @@ if (!isset($_SESSION["all_data"])) {
                             <label for="password" class="form-label fw-semibold">
                                 پسورد
                             </label>
-                            <input type="password" name="password" class="form-control" autocomplete="off" value="<?=$row['password']?>">
+                            <input type="number" name="password" class="form-control" autocomplete="off" value="<?=$row['password']?>">
                         </div>
                     </div>
 
@@ -99,6 +125,8 @@ if (!isset($_SESSION["all_data"])) {
                     <div class="row mt-4">
                         <div class="col-md-6">
                             <button name="update" class="btn btn-outline-primary">ثبت</button>
+                            <a href="new_user" class="btn btn-outline-danger">انصراف</a>
+
                         </div>
                     </div>
                 </form>
@@ -122,6 +150,21 @@ if (!isset($_SESSION["all_data"])) {
 
       
 
+    </script>
+    <script>
+        // Function to prevent Persian numbers from being entered
+        function preventPersianNumbers(event) {
+            var persianNumbersRegex = /[\u06F0-\u06F9]/; // Range of Persian numbers in Unicode
+            var inputKey = String.fromCharCode(event.keyCode);
+            if (persianNumbersRegex.test(inputKey)) {
+                event.preventDefault();
+            }
+        }
+
+        // Attach the preventPersianNumbers function to input fields
+        document.querySelectorAll('input').forEach(function(input) {
+            input.addEventListener('keypress', preventPersianNumbers);
+        });
     </script>
 </body>
 </html>
@@ -158,7 +201,7 @@ if (isset($_POST['update'])) {
                     </button>
                 </div>
                 <div class='toast-body'>
-                    یوزر با موفقیت اضافه شد!
+                    یوزر با موفقیت ویرایش شد!
                 </div>
               </div>
                 <script>
@@ -183,7 +226,7 @@ if (isset($_POST['update'])) {
                     </button>
                 </div>
                 <div class='toast-body'>
-                    خطایی در افزودن یوزر پیش آمده!
+                    خطایی در ویرایش یوزر پیش آمده!
                 </div>
               </div>
               <script>

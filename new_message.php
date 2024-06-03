@@ -25,9 +25,6 @@ $admin = $_SESSION["all_data"]['admin'];
 
 
 
-
-
-</style>
 </head>
 <body>
     

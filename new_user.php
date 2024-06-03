@@ -21,7 +21,33 @@ if (!isset($_SESSION["all_data"])) {
     ?>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-</style>
+    <style>
+        /* Hide the up and down arrows */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        
+        input[type="time"] {
+            position: relative;
+        }
+
+        input[type="time"]::-webkit-calendar-picker-indicator {
+            display: block;
+            top: 0;
+            right: 0;
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            background: transparent;
+        }
+    </style>
 
 </head>
 <body>
@@ -63,9 +89,9 @@ if (!isset($_SESSION["all_data"])) {
                         </div>
                         <div class="col-md-6">
                             <label for="password" class="form-label fw-semibold">
-                                پسورد
+                                پسوورد(عدد)
                             </label>
-                            <input type="password" name="password" class="form-control" required autocomplete="off">
+                            <input type="number" name="password" class="form-control" required autocomplete="off">
                         </div>
                     </div>
 
@@ -225,10 +251,23 @@ if (!isset($_SESSION["all_data"])) {
                 $(this).addClass('active');
             });
         });
-
-      
-
     </script>
+    <script>
+        // Function to prevent Persian numbers from being entered
+        function preventPersianNumbers(event) {
+            var persianNumbersRegex = /[\u06F0-\u06F9]/; // Range of Persian numbers in Unicode
+            var inputKey = String.fromCharCode(event.keyCode);
+            if (persianNumbersRegex.test(inputKey)) {
+                event.preventDefault();
+            }
+        }
+
+        // Attach the preventPersianNumbers function to input fields
+        document.querySelectorAll('input').forEach(function(input) {
+            input.addEventListener('keypress', preventPersianNumbers);
+        });
+    </script>
+
 </body>
 </html>
 
@@ -236,6 +275,8 @@ if (!isset($_SESSION["all_data"])) {
 <?php
 
 if(isset($_POST['enter'])){
+
+    // die();
     $name = $_POST['name'];
     $family = $_POST['family'];
     $username = $_POST['username'];
@@ -246,33 +287,31 @@ if(isset($_POST['enter'])){
         $isAdmin = 0 ;
     }
 
-    $SQL1 = "SELECT * FROM users WHERE username = '$username'";
+  
+
+
+    $SQL1 = "SELECT * FROM users WHERE username = '$username' AND password = '$password'";
     $result1 = $conn->query($SQL1);
     if ($result1->num_rows > 0) {
-         // Use Bootstrap's toast component to show an error toast message
-         echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
-         <div class='toast-header bg-danger text-white'>
-             <strong class='mr-auto'>Error</strong>
-             <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
-                 <span aria-hidden='true'>&times;</span>
-             </button>
-         </div>
-         <div class='toast-body'>
-             این یوزر نیم قبلا ثبت شده!
-         </div>
-       </div>
-       <script>
-        $(document).ready(function(){
-        $('#successToast').toast('show');
-        setTimeout(function(){
-            $('#successToast').toast('hide');
-            // Redirect after 3 seconds
-            setTimeout(function(){
-                window.location.href = 'new_user';
-            }, 1000);
-        }, 1000);
-         });
-       </script>";
+        echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+                <div class='toast-header bg-danger text-white'>
+                    <strong class='mr-auto'>Error</strong>
+                    <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                        <span aria-hidden='true'>&times;</span>
+                    </button>
+                </div>
+                <div class='toast-body'>
+                    این یوزرنیم و پسورد قبلا به ثبت رسیده! !
+                </div>
+                </div>
+                <script>
+                $(document).ready(function(){
+                    $('#errorToast').toast('show');
+                    setTimeout(function(){
+                        $('#errorToast').toast('hide');
+                    }, 3000);
+                });
+                </script>";
     }else{
        $sql = "INSERT INTO users (name, family, username, password, isAdmin, date) 
             VALUES ('$name', '$family', '$username', '$password', '$isAdmin', NOW())";

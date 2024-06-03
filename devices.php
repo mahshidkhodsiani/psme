@@ -20,7 +20,7 @@ if (!isset($_SESSION["all_data"])) {
     <link rel="stylesheet" href="style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-</style>
+
 </head>
 <body>
     

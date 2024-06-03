@@ -112,9 +112,9 @@ if (!isset($_SESSION["all_data"])) {
                             $offset = ($current_page - 1) * $items_per_page;
 
                             // SQL query to retrieve a subset of rows based on pagination
-                            $sql = "SELECT * FROM devices ORDER BY id DESC LIMIT $items_per_page OFFSET $offset";
+                            $sql = "SELECT * FROM devices ORDER BY name COLLATE utf8mb4_persian_ci LIMIT $items_per_page OFFSET $offset";
                             $result = $conn->query($sql);
-
+                            
                             
                             if ($result->num_rows > 0) {
                                 $a = ($current_page - 1) * $items_per_page + 1; // Counter for row numbers

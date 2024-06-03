@@ -122,7 +122,7 @@ if (!isset($_SESSION["all_data"])) {
                             $offset = ($current_page - 1) * $items_per_page;
 
                             // SQL query to retrieve a subset of rows based on pagination
-                            $sql = "SELECT * FROM pieces ORDER BY id DESC LIMIT $items_per_page OFFSET $offset";
+                            $sql = "SELECT * FROM pieces ORDER BY name COLLATE utf8mb4_persian_ci LIMIT $items_per_page OFFSET $offset";
                             $result = $conn->query($sql);
 
                             
@@ -400,7 +400,7 @@ if (isset($_POST['enter'])) {
                         </button>
                     </div>
                     <div class='toast-body'>
-                        این دستگاه قبلا به ثبت رسیده لطفا دستگاه جدید وارد کنید !
+                        این قطعه قبلا به ثبت رسیده لطفا دستگاه جدید وارد کنید !
                     </div>
                   </div>
                   <script>

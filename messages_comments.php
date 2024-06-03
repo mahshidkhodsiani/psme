@@ -25,17 +25,6 @@ $admin = $_SESSION["all_data"]['admin'];
 
 
 
-    <!-- <script>
-        // Function to display an alert on page load
-        function showAlertOnRefresh() {
-            alert("فقط یکبار می توانید پاسخ پیام را بدهید!");
-        }
-
-        // Add event listener for page load
-        window.addEventListener('load', showAlertOnRefresh);
-    </script> -->
-
-</style>
 </head>
 <body>
     

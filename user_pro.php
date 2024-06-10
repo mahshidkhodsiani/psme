@@ -77,10 +77,17 @@ $id_user = $_SESSION["all_data"]['id'];
                             
 
                                 <div class="col-md-6">
-                                    <label for="dates" class="form-label">تاریخ:</label>
-                                    <input id="pdpDark" type="text" name="dates" 
+                                    <label for="from_date" class="form-label">از تاریخ:</label>
+                                    <input id="pdpDark" type="text" name="from_date" 
                                     class="form-control" autocomplete="off" 
-                                        value="<?=  (isset($_GET['dates'])? htmlspecialchars($_GET['dates']) : ''); ?>">
+                                        value="<?=  (isset($_GET['from_date'])? htmlspecialchars($_GET['from_date']) : ''); ?>">
+
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="until_date" class="form-label">تا تاریخ:</label>
+                                    <input id="pdpLatoja" type="text" name="until_date" 
+                                    class="form-control" autocomplete="off" 
+                                        value="<?=  (isset($_GET['until_date'])? htmlspecialchars($_GET['until_date']) : ''); ?>">
 
                                 </div>
 
@@ -110,12 +117,64 @@ $id_user = $_SESSION["all_data"]['id'];
               
              
                 
+                <?php
+                // Pagination and results per page
+                $results_per_page = isset($_GET['rows']) ? intval($_GET['rows']) : 10; // Number of records per page, default is 10
+                $page = isset($_GET['page']) ? intval($_GET['page']) : 1; // Default page
+
+                // Calculate the starting point for fetching records
+                $start_from = ($page - 1) * $results_per_page;
+
+                // Build the SQL query for counting total filtered records
+                $sql_count = "SELECT COUNT(*) AS total FROM products WHERE user = $id_user";
+
+                // Apply filters for from_date and until_date if set
+                if(isset($_GET['from_date']) && $_GET['from_date'] !== '') {
+                    $from_date = $_GET['from_date'];
+                    // Properly escape $from_date to prevent SQL injection
+                    $sql_count .= " AND date >= '$from_date'";
+                }
+
+                if(isset($_GET['until_date']) && $_GET['until_date'] !== '') {
+                    $until_date = $_GET['until_date'];
+                    // Properly escape $until_date to prevent SQL injection
+                    $sql_count .= " AND date <= '$until_date'";
+                }
+
+                // Execute the query to get total number of filtered records
+                $result_count = $conn->query($sql_count);
+                $row_count = $result_count->fetch_assoc();
+                $total_records = $row_count["total"];
+
+                // Calculate total pages based on total records and results per page
+                $total_pages = ceil($total_records / $results_per_page);
+
+                // Build the main SQL query to fetch paginated records with filters
+                $sql_data = "SELECT * FROM products WHERE user = $id_user";
+
+                // Apply filters for from_date and until_date if set
+                if(isset($_GET['from_date']) && $_GET['from_date'] !== '') {
+                    $from_date = $_GET['from_date'];
+                    $sql_data .= " AND date >= '$from_date'";
+                }
+
+                if(isset($_GET['until_date']) && $_GET['until_date'] !== '') {
+                    $until_date = $_GET['until_date'];
+                    $sql_data .= " AND date <= '$until_date'";
+                }
+
+                $sql_data .= " ORDER BY id DESC LIMIT $start_from, $results_per_page";
+
+                // Store the SQL query in session for other uses
+                $_SESSION['query'] = $sql_data;
+
+                // Execute the main query to fetch paginated records
+                $result_data = $conn->query($sql_data);
+                ?>
+
+                <!-- Table structure -->
                 <div class="table-responsive">
-                    <table class="table border border-4 ">
-                    
-                     
-
-
+                    <table class="table border border-4">
                         <thead>
                             <tr>
                                 <th scope="col" class="text-center">ردیف</th>
@@ -127,119 +186,56 @@ $id_user = $_SESSION["all_data"]['id'];
                                 <th scope="col" class="text-center">تاریخ</th>
                                 <th scope="col" class="text-center">تعداد</th>
                                 <th scope="col" class="text-center">وضعیت محصول</th>
-                                
                             </tr>
                         </thead>
-
-                        
                         <tbody>
                             <?php
-                            // Pagination
-                            // $results_per_page = 10; // Number of records per page
-                            // if (!isset($_GET['page'])) {
-                            //     $page = 1; // Default page
-                            // } else {
-                            //     $page = $_GET['page'];
-                            // }
-
-
-                            $results_per_page = isset($_GET['rows']) ? intval($_GET['rows']) : 10; // Number of records per page, default is 10
-                            $page = isset($_GET['page']) ? intval($_GET['page']) : 1; // Default page
-                            $start_from = ($page - 1) * $results_per_page;
-
-
-
-                            // $start_from = ($page - 1) * $results_per_page;
-
-
-                            
-
-                            // Fetch records with filters
-                            $sql = "SELECT * FROM products WHERE user = $id_user";
-
-
-
-                         
-                            if(isset($_GET['dates']) && $_GET['dates'] !== '' ) {
-                                $dates = $_GET['dates'];
-                                $sql .= " AND date = '$dates'";
-                            }
-                            
-                            
-                            $sql .= " ORDER BY id DESC LIMIT $start_from, $results_per_page";
-
-
-                            $_SESSION['query'] = $sql;
-
-
-
-
-                            // echo $sql;
-                            
-                            $result = $conn->query($sql);
-
-                            if ($result->num_rows > 0) {
+                            // Display records in table rows
+                            if ($result_data->num_rows > 0) {
                                 $a = $start_from + 1;
-                                while ($row = $result->fetch_assoc()) {
+                                while ($row = $result_data->fetch_assoc()) {
                                     ?>
-                                    <!-- Table rows -->
                                     <tr>
                                         <th scope="row" class="text-center"><?= $a ?></th>
-
                                         <td class="text-center">
                                             <a href="product.php?id_pro=<?= $row['id'] ?>" style="text-decoration: none; color: black">
                                                 <?= givePerson($row['user']) ?>
                                             </a>
                                         </td>
                                         <td class="text-center"><?= giveDeviceCode($row['device_number']) ?></td>
-
                                         <td class="text-center"><?= $row['piece_name'] ?></td>
-
                                         <?php
-                                            $nameData = giveName($row['size']);
-                                            if (!empty($nameData) && is_array($nameData)) {
-                                                echo '<td class="text-center">' . $nameData['size'] . '</td>';
-                                            } else {
-                                                // Handle the case where giveName returns an empty array or non-array
-                                                echo '<td class="text-center">کاربر خالی وارد کرده</td>';
-                                            }
+                                        $nameData = giveName($row['size']);
+                                        if (!empty($nameData) && is_array($nameData)) {
+                                            echo '<td class="text-center">' . $nameData['size'] . '</td>';
+                                        } else {
+                                            echo '<td class="text-center">کاربر خالی وارد کرده</td>';
+                                        }
                                         ?>
-
                                         <td class="text-center">
                                             <?php
-                                            if($row['shift']==1){
-                                                echo 'روز' ;
-                                            }
-                                            if($row['shift']==2){
-                                                echo 'عصر' ;
-                                            }
-                                            if($row['shift']==3){
-                                                echo 'شب' ;
+                                            if ($row['shift'] == 1) {
+                                                echo 'روز';
+                                            } elseif ($row['shift'] == 2) {
+                                                echo 'عصر';
+                                            } elseif ($row['shift'] == 3) {
+                                                echo 'شب';
                                             }
                                             ?>
                                         </td>
-                                   
                                         <td class="text-center"><?= $row['date'] ?></td>
                                         <td class="text-center"><?= $row['numbers'] ?></td>
-                                        <td class="text-center" <?php if($row['status']==2){?> onclick="showReason($row['id'])" <?php } ?>>
+                                        <td class="text-center" <?php if($row['status']==2){?> onclick="showReason(<?= $row['id'] ?>)" <?php } ?>>
                                             <?php
-                                            if($row['status']==0){
-                                                echo 'در انتظار تایید' ;
-                                            }
-                                            if($row['status']==1){
-                                                echo 'تایید شده' ;
-                                            }
-                                            if($row['status']==2){
-                                                echo 'رد شده' ;
+                                            if ($row['status'] == 0) {
+                                                echo 'در انتظار تایید';
+                                            } elseif ($row['status'] == 1) {
+                                                echo 'تایید شده';
+                                            } elseif ($row['status'] == 2) {
+                                                echo 'رد شده';
                                             }
                                             ?>
                                         </td>
-                                 
-
-
-
-
-
                                     </tr>
                                     <?php
                                     $a++;
@@ -248,94 +244,55 @@ $id_user = $_SESSION["all_data"]['id'];
                             ?>
                         </tbody>
                     </table>
-
-
                 </div>
 
-
-
-
-
-
-
-
+                <!-- Pagination -->
                 <nav aria-label="Page navigation example">
                     <ul class="pagination">
                         <?php
                         // Previous page link
                         if ($page > 1) {
-                            echo '<li class="page-item"><a class="page-link" href="?page=' . ($page - 1). '&rows=' . $results_per_page;
-
-
-                    
-                          
-
-                            if(isset($_GET['dates']) && $_GET['dates'] !== '' ) {
-                                echo '&dates=' . $_GET['dates'];
+                            echo '<li class="page-item"><a class="page-link" href="?page=' . ($page - 1) . '&rows=' . $results_per_page;
+                            if (isset($_GET['from_date']) && $_GET['from_date'] !== '') {
+                                echo '&from_date=' . $_GET['from_date'];
                             }
-                          
-
-
-
-
-
-                          
+                            if (isset($_GET['until_date']) && $_GET['until_date'] !== '') {
+                                echo '&until_date=' . $_GET['until_date'];
+                            }
                             echo '">قبلی</a></li>';
                         } else {
                             echo '<li class="page-item disabled"><a class="page-link" href="#">قبلی</a></li>';
                         }
 
                         // Page numbers
-                        $sql = "SELECT COUNT(*) AS total FROM products";
-                        $result = $conn->query($sql);
-                        $row = $result->fetch_assoc();
-                        $total_pages = ceil($row["total"] / $results_per_page);
-
-                        // Define how many page numbers to display directly
-                        $direct_page_numbers = 3;
+                        $direct_page_numbers = 3; // Number of direct page links to show
                         $start_page = max(1, $page - floor($direct_page_numbers / 2));
                         $end_page = min($total_pages, $start_page + $direct_page_numbers - 1);
 
                         for ($i = $start_page; $i <= $end_page; $i++) {
                             if ($i == $page) {
                                 echo '<li class="page-item active"><a class="page-link" href="?page=' . $i . '&rows=' . $results_per_page;
-                                
-                           
-                                if(isset($_GET['dates']) && $_GET['dates'] !== '' ) {
-                                    echo '&dates=' . $_GET['dates'];
-                                }
-                               
-
-
-
-                                echo '">' . $i . '</a></li>';
                             } else {
                                 echo '<li class="page-item"><a class="page-link" href="?page=' . $i . '&rows=' . $results_per_page;
-
-
-                              
-                                if(isset($_GET['dates']) && $_GET['dates'] !== '' ) {
-                                    echo '&dates=' . $_GET['dates'];
-                                }
-                               
-
-
-                                echo '">' . $i . '</a></li>';
                             }
+                            if (isset($_GET['from_date']) && $_GET['from_date'] !== '') {
+                                echo '&from_date=' . $_GET['from_date'];
+                            }
+                            if (isset($_GET['until_date']) && $_GET['until_date'] !== '') {
+                                echo '&until_date=' . $_GET['until_date'];
+                            }
+                            echo '">' . $i . '</a></li>';
                         }
 
                         // Next page link
                         if ($page < $total_pages) {
                             echo '<li class="page-item"><a class="page-link" href="?page=' . ($page + 1) . '&rows=' . $results_per_page;
-
-
-
-                            if(isset($_GET['dates']) && $_GET['dates'] !== '' ) {
-                                echo '&dates=' . $_GET['dates'];
+                            if (isset($_GET['from_date']) && $_GET['from_date'] !== '') {
+                                echo '&from_date=' . $_GET['from_date'];
                             }
-                            
-
-
+                            if (isset($_GET['until_date']) && $_GET['until_date'] !== '') {
+                                echo '&until_date=' . $_GET['until_date'];
+                            }
                             echo '">بعدی</a></li>';
                         } else {
                             echo '<li class="page-item disabled"><a class="page-link" href="#">بعدی</a></li>';
@@ -343,6 +300,9 @@ $id_user = $_SESSION["all_data"]['id'];
                         ?>
                     </ul>
                 </nav>
+
+
+
 
 
 

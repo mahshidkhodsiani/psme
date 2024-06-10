@@ -72,11 +72,17 @@ $admin = $_SESSION["all_data"]['admin'];
                                         <thead>
                                             <tr>
                                                 <th class="text-center" scope="col">ردیف</th>
+                                                <?php
+                                                if ($admin == 1) {?>
                                                 <th class="text-center" scope="col">نام شخص</th>
+                                                <?php
+                                                }
+                                                ?>
                                                 <th class="text-center" scope="col">نام دستگاه</th>
                                                 <th class="text-center" scope="col">کد دستگاه</th>
                                                 <th class="text-center" scope="col">اسم محصول</th>
                                                 <th class="text-center" scope="col">سایز محصول</th>
+                                                <th class="text-center" scope="col">تعداد</th>
                                                 <th class="text-center" scope="col">تاریخ</th>
                                             </tr>
                                         </thead>
@@ -108,17 +114,18 @@ $admin = $_SESSION["all_data"]['admin'];
                                                         <?php
                                                         if ($admin == 1) {
                                                         ?>
-                                                            <td class="text-center" ><a href="product.php?id_pro=<?= $row['id'] ?>" style="text-decoration: none; color: black"><?= givePerson($row['user']) ?></a></td>
-                                                        <?php
-                                                        }else{?>
-                                                            <td class="text-center">
+                                                            <td class="text-center" >
                                                                 <a href="product.php?id_pro=<?= $row['id'] ?>" style="text-decoration: none; color: black"><?= givePerson($row['user']) ?></a>
                                                             </td>
                                                         <?php
-                                                        }
-                                                        ?>
-                                                        <td class="text-center"><?= $row['device_name'] ?></td>
+                                                        }?>
+                                                          
+                                                        <td class="text-center">
+                                                            <a href="product.php?id_pro=<?= $row['id'] ?>" style="text-decoration: none; color: black"><?= $row['device_name'] ?></a>
+                                                        </td>
+                                                     
                                                         <td class="text-center"><?= giveDeviceCode($row['device_number']) ?></td>
+                                                      
                                                         <td class="text-center"><?= $row['piece_name'] ?></td>
                                                         <?php
                                                             $nameData = giveName($row['size']);
@@ -129,6 +136,7 @@ $admin = $_SESSION["all_data"]['admin'];
                                                                 echo '<td class="text-center" class="text-center">کاربر خالی وارد کرده</td>';
                                                             }
                                                         ?>
+                                                        <td class="text-center"><?= $row['numbers'] ?></td>
                                                         <td class="text-center"><?= $row['date'] ?></td>
                                                     </tr>
                                             <?php

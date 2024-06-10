@@ -947,17 +947,27 @@ if (!isset($_SESSION["all_data"])) {
                                         // Calculate the remaining time or delay
                                         $remaining_time = $size_time_piece - $net_seconds;
 
+                                        // // Determine the display message based on the remaining time
+                                        // if ($remaining_time >= 0) {
+                                        //     $delay_message = "تاخیر نداشته";
+                                        // } else {
+                                        //     $delay_message = $remaining_time . " ثانیه";
+                                        // }
+                                        $b = $size_time_piece * $row['numbers'] ;
+                                        $c = $b - $net_seconds;
+
                                         // Determine the display message based on the remaining time
-                                        if ($remaining_time >= 0) {
+                                        if ($c >= 0) {
                                             $delay_message = "تاخیر نداشته";
                                         } else {
-                                            $delay_message = $remaining_time . " ثانیه";
+                                            $delay_message = $c . " ثانیه";
                                         }
+
                                         ?>
 
                                         <td class="text-center"><?= $net_seconds ?> ثانیه </td>
 
-                                        <td class="text-center"><?= $size_time_piece ?> ثانیه </td>
+                                        <td class="text-center"><?= $b ?> ثانیه </td>
 
                                         <td class="text-center"><?= $delay_message ?></td>
 

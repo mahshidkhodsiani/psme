@@ -336,7 +336,6 @@ if (!isset($_SESSION["all_data"])) {
                                 $dates = $_GET['dates'];
                                 $sql .= " WHERE STR_TO_DATE(date, '%Y/%m/%d') >= STR_TO_DATE('$dates', '%Y/%m/%d')";
                             }
-
                             if (
                                 isset($_GET['until_date']) && $_GET['until_date'] !== ''
                                 && $_GET['personel'] === '' && $_GET['device_code'] === '' && $_GET['dates'] === ''

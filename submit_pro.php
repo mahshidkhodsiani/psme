@@ -93,9 +93,8 @@ $id = $_SESSION["all_data"]['id'];
                     enctype="multipart/form-data" class="p-3 border mt-4">
                     <div class="row">
                         <div class="col-md-6">
-                            <label for="shift" class="form-label fw-semibold">
-                                شیفت</label>
-                            <select name="shift" class="form-select" aria-label="Default select example" required>
+                            <label for="shift" class="form-label fw-semibold">شیفت</label>
+                            <select id="shift" name="shift" class="form-select" aria-label="Default select example" required>
                                 <option value="" selected>یکی از شیفت های زیر را انتخاب کنید</option>
                                 <option value="1">روز</option>
                                 <option value="2">عصر</option>
@@ -344,13 +343,11 @@ $id = $_SESSION["all_data"]['id'];
                     <br>
                     <div class="row mt-3">
                         <div class="col-md-6">
-                            <label for="start" class="form-label fw-semibold">
-                                ساعت شروع تولید قطعه</label>
+                            <label for="start" class="form-label fw-semibold">ساعت شروع تولید قطعه</label>
                             <input id="startTime" name="start" type="time" class="form-control input-md" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="stop" class="form-label fw-semibold">
-                                ساعت پایان تولید قطعه</label>
+                            <label for="stop" class="form-label fw-semibold">ساعت پایان تولید قطعه</label>
                             <input id="stopTime" name="stop" type="time" class="form-control input-md" required>
                             <div id="error" style="color: red;"></div>
                         </div>
@@ -363,12 +360,20 @@ $id = $_SESSION["all_data"]['id'];
                         $(document).ready(function() {
                             var startTimeInput = document.getElementById("startTime");
                             var stopTimeInput = document.getElementById("stopTime");
+                            var shiftSelect = document.getElementById("shift");
                             var errorDiv = document.getElementById("error");
 
                             // Function to check if stop time is less than start time
                             function checkTimeValidity() {
                                 var startTime = startTimeInput.value;
                                 var stopTime = stopTimeInput.value;
+                                var shift = shiftSelect.value;
+
+                                // Skip validation if the shift is "شب" (night shift)
+                                if (shift === "3") {
+                                    errorDiv.textContent = "";
+                                    return true;
+                                }
 
                                 if (stopTime <= startTime) {
                                     errorDiv.textContent = "* ساعت پایان باید بیشتر از ساعت شروع باشد";
@@ -379,9 +384,10 @@ $id = $_SESSION["all_data"]['id'];
                                 }
                             }
 
-                            // Add event listeners to both input fields
+                            // Add event listeners to both input fields and the shift select field
                             startTimeInput.addEventListener("change", checkTimeValidity);
                             stopTimeInput.addEventListener("change", checkTimeValidity);
+                            shiftSelect.addEventListener("change", checkTimeValidity);
 
                             $('#myForm').on('submit', function(event) {
                                 if (!checkTimeValidity()) {

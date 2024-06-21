@@ -184,10 +184,10 @@ $id_from = $_SESSION["all_data"]['id'];
                                         <?php
                                         $nameData = giveName($row['size']);
                                         if (!empty($nameData) && is_array($nameData)) {
-                                            echo '<td class="text-center">' . htmlspecialchars($nameData['size']) . '</td>';
+                                            echo '<td class="">' . htmlspecialchars($nameData['size']) . '</td>';
                                         } else {
                                             // Handle the case where giveName returns an empty array or non-array
-                                            echo '<td class="text-center">کاربر خالی وارد کرده</td>';
+                                            echo '<td class="">کاربر خالی وارد کرده</td>';
                                         }
                                         ?>
                                         <td><?= htmlspecialchars($row['numbers']) ?></td>

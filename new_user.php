@@ -49,6 +49,8 @@ if (!isset($_SESSION["all_data"])) {
         }
     </style>
 
+
+
 </head>
 <body>
     
@@ -80,6 +82,7 @@ if (!isset($_SESSION["all_data"])) {
                             <input type="text" name="family" class="form-control" required autocomplete="off">
                         </div>
                     </div>
+                   
                     <div class="row mt-1">
                         <div class="col-md-6">
                             <label for="username" class="form-label fw-semibold">
@@ -265,6 +268,86 @@ if (!isset($_SESSION["all_data"])) {
         // Attach the preventPersianNumbers function to input fields
         document.querySelectorAll('input').forEach(function(input) {
             input.addEventListener('keypress', preventPersianNumbers);
+        });
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  
+    <script>
+        $(document).ready(function() {
+            // Regular expression to match English alphabet
+            const englishRegex = /^[A-Za-z\s]+$/;
+
+            // Function to validate input
+            function validateInput(input) {
+                const value = input.value;
+                if (!englishRegex.test(value)) {
+                    input.setCustomValidity("Please use only English letters.");
+                } else {
+                    input.setCustomValidity("");
+                }
+            }
+
+            // Attach input event listeners for validation
+            $('input[name="username"]').on('input', function() {
+                validateInput(this);
+            });
+
+            // Prevent paste event if the content is not in English
+            $('input[name="username"]').on('paste', function(e) {
+                const clipboardData = e.originalEvent.clipboardData || window.clipboardData;
+                const pastedData = clipboardData.getData('text');
+                if (!englishRegex.test(pastedData)) {
+                    e.preventDefault();
+                }
+            });
+
+            // Prevent non-English characters from being entered
+            $('input[name="username"]').on('keypress', function(e) {
+                const key = String.fromCharCode(e.which);
+                if (!englishRegex.test(key)) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+    
+    <script>
+        $(document).ready(function() {
+            // Regular expression to match Persian alphabet
+            const persianRegex = /^[\u0600-\u06FF\s]+$/;
+
+            // Function to validate input
+            function validateInput(input) {
+                const value = input.value;
+                if (!persianRegex.test(value)) {
+                    input.setCustomValidity("لطفاً فقط از حروف فارسی استفاده کنید.");
+                } else {
+                    input.setCustomValidity("");
+                }
+            }
+
+            // Attach input event listeners for validation
+            $('input[name="name"], input[name="family"]').on('input', function() {
+                validateInput(this);
+            });
+
+            // Prevent paste event if the content is not in Persian
+            $('input[name="name"], input[name="family"]').on('paste', function(e) {
+                const clipboardData = e.originalEvent.clipboardData || window.clipboardData;
+                const pastedData = clipboardData.getData('text');
+                if (!persianRegex.test(pastedData)) {
+                    e.preventDefault();
+                }
+            });
+
+            // Prevent non-Persian characters from being entered
+            $('input[name="name"], input[name="family"]').on('keypress', function(e) {
+                const key = String.fromCharCode(e.which);
+                if (!persianRegex.test(key)) {
+                    e.preventDefault();
+                }
+            });
         });
     </script>
 

@@ -13,7 +13,7 @@ if (!isset($input) || !isset($type)) {
 if ($type == 'name') {
     $sql = "SELECT name FROM pieces WHERE name LIKE '%$input%' LIMIT 5";
 } elseif ($type == 'size') {
-    $sql = "SELECT size FROM pieces WHERE size LIKE '%$input%' LIMIT 5";
+    $sql = "SELECT size FROM piece_size WHERE size LIKE '%$input%' LIMIT 5";
 } else {
     die("Invalid type");
 }

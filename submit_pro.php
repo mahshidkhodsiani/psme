@@ -220,7 +220,7 @@ $id = $_SESSION["all_data"]['id'];
                             <select name="size" id="size" class="form-select" aria-label="Default select example" required>
                                 <option value="" selected disabled>ابتدا اسم قطعه را وارد کنید</option>
                                 <?php
-                                $sql = "SELECT * FROM pieces";
+                                $sql = "SELECT * FROM piece_size";
                                 $result = $conn->query($sql);
                                 if ($result->num_rows > 0) {
                                     while ($row = $result->fetch_assoc()) { ?>

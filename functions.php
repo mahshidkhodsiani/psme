@@ -2,7 +2,6 @@
 
 function givePerson($id)
 {
-
     include 'config.php';
     $sql = "SELECT * FROM users WHERE id = $id";
     // echo $sql;
@@ -11,10 +10,13 @@ function givePerson($id)
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
+        return $row['name'] . " " . $row['family'];
+    } else {
+        // Handle the case where no rows are found
+        return "No user found ";
     }
-
-    return $row['name'] . " " . $row['family'];
 }
+
 
 
 function giveDeviceCode($id)
@@ -51,7 +53,7 @@ function giveName($id)
     // Check if $id is not empty
     if (!empty($id)) {
         // Use prepared statement to prevent SQL injection
-        $sql = "SELECT * FROM pieces WHERE id = ?";
+        $sql = "SELECT * FROM piece_size WHERE id = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("i", $id); // Assuming id is an integer, change "i" if it's a different type
         $stmt->execute();

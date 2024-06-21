@@ -17,6 +17,7 @@ if (!isset($_SESSION["all_data"])) {
     <?php include 'includes.php'; 
         include 'config.php';
         include 'jalaliDate.php';
+        include 'functions.php';
         $sdate = new SDate();
     ?>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -82,10 +83,24 @@ if (!isset($_SESSION["all_data"])) {
                         </div>
                         <div class="col-md-6">
                             <label for="size" class="form-label fw-semibold">سایز قطعه</label>
-                            <input type="text" name="size" id="size" class="form-control" required autocomplete="off">
-                            <div id="sizeSuggestions" class="suggestions"></div> <!-- Suggestions dropdown for size -->
+                            <select name="size" id="size" class="form-control" required>
+                                <option value="">انتخاب کنید</option>
+                                <?php
+                                // Assuming $conn is your database connection
+                                $sql = "SELECT * FROM piece_size ORDER BY size";
+                                $result = $conn->query($sql);
 
+                                if ($result->num_rows > 0) {
+                                    while ($row = $result->fetch_assoc()) {
+                                        $size = htmlspecialchars($row['size']);
+                                        $id = htmlspecialchars($row['id']);
+                                        echo "<option value=\"$id\">$size</option>";
+                                    }
+                                }
+                                ?>
+                            </select>
                         </div>
+
                     </div>
                     <div class="row mt-4">
                         <div class="col-md-6">
@@ -104,6 +119,25 @@ if (!isset($_SESSION["all_data"])) {
                         </div>
                     </div>
                 </form>
+
+                <div class="row mt-4">
+                    <form action="" method="POST" enctype="multipart/form-data" class="p-3 border mt-4">
+                        <h4>اضافه کردن سایز جدید</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="new_size" class="form-label fw-semibold">سایز جدید</label>
+                                <input type="text" name="new_size" id="new_size" class="form-control" required autocomplete="off">
+                                <div id="sizeSuggestions" class="suggestions"></div> <!-- Suggestions dropdown for size -->
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <button name="submit_size" class="btn btn-outline-primary">ثبت سایز</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
 
 
                 <div class="row mt-4">
@@ -149,7 +183,7 @@ if (!isset($_SESSION["all_data"])) {
                                         <tr>
                                             <th scope="row" class="text-center"><?= $a ?></th>
                                             <td class="text-center"><?= $row['name'] ?></td>
-                                            <td class="text-center"><?= $row['size'] ?></td>
+                                            <td class="text-center"><?= giveName($row['size'])['size'] ?></td>
                                             <td class="text-center"><?= $row['price'] ?></td>
                                             <td class="text-center"><?= $sdate->toShaDate($row['date']) ?></td>
                                             <td class="text-center"><?= $row['time_one'] ?></td>
@@ -368,6 +402,38 @@ if (!isset($_SESSION["all_data"])) {
 
 
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $("#new_size").on("input", function(){
+                let input = $(this).val();
+                if(input.length > 0){
+                    $.ajax({
+                        url: "suggestions_piece.php",
+                        method: "POST",
+                        data: {input: input, type: 'size'},
+                        success: function(data){
+                            $("#sizeSuggestions").html(data).show();
+                        }
+                    });
+                } else {
+                    $("#sizeSuggestions").hide();
+                }
+            });
+
+            $(document).on("click", ".suggestion", function(){
+                $("#new_size").val($(this).text());
+                $("#sizeSuggestions").hide();
+            });
+
+            $(document).click(function(e) {
+                if (!$(e.target).closest('#new_size, #sizeSuggestions').length) {
+                    $("#sizeSuggestions").hide();
+                }
+            });
+        });
+    </script>
+
 
 </body>
 
@@ -385,42 +451,44 @@ if (isset($_POST['enter'])) {
     $price = $conn->real_escape_string($_POST['price']);
     $time = $conn->real_escape_string($_POST['time']);
 
+    // Check for duplicates
+    $sql1 = "SELECT ps.*
+             FROM piece_size ps
+             INNER JOIN pieces p ON ps.id = p.size
+             WHERE ps.id = ? AND p.name = ?";
+    $stmt = $conn->prepare($sql1);
+    $stmt->bind_param('ss', $size, $name);
+    $stmt->execute();
+    $result1 = $stmt->get_result();
 
-    
+    if ($result1->num_rows > 0) {
+        echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+                <div class='toast-header bg-danger text-white'>
+                    <strong class='mr-auto'>Error</strong>
+                    <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                        <span aria-hidden='true'>&times;</span>
+                    </button>
+                </div>
+                <div class='toast-body'>
+                    این سایز و قطعه قبلا به ثبت رسیده لطفا سایز جدید وارد کنید !
+                </div>
+            </div>
+            <script>
+                $(document).ready(function(){
+                    $('#errorToast').toast('show');
+                    setTimeout(function(){
+                        $('#errorToast').toast('hide');
+                    }, 3000);
+                });
+            </script>";
+    } else {
+        // Construct the SQL query using placeholders
+        $sql = "INSERT INTO pieces (name, size, price, time_one, date)
+                VALUES (?, ?, ?, ?, NOW())";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param('ssss', $name, $size, $price, $time);
 
-    // check for duplicates :
-        $sql1 = "SELECT * FROM pieces WHERE name = '$name' AND size = '$size'";
-        $result1 = $conn->query($sql1);
-        if ($result1-> num_rows > 0) {
-            echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
-                    <div class='toast-header bg-danger text-white'>
-                        <strong class='mr-auto'>Error</strong>
-                        <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
-                            <span aria-hidden='true'>&times;</span>
-                        </button>
-                    </div>
-                    <div class='toast-body'>
-                        این قطعه قبلا به ثبت رسیده لطفا دستگاه جدید وارد کنید !
-                    </div>
-                  </div>
-                  <script>
-                    $(document).ready(function(){
-                        $('#errorToast').toast('show');
-                        setTimeout(function(){
-                            $('#errorToast').toast('hide');
-                        }, 3000);
-                    });
-                  </script>";
-        }else{
-            
-            // Construct the SQL query using placeholders
-            $sql = "INSERT INTO pieces (name, size, price, time_one, date)
-            VALUES ('$name', '$size', '$price', '$time', NOW());";
-
-            // Execute the query
-            $result = $conn->query($sql);
-
-            if ($result) {
+        if ($stmt->execute()) {
             // Use Bootstrap's toast component to show a success toast message
             echo "<div id='successToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
                     <div class='toast-header bg-success text-white'>
@@ -445,7 +513,7 @@ if (isset($_POST['enter'])) {
                         }, 1000);
                     });
                 </script>";
-            } else {
+        } else {
             // Use Bootstrap's toast component to show an error toast message
             echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
                     <div class='toast-header bg-danger text-white'>
@@ -466,15 +534,111 @@ if (isset($_POST['enter'])) {
                         }, 3000);
                     });
                 </script>";
-            }
         }
-
-  
-
+    }
 }
 
 
 
+if (isset($_POST['submit_size'])) {
+    $size = $conn->real_escape_string($_POST['new_size']);
+
+    $sql1 = "SELECT * FROM piece_size WHERE size = ?";
+    $stmt = $conn->prepare($sql1);
+
+    if ($stmt === false) {
+        die('Prepare failed: ' . htmlspecialchars($conn->error));
+    }
+
+    // Correct bind_param to match the number of placeholders
+    $stmt->bind_param('s', $size); // Only one placeholder and one variable
+
+    if ($stmt->execute() === false) {
+        die('Execute failed: ' . htmlspecialchars($stmt->error));
+    }
+
+    $result1 = $stmt->get_result();
+
+    if ($result1->num_rows > 0) {
+        echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+                <div class='toast-header bg-danger text-white'>
+                    <strong class='mr-auto'>Error</strong>
+                    <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                        <span aria-hidden='true'>&times;</span>
+                    </button>
+                </div>
+                <div class='toast-body'>
+                    این سایز قبلا به ثبت رسیده لطفا سایز جدید وارد کنید !
+                </div>
+            </div>
+            <script>
+                $(document).ready(function(){
+                    $('#errorToast').toast('show');
+                    setTimeout(function(){
+                        $('#errorToast').toast('hide');
+                    }, 3000);
+                });
+            </script>";
+    }else{
+        
+        // Construct the SQL query using placeholders
+        $sql = "INSERT INTO piece_size (size)
+        VALUES ('$size');";
+        echo $sql;
+
+        // Execute the query
+        $result = $conn->query($sql);
+
+        if ($result) {
+        // Use Bootstrap's toast component to show a success toast message
+        echo "<div id='successToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+                <div class='toast-header bg-success text-white'>
+                    <strong class='mr-auto'>Success</strong>
+                    <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                        <span aria-hidden='true'>&times;</span>
+                    </button>
+                </div>
+                <div class='toast-body'>
+                    سایز به درستی اضافه شد!
+                </div>
+            </div>
+            <script>
+                $(document).ready(function(){
+                    $('#successToast').toast('show');
+                    setTimeout(function(){
+                        $('#successToast').toast('hide');
+                        // Redirect after 3 seconds
+                        setTimeout(function(){
+                            window.location.href = 'new_piece';
+                        }, 1000);
+                    }, 1000);
+                });
+            </script>";
+        } else {
+        // Use Bootstrap's toast component to show an error toast message
+        echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
+                <div class='toast-header bg-danger text-white'>
+                    <strong class='mr-auto'>Error</strong>
+                    <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
+                        <span aria-hidden='true'>&times;</span>
+                    </button>
+                </div>
+                <div class='toast-body'>
+                    خطایی در افزودن سایز پیش آمده!
+                </div>
+            </div>
+            <script>
+                $(document).ready(function(){
+                    $('#errorToast').toast('show');
+                    setTimeout(function(){
+                        $('#errorToast').toast('hide');
+                    }, 3000);
+                });
+            </script>";
+        }
+    }
+
+}
 
 
 

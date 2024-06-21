@@ -173,7 +173,7 @@ if (!isset($_SESSION["all_data"])) {
                                     <select class="form-select" name="piece_size" id="piece_size">
                                         <option value="" >همه</option>
                                         <?php
-                                        $sql = "SELECT * FROM pieces";
+                                        $sql = "SELECT * FROM piece_size";
                                         $result = $conn->query($sql);
                                         if ($result->num_rows > 0) {
                                             while ($row = $result->fetch_assoc()) { ?>

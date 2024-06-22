@@ -143,7 +143,8 @@ if (!isset($_SESSION["all_data"])) {
                         $offset = ($current_page - 1) * $items_per_page;
 
                         // SQL query to retrieve a subset of rows based on pagination
-                        $sql = "SELECT * FROM users ORDER BY id DESC LIMIT $items_per_page OFFSET $offset";
+                        $sql = "SELECT * FROM users WHERE deleted = 0
+                            ORDER BY id DESC LIMIT $items_per_page OFFSET $offset";
                         $result = $conn->query($sql);
 
                         // Display the table
@@ -183,8 +184,10 @@ if (!isset($_SESSION["all_data"])) {
                                                             <button name="deactive_user" class="btn btn-outline-secondary btn-sm" onclick="return confirmInActive()">غیرفعال کردن</button>
                                                         <?php } else { ?>
                                                             <button name="active_user" class="btn btn-outline-secondary btn-sm" onclick="return confirmActive()">فعال کردن</button>
-                                                        <?php } ?>
-                                                        <button name="delete_user" class="btn btn-outline-danger btn-sm" onclick="return confirmDelete()">حذف</button>
+                                                        <?php } 
+                                                        ?>
+                                                            <button name="delete_user" class="btn btn-outline-danger btn-sm" onclick="return confirmDelete()">حذف</button>
+                                                      
                                                     </form>
                                                 </td>
                                                 <script>
@@ -211,7 +214,7 @@ if (!isset($_SESSION["all_data"])) {
                             <?php
 
                             // Pagination links
-                            $sql = "SELECT COUNT(*) AS total FROM users";
+                            $sql = "SELECT COUNT(*) AS total FROM users WHERE deleted = 0";
                             $result = $conn->query($sql);
                             $row = $result->fetch_assoc();
                             $total_items = $row['total'];
@@ -463,7 +466,9 @@ if(isset($_GET['delete_user'])){
 
     $id_user = $_GET['id_user'];
 
-    $sql = "DELETE FROM users WHERE id = $id_user";
+    // $sql = "DELETE FROM users WHERE id = $id_user";
+    $sql = "UPDATE users SET deleted = 1 WHERE id = $id_user";
+
     $result = $conn->query($sql);
     if ($result) {
         // Use Bootstrap's toast component to show a success toast message

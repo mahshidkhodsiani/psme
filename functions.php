@@ -10,10 +10,13 @@ function givePerson($id)
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
-        return $row['name'] . " " . $row['family'];
+        if($row['deleted']==0)
+            return $row['name'] . " " . $row['family'];
+        else
+            return $row['name'] . " " . $row['family'] ."(کاربر حذف شده)";
     } else {
         // Handle the case where no rows are found
-        return "No user found ";
+        return "No user found";
     }
 }
 

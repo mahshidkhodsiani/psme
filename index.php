@@ -197,14 +197,26 @@ $admin = $_SESSION["all_data"]['admin'];
                                                 <tr>
                                                     <th scope="row"><?= $a ?></th>
                                                     <?php
-                                                    if($admin == 1){?>
-                                                    <td><a href="messages" style="text-decoration: none; color: black;"> <?= truncateText($row['text']) ?></a></td>
+                                                    if($admin == 1){
+                                                        if($row['rejected'] == 0){?>
+                                                            <td><a href="messages" style="text-decoration: none; color: black;"> <?= truncateText($row['text']) ?></a></td>
                                                 
                                                     <?php
-                                                    }else{?>
+                                                        } else {?>
+                                                            <td><a title="محصول رد شده" href="messages" style="text-decoration: none; color: red;"> <?= truncateText($row['text']) ?></a></td>
+
+                                                    <?php
+                                                        }
+                                                    }else{
+                                                        if($row['rejected'] == 0){?>
                                                     
                                                     <td><a href="new_message" style="text-decoration: none; color: black;"> <?= truncateText($row['text']) ?></a></td>
                                                     <?php
+                                                        } else {?>
+                                                    <td><a title="محصول رد شده" href="new_message" style="text-decoration: none; color: red;"> <?= truncateText($row['text']) ?></a></td>
+
+                                                    <?php
+                                                        }
                                                     }
                                                     ?>
 

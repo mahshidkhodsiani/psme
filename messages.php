@@ -156,6 +156,7 @@ $admin = $_SESSION["all_data"]['admin'];
                                             <th scope="col">گیرنده</th>
                                             <th scope="col">فرستنده</th>
                                             <th scope="col">تاریخ</th>
+                                            <th scope="col">وضعیت</th>
                                             <th scope="col">دیدن پیام</th>
                                         </tr>
                                     </thead>
@@ -168,9 +169,19 @@ $admin = $_SESSION["all_data"]['admin'];
                                         ?>
                                                 <tr>
                                                     <th scope="row"><?= $a ?></th>
-                                                    <td><?= $row['text'] ?></td>
+                                                    <?php
+                                                    if($row['rejected']==0){?>
+                                                        <td><?= $row['text'] ?></td>
+                                                    <?php
+                                                    }else{?>
+                                                        <td style="color: red;"><?= $row['text'] ?></td>
+                                                    <?php
+                                                    }
+                                                    ?>    
+
                                                     <td><?= givePerson($row['to_user']) ?></td>
                                                     <td><?= givePerson($row['from_user']) ?></td>
+                                                    <td><?= $row['date'] ?></td>
                                                     <td><?= $row['date'] ?></td>
                                                     <td>
                                                         <a href="messages_comments.php?msg_id=<?= $row['id'] ?>" class="btn btn-outline-dark">مشاهده</a>

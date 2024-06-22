@@ -171,7 +171,15 @@ $admin = $_SESSION["all_data"]['admin'];
                                         ?>
                                                 <tr>
                                                     <th scope="row"><?= $a ?></th>
-                                                    <td><?= $row['text'] ?></td>
+                                                    <?php
+                                                    if($row['rejected']==0){?>
+                                                        <td><?= $row['text'] ?></td>
+                                                    <?php
+                                                    }else{?>
+                                                        <td style="color: red;"><?= $row['text'] ?></td>
+                                                    <?php
+                                                    }
+                                                    ?>
                                                     <td><?= givePerson($row['to_user']) ?></td>
                                                     <td><?= givePerson($row['from_user']) ?></td>
                                                     <td><?= $row['date'] ?></td>

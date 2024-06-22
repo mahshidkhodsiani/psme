@@ -428,8 +428,8 @@ if(isset($_POST['text_reason'], $_POST['send_message'])){
 
     if($result){
 
-        $sql2 = "INSERT INTO messages (text, to_user, from_user, date)
-                VALUES ('$message', '$person', '$id_from', '$date')"; ;
+        $sql2 = "INSERT INTO messages (text, to_user, from_user, date, rejected)
+                VALUES ('$message', '$person', '$id_from', '$date', 1)"; ;
                  $result2 = $conn->query($sql2);
                  if($result){
 

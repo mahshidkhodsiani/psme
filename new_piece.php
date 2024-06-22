@@ -112,6 +112,17 @@ if (!isset($_SESSION["all_data"])) {
                             <input type="number" name="time" id="time"  class="form-control" required autocomplete="off">
                         </div>
                     </div>
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <label for="price" class="form-label fw-semibold">مرحله</label>
+                            <select name="level" class="form-control" required>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                        </div>
+                       
+                    </div>
                  
                     <div class="row mt-4">
                         <div class="col-md-6">
@@ -172,6 +183,7 @@ if (!isset($_SESSION["all_data"])) {
                                         <th scope="col" class="text-center">سایز</th>
                                         <th scope="col" class="text-center">قیمت</th>
                                         <th scope="col" class="text-center">تاریخ ثبت</th>
+                                        <th scope="col" class="text-center">مرحله</th>
                                         <th scope="col" class="text-center">زمان تولید یک قطعه</th>
                                         <th scope="col" class="text-center">عملیات</th>
                                     </tr>
@@ -186,6 +198,7 @@ if (!isset($_SESSION["all_data"])) {
                                             <td class="text-center"><?= giveName($row['size'])['size'] ?></td>
                                             <td class="text-center"><?= $row['price'] ?></td>
                                             <td class="text-center"><?= $sdate->toShaDate($row['date']) ?></td>
+                                            <td class="text-center"><?= $row['level']?></td>
                                             <td class="text-center"><?= $row['time_one'] ?></td>
                                             <td class="text-center">
                                                 <form action="" method="GET">
@@ -450,6 +463,7 @@ if (isset($_POST['enter'])) {
     $size = $conn->real_escape_string($_POST['size']);
     $price = $conn->real_escape_string($_POST['price']);
     $time = $conn->real_escape_string($_POST['time']);
+    $level = $conn->real_escape_string($_POST['level']);
 
     // Check for duplicates
     $sql1 = "SELECT ps.*
@@ -483,10 +497,11 @@ if (isset($_POST['enter'])) {
             </script>";
     } else {
         // Construct the SQL query using placeholders
-        $sql = "INSERT INTO pieces (name, size, price, time_one, date)
-                VALUES (?, ?, ?, ?, NOW())";
+        $sql = "INSERT INTO pieces (name, size, price, time_one, date, level)
+        VALUES (?, ?, ?, ?, NOW(), ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param('ssss', $name, $size, $price, $time);
+        $stmt->bind_param('sssss', $name, $size, $price, $time, $level);
+
 
         if ($stmt->execute()) {
             // Use Bootstrap's toast component to show a success toast message

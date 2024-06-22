@@ -58,21 +58,51 @@ if (!isset($_SESSION["all_data"])) {
                             <input type="text" name="name" id="name" class="form-control" value="<?=$row['name']?>">
                         </div>
                         <div class="col-md-6">
-                            <label for="size" class="form-label fw-semibold">سایز قطعه</label>
-                            <input type="text" name="size" id="size" class="form-control" value="<?=$row['size']?>">
-                        </div>
+                        <label for="size" class="form-label fw-semibold">سایز قطعه</label>
+                        <select name="size" id="size" class="form-control" required>
+                            <option value="">انتخاب کنید</option>
+                            <?php
+                            // Assuming $conn is your database connection and $row['size'] contains the selected size ID
+                            $selected_size = $row['size'];
+                            $sql1 = "SELECT * FROM piece_size ORDER BY size";
+                            $result1 = $conn->query($sql1);
+
+                            if ($result1->num_rows > 0) {
+                                while ($row1 = $result1->fetch_assoc()) {
+                                    $size = htmlspecialchars($row1['size']);
+                                    $id = htmlspecialchars($row1['id']);
+                                    $selected = ($id == $selected_size) ? 'selected' : '';
+                                    echo "<option value=\"$id\" $selected>$size</option>";
+                                }
+                            }
+                            ?>
+                        </select>
+                    </div>
+
                     </div>
                     <div class="row mt-4">
                         <div class="col-md-6">
                             <label for="price" class="form-label fw-semibold">قیمت قطعه(تومان)</label>
-                            <input type="number" name="price" id="price" placeholder="به انگلیسی وارد کنید" class="form-control" value="<?=$row['price']?>">
+                            <input type="number" name="price" id="price" placeholder="به انگلیسی وارد کنید" class="form-control" value="<?= $row ? htmlspecialchars($row['price']) : '' ?>">
                         </div>
                         <div class="col-md-6">
                             <label for="time" class="form-label fw-semibold">زمان لازم برای تولید</label>
-                            <input type="text" name="time" id="time" class="form-control" value="<?=$row['time_one']?>">
-                            <input type="hidden" name="id_piece" value="<?=$row['id']?>">
+                            <input type="text" name="time" id="time" class="form-control" value="<?= $row ? htmlspecialchars($row['time_one']) : '' ?>">
+                            <input type="hidden" name="id_piece" value="<?= $row ? htmlspecialchars($row['id']) : '' ?>">
                         </div>
                     </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <label for="level" class="form-label fw-semibold">مرحله</label>
+                            <select name="level" id="level" class="form-control" required>
+                                <option value="1" <?= ($row['level'] == 1) ? 'selected' : '' ?>>1</option>
+                                <option value="2" <?= ($row['level'] == 2) ? 'selected' : '' ?>>2</option>
+                                <option value="3" <?= ($row['level'] == 3) ? 'selected' : '' ?>>3</option>
+                            </select>
+                        </div>
+                    </div>
+
                  
                     <div class="row mt-4">
                         <div class="col-md-6">
@@ -117,6 +147,7 @@ if (isset($_POST['update'])) {
     $size = $_POST['size'];
     $price = $_POST['price'];
     $time_one = $_POST['time'];
+    $level = $_POST['level'];
 
     // check for duplicates :
         $sql1 = "SELECT * FROM pieces WHERE name = '$name' AND size = '$size' AND price = '$price' AND time_one = '$time_one'"; 
@@ -143,7 +174,7 @@ if (isset($_POST['update'])) {
                   </script>";
         }else{
 
-            $sql = "UPDATE pieces SET name = '$name', size = '$size' , price = '$price', time_one = '$time_one' 
+            $sql = "UPDATE pieces SET name = '$name', size = '$size' , price = '$price', time_one = '$time_one' , level = '$level'
                 WHERE id = $id_piece";
 
    

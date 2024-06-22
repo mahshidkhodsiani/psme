@@ -8,14 +8,14 @@ if(isset($_POST['enter'])){
    $username = $_POST['username'];
    $password = $_POST['password'];
 
-   $sql = "SELECT * FROM  users WHERE username='$username' AND password='$password'";
+   $sql = "SELECT * FROM  users WHERE username='$username' AND password='$password' AND deleted = 0 ";
    
    $result = $conn->query($sql);
 
    if($result->num_rows > 0){
       $row = $result->fetch_assoc();
 
-      if($row['status'] == 0){
+      if($row['status'] == 0 ){
         echo 'حساب کاربری شما غیر فعال است. لطفا با مدیر سایت تماس بگیرید.';
          // header("Location: login.php"); // Redirect back to the login page
          // exit();

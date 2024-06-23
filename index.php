@@ -261,7 +261,8 @@ $admin = $_SESSION["all_data"]['admin'];
                                         $a = 0;
 
                                        
-                                        $sql = "SELECT * FROM users ORDER BY id DESC LIMIT 10";
+                                        $sql = "SELECT * FROM users WHERE deleted = 0
+                                        ORDER BY id DESC LIMIT 10";
                                          
 
                                         

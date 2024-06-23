@@ -40,10 +40,16 @@ $admin = $_SESSION["all_data"]['admin'];
                 if(isset($_GET['msg_id'])){
                     $id_msg = $_GET['msg_id'];
                     $sql1 = "SELECT * FROM messages WHERE id=$id_msg";
+
                     $result1 = $conn->query($sql1);
                     if($result1->num_rows > 0){
                         $row1 = $result1->fetch_assoc();
                         $to_user = $row1['to_user'];
+
+                        if($row1['to_user']== $id_from){
+                            $sqll = "UPDATE messages SET status = 1 WHERE id = $id_msg";
+                            $conn->query($sqll);
+                        }
                     }
 
                     $sql2 = "SELECT * FROM messages_comments WHERE msg_id = $id_msg order by id";

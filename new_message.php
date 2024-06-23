@@ -151,50 +151,68 @@ $admin = $_SESSION["all_data"]['admin'];
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">آخرین پیام ها</h5>
-                                <table class="table border">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">ردیف</th>
-                                            <th scope="col">پیام</th>
-                                            <th scope="col">گیرنده</th>
-                                            <th scope="col">فرستنده</th>
-                                            <th scope="col">تاریخ</th>
-                                            <th scope="col">دیدن پیام</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php
-                                        $result = $conn->query($sql);
-                                        if ($result->num_rows > 0) {
-                                            $a = $offset + 1;
-                                            while ($row = $result->fetch_assoc()) {
-                                        ?>
-                                                <tr>
-                                                    <th scope="row"><?= $a ?></th>
-                                                    <?php
-                                                    if($row['rejected']==0){?>
-                                                        <td><?= $row['text'] ?></td>
-                                                    <?php
-                                                    }else{?>
-                                                        <td style="color: red;"><?= $row['text'] ?></td>
-                                                    <?php
-                                                    }
-                                                    ?>
-                                                    <td><?= givePerson($row['to_user']) ?></td>
-                                                    <td><?= givePerson($row['from_user']) ?></td>
-                                                    <td><?= $row['date'] ?></td>
-                                                    <td>
-                                                        <a href="messages_comments.php?msg_id=<?= $row['id'] ?>" class="btn btn-outline-dark">مشاهده</a>
-                                                    </td>
-                                                </tr>
-                                        <?php
-                                                $a++;
+                                <div class="table-responsive">
+                                    <table class="table border">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">ردیف</th>
+                                                <th scope="col">پیام</th>
+                                                <th scope="col">گیرنده</th>
+                                                <th scope="col">فرستنده</th>
+                                                <th scope="col">تاریخ</th>
+                                                <th scope="col">وضعیت</th>
+                                                <th scope="col">دیدن پیام</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            $result = $conn->query($sql);
+                                            if ($result->num_rows > 0) {
+                                                $a = $offset + 1;
+                                                while ($row = $result->fetch_assoc()) {
+                                            ?>
+                                                    <tr>
+                                                        <th scope="row"><?= $a ?></th>
+                                                        <?php
+                                                        if($row['rejected']==0){?>
+                                                            <td><?= $row['text'] ?></td>
+                                                        <?php
+                                                        }else{?>
+                                                            <td style="color: red;"><?= $row['text'] ?></td>
+                                                        <?php
+                                                        }
+                                                        ?>
+                                                        <td><?= givePerson($row['to_user']) ?></td>
+                                                        <td><?= givePerson($row['from_user']) ?></td>
+                                                        <td><?= $row['date'] ?></td>
+                                                        <td>
+                                                            <?php
+                                                            if($row['status']==0){?>
+
+                                                                <img src="img/eye-close.jpg" height="20px" width="20px" title="توسط گیرنده دیده نشده">
+
+                                                            <?php
+                                                            }else{?>
+                                                            
+                                                                <img src="img/eye-open.jpg" height="20px" width="20px" title="توسط گیرنده دیده شده">
+                                                            <?php
+
+                                                            }
+                                                        ?>
+                                                        </td>
+                                                        <td>
+                                                            <a href="messages_comments.php?msg_id=<?= $row['id'] ?>" class="btn btn-outline-dark">مشاهده</a>
+                                                        </td>
+                                                    </tr>
+                                            <?php
+                                                    $a++;
+                                                }
                                             }
-                                        }
-                                        ?>
-                                    </tbody>
-                                </table>
-                                <?php echo pagination($page, $totalPages); ?>
+                                            ?>
+                                        </tbody>
+                                    </table>
+                                    <?php echo pagination($page, $totalPages); ?>
+                                </div>
                             </div>
                         </div>
                     </div>

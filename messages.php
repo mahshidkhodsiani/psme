@@ -187,7 +187,7 @@ $admin = $_SESSION["all_data"]['admin'];
                                                             <?php
                                                             if($row['status']==0){?>
 
-                                                                <img src="img/eye-close.jpg" height="20px" width="20px" title="توسط گیرنده دیده نشده">
+                                                                <img src="img/eye-close.jpg" height="20px" width="20px" title="توسط گیرنده دیده نشده" style="color: yellow;">
 
                                                             <?php
                                                             }else{?>

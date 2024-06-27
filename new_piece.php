@@ -464,16 +464,17 @@ if (isset($_POST['enter'])) {
     $price = $conn->real_escape_string($_POST['price']);
     $time = $conn->real_escape_string($_POST['time']);
     $level = $conn->real_escape_string($_POST['level']);
-
+    
     // Check for duplicates
     $sql1 = "SELECT ps.*
              FROM piece_size ps
              INNER JOIN pieces p ON ps.id = p.size
-             WHERE ps.id = ? AND p.name = ?";
+             WHERE ps.id = ? AND p.name = ? AND p.level = ?";
     $stmt = $conn->prepare($sql1);
-    $stmt->bind_param('ss', $size, $name);
+    $stmt->bind_param('sss', $size, $name, $level);
     $stmt->execute();
     $result1 = $stmt->get_result();
+    
 
     if ($result1->num_rows > 0) {
         echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
@@ -484,7 +485,7 @@ if (isset($_POST['enter'])) {
                     </button>
                 </div>
                 <div class='toast-body'>
-                    این سایز و قطعه قبلا به ثبت رسیده لطفا سایز جدید وارد کنید !
+                    این سایز و قطعه در این مرحله قبلا به ثبت رسیده لطفا محصول جدید وارد کنید !
                 </div>
             </div>
             <script>
@@ -599,7 +600,7 @@ if (isset($_POST['submit_size'])) {
         // Construct the SQL query using placeholders
         $sql = "INSERT INTO piece_size (size)
         VALUES ('$size');";
-        echo $sql;
+        // echo $sql;
 
         // Execute the query
         $result = $conn->query($sql);

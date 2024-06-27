@@ -170,6 +170,7 @@ $admin = $_SESSION["all_data"]['admin'];
                                             <th scope="col">ردیف</th>
                                             <th scope="col">پیام</th>
                                             <th scope="col">فرستنده</th>
+                                            <th scope="col">وضعیت</th>
                                             <th scope="col">تاریخ</th>
 
                                         </tr>
@@ -180,11 +181,14 @@ $admin = $_SESSION["all_data"]['admin'];
                                         $a = 0;
 
                                         if($admin == 1){
-                                           $sql = "SELECT * FROM messages 
+                                           $sql = "SELECT * FROM messages WHERE status = 0
                                                 ORDER BY id DESC LIMIT 10"; 
                                         }else{
-                                             $sql = "SELECT * FROM messages WHERE to_user = '$id' OR from_user = '$id' 
-                                                ORDER BY id DESC LIMIT 10";
+                                            $sql = "SELECT * FROM messages 
+                                                WHERE (to_user = '$id' OR from_user = '$id') 
+                                                AND status = 0
+                                                ORDER BY id DESC 
+                                                LIMIT 10";
                                         }
                                        
                                         
@@ -221,6 +225,18 @@ $admin = $_SESSION["all_data"]['admin'];
                                                     ?>
 
                                                     <td><?= givePerson($row['from_user']) ?></td>
+                                                    <td >
+                                                        <?php
+                                                            if($row['status']==0){?>
+                                                                <img src="img/eye-close.jpg" height="20px" width="20px" title="توسط گیرنده دیده نشده">
+                                                            <?php
+                                                            }else{?>
+                                                                <img src="img/eye-open.jpg" height="20px" width="20px" title="توسط گیرنده دیده شده" style="color: green;">
+                                                            <?php
+
+                                                            }
+                                                        ?>
+                                                    </td>
                                                     <td><?= $row['date'] ?></td>
                                                 </tr> 
                                         <?php

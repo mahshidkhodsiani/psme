@@ -150,7 +150,8 @@ if (isset($_POST['update'])) {
     $level = $_POST['level'];
 
     // check for duplicates :
-        $sql1 = "SELECT * FROM pieces WHERE name = '$name' AND size = '$size' AND price = '$price' AND time_one = '$time_one'"; 
+        $sql1 = "SELECT * FROM pieces WHERE name = '$name' AND size = '$size' AND price = '$price' 
+                AND time_one = '$time_one' AND level = '$level'"; 
         $result1 = $conn->query($sql1);
         if ($result1-> num_rows > 0) {
             echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
@@ -161,7 +162,7 @@ if (isset($_POST['update'])) {
                         </button>
                     </div>
                     <div class='toast-body'>
-                        این قطعه قبلا به ثبت رسیده لطفا قطعه جدید وارد کنید !
+                        این محصول قبلا به ثبت رسیده لطفا محصول جدید وارد کنید !
                     </div>
                   </div>
                   <script>

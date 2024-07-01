@@ -94,10 +94,12 @@ $admin = $_SESSION["all_data"]['admin'];
                                             if ($admin == 1) {
                                                 $sql = "SELECT * FROM products
                                                         WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 1 DAY)
+                                                        AND user_confirm = 1
                                                         ORDER BY id DESC LIMIT 10"; 
                                             } else {
                                                 $sql = "SELECT * FROM products
                                                         WHERE user = '$id' AND created_at >= DATE_SUB(CURDATE(), INTERVAL 1 DAY)
+                                                        AND user_confirm = 1
                                                         ORDER BY id DESC LIMIT 10";
                                             }
                                             

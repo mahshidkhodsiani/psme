@@ -90,6 +90,10 @@ if ($_SESSION["all_data"]['admin'] == 1) {
         <img src="img/new_p.png" height="20px" width="20px">
         ثبت قطعه جدید
     </a>
+    <a href="new_size" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'new_size') echo 'active'; ?>">
+        <img src="img/size.png" height="25px" width="25px">
+        ثبت سایز جدید
+    </a>
     <a href="new_user" class="nav-link <?php if (basename($_SERVER['REQUEST_URI']) === 'new_user') echo 'active'; ?>">
         <img src="img/new_u.png" height="20px" width="20px">
         ثبت یوزر جدید

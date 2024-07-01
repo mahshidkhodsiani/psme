@@ -295,13 +295,7 @@ if (!isset($_SESSION["all_data"])) {
 
                         <tbody>
                             <?php
-                            // Pagination
-                            // $results_per_page = 10; // Number of records per page
-                            // if (!isset($_GET['page'])) {
-                            //     $page = 1; // Default page
-                            // } else {
-                            //     $page = $_GET['page'];
-                            // }
+                       
 
 
                             $results_per_page = isset($_GET['rows']) ? intval($_GET['rows']) : 10; // Number of records per page, default is 10
@@ -316,7 +310,7 @@ if (!isset($_SESSION["all_data"])) {
 
 
                             // Fetch records with filters
-                            $sql = "SELECT * FROM products WHERE status = 1";
+                            $sql = "SELECT * FROM products WHERE status = 1 AND user_confirm = 1";
 
 
 

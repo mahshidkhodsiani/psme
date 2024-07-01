@@ -87,7 +87,7 @@ if (!isset($_SESSION["all_data"])) {
                                 <option value="">انتخاب کنید</option>
                                 <?php
                                 // Assuming $conn is your database connection
-                                $sql = "SELECT * FROM piece_size ORDER BY size";
+                                $sql = "SELECT * FROM piece_size ORDER BY size COLLATE utf8mb4_general_ci";
                                 $result = $conn->query($sql);
 
                                 if ($result->num_rows > 0) {
@@ -131,23 +131,7 @@ if (!isset($_SESSION["all_data"])) {
                     </div>
                 </form>
 
-                <div class="row mt-4">
-                    <form action="" method="POST" enctype="multipart/form-data" class="p-3 border mt-4">
-                        <h4>اضافه کردن سایز جدید</h4>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label for="new_size" class="form-label fw-semibold">سایز جدید</label>
-                                <input type="text" name="new_size" id="new_size" class="form-control" required autocomplete="off">
-                                <div id="sizeSuggestions" class="suggestions"></div> <!-- Suggestions dropdown for size -->
-                            </div>
-                        </div>
-                        <div class="row mt-4">
-                            <div class="col-md-6">
-                                <button name="submit_size" class="btn btn-outline-primary">ثبت سایز</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+           
 
 
 
@@ -556,108 +540,6 @@ if (isset($_POST['enter'])) {
 
 
 
-if (isset($_POST['submit_size'])) {
-    $size = $conn->real_escape_string($_POST['new_size']);
-
-    $sql1 = "SELECT * FROM piece_size WHERE size = ?";
-    $stmt = $conn->prepare($sql1);
-
-    if ($stmt === false) {
-        die('Prepare failed: ' . htmlspecialchars($conn->error));
-    }
-
-    // Correct bind_param to match the number of placeholders
-    $stmt->bind_param('s', $size); // Only one placeholder and one variable
-
-    if ($stmt->execute() === false) {
-        die('Execute failed: ' . htmlspecialchars($stmt->error));
-    }
-
-    $result1 = $stmt->get_result();
-
-    if ($result1->num_rows > 0) {
-        echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
-                <div class='toast-header bg-danger text-white'>
-                    <strong class='mr-auto'>Error</strong>
-                    <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
-                        <span aria-hidden='true'>&times;</span>
-                    </button>
-                </div>
-                <div class='toast-body'>
-                    این سایز قبلا به ثبت رسیده لطفا سایز جدید وارد کنید !
-                </div>
-            </div>
-            <script>
-                $(document).ready(function(){
-                    $('#errorToast').toast('show');
-                    setTimeout(function(){
-                        $('#errorToast').toast('hide');
-                    }, 3000);
-                });
-            </script>";
-    }else{
-        
-        // Construct the SQL query using placeholders
-        $sql = "INSERT INTO piece_size (size)
-        VALUES ('$size');";
-        // echo $sql;
-
-        // Execute the query
-        $result = $conn->query($sql);
-
-        if ($result) {
-        // Use Bootstrap's toast component to show a success toast message
-        echo "<div id='successToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
-                <div class='toast-header bg-success text-white'>
-                    <strong class='mr-auto'>Success</strong>
-                    <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
-                        <span aria-hidden='true'>&times;</span>
-                    </button>
-                </div>
-                <div class='toast-body'>
-                    سایز به درستی اضافه شد!
-                </div>
-            </div>
-            <script>
-                $(document).ready(function(){
-                    $('#successToast').toast('show');
-                    setTimeout(function(){
-                        $('#successToast').toast('hide');
-                        // Redirect after 3 seconds
-                        setTimeout(function(){
-                            window.location.href = 'new_piece';
-                        }, 1000);
-                    }, 1000);
-                });
-            </script>";
-        } else {
-        // Use Bootstrap's toast component to show an error toast message
-        echo "<div id='errorToast' class='toast' role='alert' aria-live='assertive' aria-atomic='true' data-delay='3000' style='position: fixed; bottom: 0; right: 0; width: 300px;'>
-                <div class='toast-header bg-danger text-white'>
-                    <strong class='mr-auto'>Error</strong>
-                    <button type='button' class='ml-2 mb-1 close' data-dismiss='toast' aria-label='Close'>
-                        <span aria-hidden='true'>&times;</span>
-                    </button>
-                </div>
-                <div class='toast-body'>
-                    خطایی در افزودن سایز پیش آمده!
-                </div>
-            </div>
-            <script>
-                $(document).ready(function(){
-                    $('#errorToast').toast('show');
-                    setTimeout(function(){
-                        $('#errorToast').toast('hide');
-                    }, 3000);
-                });
-            </script>";
-        }
-    }
-
-}
-
-
-
 if(isset($_GET['delete_piece'])){
 
     $id_piece = $_GET['id_piece'];
@@ -715,3 +597,4 @@ if(isset($_GET['delete_piece'])){
     }
     
 }
+

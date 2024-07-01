@@ -56,7 +56,8 @@ if (!isset($_SESSION["all_data"])) {
                         $start_from = ($page - 1) * $results_per_page;
 
                         // Fetch records
-                        $sql = "SELECT * FROM products LIMIT $start_from, $results_per_page";
+                        $sql = "SELECT * FROM products WHERE user_confirm = 1
+                        LIMIT $start_from, $results_per_page";
                         $result = $conn->query($sql);
 
                         if ($result->num_rows > 0) {
@@ -87,7 +88,7 @@ if (!isset($_SESSION["all_data"])) {
                         }
 
                         // Page numbers
-                        $sql = "SELECT COUNT(*) AS total FROM products";
+                        $sql = "SELECT COUNT(*) AS total FROM products where user_confirm = 1";
                         $result = $conn->query($sql);
                         $row = $result->fetch_assoc();
                         $total_pages = ceil($row["total"] / $results_per_page);

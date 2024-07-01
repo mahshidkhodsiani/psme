@@ -148,7 +148,7 @@ $id_from = $_SESSION["all_data"]['id'];
                             $start_from = ($page - 1) * $results_per_page;
 
                             // Fetch records with filters
-                            $sql = "SELECT * FROM products WHERE status = 0";
+                            $sql = "SELECT * FROM products WHERE status = 0 AND user_confirm = 1";
 
                             // Add LIMIT clause for pagination
                             $sql .= " ORDER BY id DESC LIMIT $start_from, $results_per_page";
@@ -300,7 +300,8 @@ $id_from = $_SESSION["all_data"]['id'];
                                     </thead>
                                     <tbody>
                                         <?php
-                                        $sql = "SELECT * FROM products ORDER BY id DESC LIMIT 10";
+                                        $sql = "SELECT * FROM products WHERE user_confirm = 1
+                                        ORDER BY id DESC LIMIT 10";
                                         $result = $conn->query($sql);
                                         $a = 1; // Initialize $a
 

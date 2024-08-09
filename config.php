@@ -23,7 +23,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "project2";
+$dbname = "psmerp";
 
 
 $conn = new mysqli($servername, $username, $password, $dbname);

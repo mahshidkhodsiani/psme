@@ -131,6 +131,7 @@ $id_from = $_SESSION["all_data"]['id'];
                                 <th scope="col">قطعه</th>
                                 <th scope="col">سایز قطعه</th>
                                 <th scope="col">تعداد</th>
+                                <th scope="col">مرحله</th>
                                 <th scope="col">توقف</th>
                                 <th scope="col">تاریخ</th>
                                 <th scope="col">تایید یا رد</th>
@@ -191,6 +192,7 @@ $id_from = $_SESSION["all_data"]['id'];
                                         }
                                         ?>
                                         <td><?= htmlspecialchars($row['numbers']) ?></td>
+                                        <td><?= htmlspecialchars($row['level']) ?></td>
                                         <td>
                                             <?php
                                             if ($row['had_stop'] == 1) {

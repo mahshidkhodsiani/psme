@@ -40,29 +40,17 @@ while ($row = $result->fetch_assoc()) {
 
     // Display size of the piece
     $nameData = giveName($row['size']);
-    if (!empty($nameData) && is_array($nameData)) {
-        $html_table .= '<td class="text-center">' . $nameData['size'] . '</td>';
-    } else {
-        $html_table .= '<td class="text-center">کاربر خالی وارد کرده</td>';
-    }
+    $size_display = (!empty($nameData) && is_array($nameData)) ? $nameData['size'] : 'کاربر خالی وارد کرده';
+    $html_table .= '<td class="text-center">' . $size_display . '</td>';
 
     // Display shift based on value
-    $html_table .= '<td class="text-center">';
-    switch($row['shift']) {
-        case 1:
-            $html_table .= 'روز';
-            break;
-        case 2:
-            $html_table .= 'عصر';
-            break;
-        case 3:
-            $html_table .= 'شب';
-            break;
-        default:
-            $html_table .= 'نامشخص';
-            break;
-    }
-    $html_table .= '</td>';
+    $shift_display = match ($row['shift']) {
+        1 => 'روز',
+        2 => 'عصر',
+        3 => 'شب',
+        default => 'نامشخص'
+    };
+    $html_table .= '<td class="text-center">' . $shift_display . '</td>';
 
     $html_table .= '<td class="text-center">' . $row['date'] . '</td>';
 
@@ -70,37 +58,39 @@ while ($row = $result->fetch_assoc()) {
     $start_time = strtotime($row['start']);
     $finish_time = strtotime($row['stop']);
     $time_difference = $finish_time - $start_time;
-    $net_seconds = $time_difference;
-    $html_table .= '<td class="text-center">' . $net_seconds . ' ثانیه </td>';
+    $html_table .= '<td class="text-center">' . $time_difference . ' ثانیه </td>';
 
-    // Display allowed time (size time piece)
-    $size_time_piece = (int)giveTimePiece($row['size']);
-    $html_table .= '<td class="text-center">' . $size_time_piece . ' ثانیه </td>';
+    // Fetch additional data
+    $size_piece = $row['size'];
+    $piece_name = $row['piece_name'];
+    $level = $row['level'];
+    $sqll = "SELECT * FROM pieces WHERE size = '$size_piece' AND name = '$piece_name' AND level = '$level'";
+    $resultt = $conn->query($sqll);
 
-    // Calculate remaining time or delay
-    $remaining_time = $size_time_piece - $net_seconds;
-    if ($remaining_time >= 0) {
-        $delay_message = "تاخیر نداشته";
+    if ($resultt->num_rows > 0) {
+        $roww = $resultt->fetch_assoc();
+        $time_one = $roww['time_one'];
+        $price = $roww['price'];
+        $all_time = $time_one * $row['numbers'];
+        $all_price = $price * $row['numbers'];
+        $totals[] = $all_price;
+
+        $delay = $all_time - $time_difference;
+        $delay_message = $delay >= 0 ? "تاخیر نداشته" : $delay . ' ثانیه';
+
     } else {
-        $delay_message = abs($remaining_time) . " ثانیه";
+        $all_time = "زمانی ثبت نشده";
+        $delay_message = "زمانی ثبت نشده";
+        $all_price = "قیمتی ثبت نشده";
+        $price = "قیمتی ثبت نشده";
+        $totals[] = 0;
     }
+
+    $html_table .= '<td class="text-center">' . $all_time . ' ثانیه </td>';
     $html_table .= '<td class="text-center">' . $delay_message . '</td>';
-
-    // Display number of items
     $html_table .= '<td class="text-center">' . $row['numbers'] . '</td>';
-
-    // Calculate unit price and display
-    $price = isset($nameData['price']) ? $nameData['price'] : 0;
-    $html_table .= '<td class="text-center">' . number_format($price) . '</td>';
-
-    // Calculate total price and display
-    $totalPrice = $price * intval($row['numbers']);
-    $html_table .= '<td class="text-center">' . number_format($totalPrice) . '</td>';
-
-    // Add totalPrice to the totals array
-    $totals[] = $totalPrice;
-
-    $html_table .= '</tr>';
+    $html_table .= '<td class="text-center">' . $price . '</td>';
+    $html_table .= '<td class="text-center">' . $all_price . '</td>';
     $a++;
 }
 

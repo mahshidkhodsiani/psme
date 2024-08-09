@@ -29,11 +29,11 @@ function giveDeviceCode($id)
     // Check if $id is not empty
     if(!empty($id)) {
         // Use prepared statement to prevent SQL injection
-        $sql = "SELECT * FROM devices WHERE id = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("i", $id); // Assuming id is an integer, change "i" if it's a different type
-        $stmt->execute();
-        $result = $stmt->get_result();
+        $sql = "SELECT * FROM devices WHERE id = '$id'";
+
+        // echo $sql;
+     
+        $result = $conn->query($sql);
         
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
@@ -103,6 +103,7 @@ function giveTimePiece($id){
     include 'config.php';
 
     $sql = "SELECT * FROM pieces WHERE id = $id";
+    
     $result = $conn->query($sql);
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
